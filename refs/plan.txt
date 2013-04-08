@@ -1,0 +1,15 @@
+GUI
+    - move / transforms
+    - delete
+    - color
+    - bezier curves
+
+RPC
+    - operation structure
+
+OT
+    - read paper
+    - implement or pull ?
+
+Tester
+    - interesting test cases where conflict actually changes something

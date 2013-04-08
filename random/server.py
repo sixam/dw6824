@@ -14,7 +14,7 @@ class MyFuncs:
     def pow(self, x, y): return pow(x, y)
     def add(self, x, y) : return x + y
 
-server = SimpleXMLRPCServer(("localhost", 8000))
+server = SimpleXMLRPCServer(("bratwurst.mit.edu", 8000))
 server.register_introspection_functions()
 server.register_instance(MyFuncs())
 server.serve_forever()

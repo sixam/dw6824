@@ -7,37 +7,6 @@ import math
 
 
 from PyQt4 import QtCore, QtGui
-class Bezier:
-	def binomial(self,i, n):
-	    """Binomial coefficient"""
-	    return math.factorial(n) / float(
-	        math.factorial(i) * math.factorial(n - i))
-	
-	
-	def bernstein(self, t, i, n):
-	    """Bernstein polynom"""
-	    return self.binomial(i, n) * (t ** i) * ((1 - t) ** (n - i))
-	
-	
-	def bezier(self, t, points):
-	    """Calculate coordinate of a point in the bezier curve"""
-	    n = len(points) - 1
-	    x = y = 0
-	    for i, pos in enumerate(points):
-	        bern = self.bernstein(t, i, n)
-	        x += pos[0] * bern
-	        y += pos[1] * bern
-	    return x, y
-	
-	
-	def bezier_curve_range(self, n, points):
-	    """Range of points in a curve bezier"""
-	    for i in xrange(n):
-	        t = i / float(n - 1)
-	        yield self.bezier(t, points)
-	
-
-
 class ScribbleArea(QtGui.QWidget):
     def __init__(self, parent=None):
         super(ScribbleArea, self).__init__(parent)
@@ -48,9 +17,8 @@ class ScribbleArea(QtGui.QWidget):
         self.myPenWidth = 10
         self.myPenColor = QtCore.Qt.blue
         self.image = QtGui.QImage()
-        self.lastPoint = QtCore.QPoint()
         self.controlPoints = [];
-        self.BZ = Bezier()
+        self.LinePath = QtGui.QPainterPath()
 
     def openImage(self, fileName):
         loadedImage = QtGui.QImage()
@@ -87,31 +55,25 @@ class ScribbleArea(QtGui.QWidget):
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
-            self.lastPoint = event.pos()
+            self.controlPoints = []
+            self.controlPoints.append(event.posF());
+            self.path = QtGui.QPainterPath(event.posF());
             self.scribbling = True
 
     def mouseMoveEvent(self, event):
         if (event.buttons() & QtCore.Qt.LeftButton) and self.scribbling:
-            self.controlPoints.append([event.x(), event.y()]);
-            if len(self.controlPoints) > 12:
-                for point in self.BZ.bezier_curve_range(100, self.controlPoints):
-                        p = QtCore.QPoint(point[0],point[1]);
-                        self.drawLineTo(p);
-                        self.controlPoints = [];
-                        self.update()
+            self.controlPoints.append(event.posF());
+            self.path.lineTo(event.posF());
+            self.drawLineTo()
+            self.update()
+
             #self.drawLineTo(event.pos())
-            #self.update()
 
     def mouseReleaseEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton and self.scribbling:
             #self.drawLineTo(event.pos())
-            print(self.controlPoints);
-            if len(self.controlPoints) > 0:
-                for point in self.BZ.bezier_curve_range(1000, self.controlPoints):
-                        p = QtCore.QPoint(point[0],point[1]);
-                        self.drawLineTo(p);
+            print self.path
             self.update()
-            self.controlPoints = [];
             self.scribbling = False
 
     def paintEvent(self, event):
@@ -127,16 +89,16 @@ class ScribbleArea(QtGui.QWidget):
 
         super(ScribbleArea, self).resizeEvent(event)
 
-    def drawLineTo(self, endPoint):
+    def drawLineTo(self):
         painter = QtGui.QPainter(self.image)
         painter.setPen(QtGui.QPen(self.myPenColor, self.myPenWidth,
                 QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-        painter.drawLine(self.lastPoint, endPoint)
+        painter.drawPath(self.path);
         self.modified = True
 
-        rad = self.myPenWidth / 2 + 2
-        self.update(QtCore.QRect(self.lastPoint, endPoint).normalized().adjusted(-rad, -rad, +rad, +rad))
-        self.lastPoint = QtCore.QPoint(endPoint)
+#        rad = self.myPenWidth / 2 + 2
+#        self.update(QtCore.QRect(self.lastPoint, endPoint).normalized().adjusted(-rad, -rad, +rad, +rad))
+#        self.lastPoint = QtCore.QPoint(endPoint)
 
     def resizeImage(self, image, newSize):
         if image.size() == newSize:

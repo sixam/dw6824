@@ -1,10 +1,10 @@
 from SimpleXMLRPCServer import SimpleXMLRPCServer
-from ui.main_window import MainWindow
+from dp.src.ui.main_window import MainWindow
 from PyQt4 import QtCore, QtGui
 import sys
 from threading import Thread
-from rpc.client import Client
-from rpc.responder import RPCresponder
+from dp.src.rpc.client import Client
+from dp.src.rpc.responder import RPCresponder
 
 class Peer:
     def __init__(self,identifier,port):

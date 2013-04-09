@@ -1,7 +1,7 @@
 from PyQt4 import QtCore, QtGui
-from utils.utils import utils
+from dp.src.utils.utils import utils
 import sys
-from rpc.peer import Peer
+from dp.src.rpc.peer import Peer
 
 if __name__ == '__main__':
     # init QtGUI

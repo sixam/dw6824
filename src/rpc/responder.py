@@ -1,5 +1,5 @@
 from PyQt4 import QtCore, QtGui
-from ui import ui
+from dp.src import ui
 
 class RPCresponder:
     def __init__(self,window):

@@ -84,6 +84,15 @@ class ScribbleArea(QtGui.QWidget):
         if event.button() == QtCore.Qt.LeftButton:
             if self.current_tool == Tool.MOVE:
                 self.move_pos = event.posF()
+                x = event.posF().x()
+                y = event.posF().y()
+                sel_rect = QtCore.QRectF(QtCore.QPointF(x-10,y-10),QtCore.QPointF(x+10,y+10))
+                self.selected = -1 #if the click is outside, we deselect
+                for s_id,stroke in enumerate(self.strokes): # check selection
+                    if stroke.path.intersects(sel_rect):
+                        self.selected = s_id
+                        print 'selected :', s_id, stroke
+                        break
                 pass
             elif self.current_tool == Tool.PEN:
                 self.controlPoints = []
@@ -119,15 +128,7 @@ class ScribbleArea(QtGui.QWidget):
                     #stroke.path.translate(offset)
                     self.moving = False
                 else :
-                    x = event.posF().x()
-                    y = event.posF().y()
-                    sel_rect = QtCore.QRectF(QtCore.QPointF(x-10,y-10),QtCore.QPointF(x+10,y+10))
-                    self.selected = -1 #if the click is outside, we deselect
-                    for s_id,stroke in enumerate(self.strokes): # check selection
-                        if stroke.path.intersects(sel_rect):
-                            self.selected = s_id
-                            print 'selected :', s_id, stroke
-                            break
+                    pass
 
             elif self.current_tool == Tool.PEN and self.scribbling:
                 stroke = Stroke(self.path,self.myPenWidth,self.myPenColor)
@@ -188,6 +189,12 @@ class ScribbleArea(QtGui.QWidget):
         self.modified = True
         self.update()
 
+    def delete(self):
+        if self.selected >= 0:
+            print 'deleted'
+            del(self.strokes[self.selected])
+            self.draw()
+
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
@@ -240,6 +247,8 @@ class MainWindow(QtGui.QMainWindow):
         print '\033[32mTool :',tool,'\033[0m'
 
     def createActions(self):
+        self.deleteAct = QtGui.QAction("Delete", self, shortcut="D",
+                triggered=self.scribbleArea.delete)
         self.openAct = QtGui.QAction("&Open...", self, shortcut="Ctrl+O",
                 triggered=self.open)
 
@@ -301,6 +310,7 @@ class MainWindow(QtGui.QMainWindow):
         optionMenu.addMenu(self.toolMenu)
         optionMenu.addSeparator()
         optionMenu.addAction(self.clearScreenAct)
+        optionMenu.addAction(self.deleteAct)
 
         helpMenu = QtGui.QMenu("&Help", self)
         helpMenu.addAction(self.aboutAct)

@@ -10,21 +10,25 @@ class Node:
         # string.func_name
         import string
         self.string = string
-        self.x = 10
+
         self.window = ui.MainWindow()
         self.window.show()
+
     def _listMethods(self):
         # implement this method so that system.listMethods
         # knows to advertise the strings methods
         return list_public_methods(self) + \
                 ['string.' + method for method in list_public_methods(self.string)]
-    def add(self, x, y) :
-        return x+y
 
+    # RPC methods
     def get_strokes(self):
         return self.window.scribbleArea.strokes
 
-    def add_strokes(self):
+    def add_stroke(self,strokeData):
+        stroke = ui.Stroke(**strokeData)
+        self.window.scribbleArea.strokes.append(stroke)
+        self.window.scribbleArea.draw()
+        return 0
 
 class Server:
     def __init__(self,identifier,port):
@@ -39,9 +43,6 @@ class Server:
     def run(self):
         self.server.serve_forever()
 
-
 # client code : import xmlrpclib
 # srv = xmlrpclib.Server('http://localhost:8000')
 # srv.function
-
-

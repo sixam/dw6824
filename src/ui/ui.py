@@ -6,6 +6,8 @@ import math
 import functools
 from PyQt4 import QtCore, QtGui
 
+from rpc.clerk import Clerk
+
 class Tool:
     """Set of authorized tools"""
     MOVE = 'Move'
@@ -13,10 +15,10 @@ class Tool:
 
 class Stroke:
     """Basic Stroke"""
-    def __init__(self, path, width, color):
+    def __init__(self, path=None, width=None, color=None):
         self.path  = path
         self.width = width
-        self.color = color.getRgb()
+        self.color = color
 
     def __str__(self):
         return "Stroke: {0} - width: {1}, color: {2}".format(self.path, self.width, self.color)
@@ -27,7 +29,6 @@ class Stroke:
         for pt in points:
             path.lineTo(QtCore.QPointF(*pt));
         return path
-
 
 class ScribbleArea(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -50,6 +51,9 @@ class ScribbleArea(QtGui.QWidget):
         self.image = QtGui.QImage()
 
         self.LinePath = QtGui.QPainterPath()
+
+        self.clerk = Clerk()
+        self.clerk.addPeer('http://localhost:2000')
 
         # Drawing content
         self.strokes = [];
@@ -103,7 +107,7 @@ class ScribbleArea(QtGui.QWidget):
                 pass
             elif self.current_tool == Tool.PEN:
                 self.controlPoints = []
-                self.controlPoints.append((event.posF().x(),event.posF().y()));
+                self.controlPoints.append([event.posF().x(),event.posF().y()]);
                 self.path = QtGui.QPainterPath(event.posF());
                 self.scribbling = True
             else:
@@ -119,14 +123,13 @@ class ScribbleArea(QtGui.QWidget):
                     self.move_pos = event.posF()
                     stroke = self.strokes[self.selected]
                     for i,pt in enumerate(stroke.path):
-                        a = pt[0] + offset.x()
-                        b = pt[1] + offset.y()
-                        pt = (a,b)
-                        stroke.path[i] = pt
+                        pt[0] = pt[0] + offset.x()
+                        pt[1] = pt[1] + offset.y()
+                        #stroke.path[i] = pt
                     self.draw()
             elif self.current_tool == Tool.PEN and self.scribbling:
                 self.path.lineTo(event.posF());
-                self.controlPoints.append((event.posF().x(),event.posF().y()));
+                self.controlPoints.append([event.posF().x(),event.posF().y()]);
                 self.drawLineTo()
                 self.update()
 
@@ -139,7 +142,8 @@ class ScribbleArea(QtGui.QWidget):
                     pass
 
             elif self.current_tool == Tool.PEN and self.scribbling:
-                stroke = Stroke(self.controlPoints,self.myPenWidth,self.myPenColor)
+                stroke = Stroke(self.controlPoints,self.myPenWidth,list(self.myPenColor.getRgb()))
+                self.clerk.sendStroke(stroke)
                 self.strokes.append(stroke)
                 self.update()
                 self.scribbling = False
@@ -217,6 +221,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.createActions()
         self.createMenus()
+
 
         self.setWindowTitle("Scribble")
         self.resize(1024, 768)

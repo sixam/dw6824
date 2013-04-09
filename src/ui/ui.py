@@ -16,7 +16,8 @@ class Stroke:
     def __init__(self, path, width, color):
         self.path  = path
         self.width = width
-        self.color = color
+        self.color = color.rgb()
+        print self.color
 
     def __str__(self):
         return "Stroke: {0} - width: {1}, color: {2}".format(self.path, self.width, self.color)
@@ -31,8 +32,8 @@ class ScribbleArea(QtGui.QWidget):
         # Current State 
         self.modified = False
         self.current_tool = Tool.PEN
-        self.myPenWidth = 10
-        self.myPenColor = QtCore.Qt.blue
+        self.myPenWidth = 10.0
+        self.myPenColor = QtGui.QColor(0,0,255)
 
         self.controlPoints = [];
         self.scribbling = False
@@ -76,7 +77,7 @@ class ScribbleArea(QtGui.QWidget):
         self.myPenWidth = newWidth
 
     def clearImage(self):
-        self.image.fill(QtGui.qRgb(255, 255, 255))
+        self.image.fill(QtGui.QColor(255, 255, 255))
         self.modified = True
         self.update()
 
@@ -179,10 +180,10 @@ class ScribbleArea(QtGui.QWidget):
 
     def draw(self):
         #self.clearImage()
-        self.image.fill(QtGui.qRgb(255, 255, 255))
+        self.image.fill(QtGui.QColor(255, 255, 255))
         painter = QtGui.QPainter(self.image)
         for stroke in self.strokes:
-            painter.setPen(QtGui.QPen(stroke.color, stroke.width,
+            painter.setPen(QtGui.QPen(QtGui.QColor(stroke.color), stroke.width,
                 QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
             painter.drawPath(stroke.path);
         print 'redrawn'
@@ -237,7 +238,7 @@ class MainWindow(QtGui.QMainWindow):
             self.scribbleArea.setPenColor(newColor)
 
     def penWidth(self):
-        newWidth, ok = QtGui.QInputDialog.getInteger(self, "Scribble",
+        newWidth, ok = QtGui.QInputDialog.getDouble(self, "Scribble",
                 "Select pen width:", self.scribbleArea.penWidth(), 1, 50, 1)
         if ok:
             self.scribbleArea.setPenWidth(newWidth)

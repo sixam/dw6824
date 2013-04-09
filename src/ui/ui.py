@@ -188,6 +188,7 @@ class ScribbleArea(QtGui.QWidget):
         self.modified = True
         self.update()
 
+
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -237,7 +238,6 @@ class MainWindow(QtGui.QMainWindow):
     def setTool(self,tool):
         self.scribbleArea.current_tool = tool
         print '\033[32mTool :',tool,'\033[0m'
-
 
     def createActions(self):
         self.openAct = QtGui.QAction("&Open...", self, shortcut="Ctrl+O",

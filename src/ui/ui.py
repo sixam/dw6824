@@ -16,11 +16,17 @@ class Stroke:
     def __init__(self, path, width, color):
         self.path  = path
         self.width = width
-        self.color = color.rgb()
-        print self.color
+        self.color = color.getRgb()
 
     def __str__(self):
         return "Stroke: {0} - width: {1}, color: {2}".format(self.path, self.width, self.color)
+
+    def toPainterPath(self):
+        points = self.path
+        path = QtGui.QPainterPath(QtCore.QPointF(*points[0]));
+        for pt in points:
+            path.lineTo(QtCore.QPointF(*pt));
+        return path
 
 
 class ScribbleArea(QtGui.QWidget):
@@ -90,14 +96,14 @@ class ScribbleArea(QtGui.QWidget):
                 sel_rect = QtCore.QRectF(QtCore.QPointF(x-10,y-10),QtCore.QPointF(x+10,y+10))
                 self.selected = -1 #if the click is outside, we deselect
                 for s_id,stroke in enumerate(self.strokes): # check selection
-                    if stroke.path.intersects(sel_rect):
+                    if stroke.toPainterPath().intersects(sel_rect):
                         self.selected = s_id
                         print 'selected :', s_id, stroke
                         break
                 pass
             elif self.current_tool == Tool.PEN:
                 self.controlPoints = []
-                self.controlPoints.append(event.posF());
+                self.controlPoints.append((event.posF().x(),event.posF().y()));
                 self.path = QtGui.QPainterPath(event.posF());
                 self.scribbling = True
             else:
@@ -112,11 +118,15 @@ class ScribbleArea(QtGui.QWidget):
                     offset = event.posF() - self.move_pos 
                     self.move_pos = event.posF()
                     stroke = self.strokes[self.selected]
-                    stroke.path.translate(offset)
+                    for i,pt in enumerate(stroke.path):
+                        a = pt[0] + offset.x()
+                        b = pt[1] + offset.y()
+                        pt = (a,b)
+                        stroke.path[i] = pt
                     self.draw()
             elif self.current_tool == Tool.PEN and self.scribbling:
-                self.controlPoints.append(event.posF());
                 self.path.lineTo(event.posF());
+                self.controlPoints.append((event.posF().x(),event.posF().y()));
                 self.drawLineTo()
                 self.update()
 
@@ -124,15 +134,12 @@ class ScribbleArea(QtGui.QWidget):
         if event.button() == QtCore.Qt.LeftButton:
             if self.current_tool == Tool.MOVE:
                 if self.moving and self.selected >= 0: 
-                    #offset = event.posF() - self.move_origin 
-                    #stroke = self.strokes[self.selected]
-                    #stroke.path.translate(offset)
                     self.moving = False
                 else :
                     pass
 
             elif self.current_tool == Tool.PEN and self.scribbling:
-                stroke = Stroke(self.path,self.myPenWidth,self.myPenColor)
+                stroke = Stroke(self.controlPoints,self.myPenWidth,self.myPenColor)
                 self.strokes.append(stroke)
                 self.update()
                 self.scribbling = False
@@ -183,9 +190,10 @@ class ScribbleArea(QtGui.QWidget):
         self.image.fill(QtGui.QColor(255, 255, 255))
         painter = QtGui.QPainter(self.image)
         for stroke in self.strokes:
-            painter.setPen(QtGui.QPen(QtGui.QColor(stroke.color), stroke.width,
+            painter.setPen(QtGui.QPen(QtGui.QColor(*stroke.color), stroke.width,
                 QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-            painter.drawPath(stroke.path);
+            path = stroke.toPainterPath()
+            painter.drawPath(path);
         print 'redrawn'
         self.modified = True
         self.update()

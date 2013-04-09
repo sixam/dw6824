@@ -22,7 +22,9 @@ class Node:
         return x+y
 
     def get_strokes(self):
-        return self.window.scribbleArea.test_struct
+        return self.window.scribbleArea.strokes
+
+    def add_strokes(self):
 
 class Server:
     def __init__(self,identifier,port):

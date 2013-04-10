@@ -1,5 +1,5 @@
 from PyQt4 import QtCore, QtGui
-from dp.src import ui
+from dp.src.ui.stroke import Stroke
 
 class RPCresponder:
     def __init__(self,window):
@@ -7,6 +7,7 @@ class RPCresponder:
         # string.func_name
         import string
         self.string = string
+        self.window = window
 
     def _listMethods(self):
         # implement this method so that system.listMethods
@@ -19,7 +20,7 @@ class RPCresponder:
         return self.window.scribbleArea.strokes
 
     def add_stroke(self,strokeData):
-        stroke = ui.Stroke(**strokeData)
+        stroke = Stroke(**strokeData)
         self.window.scribbleArea.strokes.append(stroke)
         self.window.scribbleArea.draw()
         return True

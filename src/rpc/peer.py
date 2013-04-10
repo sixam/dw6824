@@ -5,24 +5,24 @@ import sys
 from threading import Thread
 from dp.src.rpc.client import Client
 from dp.src.rpc.responder import RPCresponder
+import xmlrpclib
 
 class Peer:
-    def __init__(self,identifier,port):
+    def __init__(self,ip,port):
         # Node state
         self.peers         = []
         self.request_queue = []
         self.request_log   = []
         self.state_vector  = []
 
-        self.server = SimpleXMLRPCServer((identifier,port))
+        self.server = SimpleXMLRPCServer((ip,port))
         self.server.register_introspection_functions()
 
-        self.client = Client()
+        self.client = Client(self.peers)
 
         self.window = MainWindow(self.client)
         self.window.show()
 
-        self.client.add()
 
         self.RPCresponder = RPCresponder(self.window)
         self.server.register_instance(self.RPCresponder)
@@ -34,7 +34,9 @@ class Peer:
     def run(self):
         self.server.serve_forever()
 
-    def addPeer(self,srv_name):
+    def addPeer(self,ip,port):
+        #self.client.addPeer(ip,port)
+        srv_name = 'http://%s:%s' % (ip, port)
         srv = xmlrpclib.Server(srv_name)
         self.peers.append(srv)
         print 'added peer:',srv_name

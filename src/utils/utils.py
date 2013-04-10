@@ -11,8 +11,9 @@ class utils:
 			config.read("%s/%s/%s" % (os.environ.get('DW_BASE'),'conf',loc))
 		return config
 	@staticmethod
-	def getLogPath(logtype):
+	def getLogPath(logtype,local_id):
 		config = utils.getConfig()
-		return "%s/%s" % (os.environ.get('DW_BASE'), config.get('log', logtype))
+		return "%s/%s" % (os.environ.get('DW_BASE'), 
+                 config.get('log', logtype) % (local_id) )
 		
 		

@@ -17,21 +17,9 @@ class RPCresponder:
                 ['string.' + method for method in list_public_methods(self.string)]
 
     # RPC methods
-    def get_strokes(self):
-        return self.strokes
-
-    def addStroke(self,strokeData):
-        stroke = Stroke(**strokeData)
-        self.strokes.append(stroke)
-        self.window.scribbleArea.draw()
+    def enq(self,rqData):
+        #rq = Request(**rqData)
+        print rqData
         return True
 
-    def moveStroke(self,moveOp):
-        print moveOp
-        id = moveOp['id']
-        offset = moveOp['offset']
-        stroke = self.strokes[id]
-        stroke.offsetPosBy(offset)
-        self.window.scribbleArea.draw()
-        return True
 

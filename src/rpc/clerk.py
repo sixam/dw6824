@@ -1,32 +1,58 @@
 import xmlrpclib
-class MoveOp:
-    def __init__(self,id,offset):
-        self.id = id
-        self.offset = offset
-
+from threading import Thread
+from rpc.common import PeerState,Request,Operation,OpType
+import time
 
 class Clerk:
     """ Clerk for the UI thread, handles the emission of RPC calls"""
     def __init__(self,state):
-        self.peers         = state.peers
+        self.state = state
+
+    def _increase_vt(self):
+        self.state.vt[self.state.id] += 1
         
     def addStroke(self,s):
-        # compute operation priority
+        id = 0
+        self._increase_vt()
 
-        # add op to the queue
+        op = Operation(type=OpType.ADD,stroke_id = id, stroke = s)
 
-        print self.peers
+        rq = Request(sender = self.state.id, vt = self.state.vt, op = op,
+                priority = self._calculatePriority, request_id = 0)
 
-        # broadcast to peers
-        for srv in self.peers:
-            srv.addStroke(s)
-            print srv,'sent stroke:',s
+        self.state.queue.append(rq)
+
+        # broadcast
+        self._send(rq)
+
+    def _calculatePriority(self):
+        return self.state.id
+
+    def _send(self,rq):
+        for srv in self.state.peers:
+            print srv
+            t = Thread(target=self._send_worker,args=(rq,srv))
+            t.daemon = True
+            t.start()
+
+    def _send_worker(self,rq,srv):
+        keep_running = True
+        while keep_running :
+            try:
+                srv.enq(rq)
+                keep_running = False
+                print 'sent'
+            except:
+                pass
+                print 'shit happened'
+            time.sleep(.01)
 
     def moveStroke(self,id,offset):
-        for srv in self.peers:
-            off = [offset.x(), offset.y()]
-            mOp = MoveOp(id,off)
-            srv.moveStroke(mOp)
-
-    def deleteStroke(self):
         pass
+
+    def editStroke(self,id,stroke):
+        pass
+
+    def deleteStroke(self,id):
+        for srv in self.peers:
+            srv.deleteStroke(id)

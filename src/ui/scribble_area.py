@@ -3,6 +3,7 @@ from rpc.clerk import Clerk
 from stroke import Stroke
 from tool import Tool
 
+
 class ScribbleArea(QtGui.QWidget):
     """ Main Area for drawing
         =====================
@@ -27,7 +28,7 @@ class ScribbleArea(QtGui.QWidget):
 
         # Select and move state variables
         self.select_rect = QtCore.QRectF
-        self.selected = -1
+        self.selected = None
         self.moving = False
 
         # Drawing canvas
@@ -49,27 +50,25 @@ class ScribbleArea(QtGui.QWidget):
         x = pos.x()
         y = pos.y()
         sel_rect = QtCore.QRectF(QtCore.QPointF(x-10,y-10),QtCore.QPointF(x+10,y+10))
-        self.selected = -1 #if the click is outside, we deselect
-        for s_id,stroke in enumerate(self.strokes): # check selection
+        self.selected = None #if the click is outside, we deselect
+        for stroke in self.strokes: # check selection
             if stroke.toPainterPath().intersects(sel_rect):
-                self.selected = s_id
+                self.selected = stroke
                 break
         self.original_move_pos = self.move_pos
 
     def _moveUpdate(self,pos):
-        if self.selected != -1:
+        if self.selected != None:
             self.moving = True
-        if self.moving and self.selected >= 0: 
+        if self.moving and self.selected:
             offset = pos - self.move_pos 
             self.move_pos = pos
-            stroke = self.strokes[self.selected]
-            stroke.offsetPosBy(offset)
             self.draw()
 
     def _moveEnd(self,pos):
-        if self.moving and self.selected >= 0: 
+        if self.moving and self.selected: 
             offset = pos - self.original_move_pos 
-            self.clerk.moveStroke(self.selected,offset)
+            self.clerk.moveStroke(self.selected.id,offset)
             self.moving = False
         else:
             pass
@@ -93,7 +92,6 @@ class ScribbleArea(QtGui.QWidget):
         if self.scribbling:
             stroke = Stroke(self.controlPoints,self.myPenWidth,list(self.myPenColor.getRgb()))
             self.clerk.addStroke(stroke)
-            self.strokes.append(stroke)
             self.update()
             self.scribbling = False
 ################################ END 
@@ -138,12 +136,6 @@ class ScribbleArea(QtGui.QWidget):
 
         super(ScribbleArea, self).resizeEvent(event)
 
-    def drawLineTo(self):
-        """ Draw a temporary line  """
-        painter = QtGui.QPainter(self.image)
-        painter.setPen(QtGui.QPen(self.myPenColor, self.myPenWidth,
-                QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-        painter.drawPath(self.path);
 
     def resizeImage(self, image, newSize):
         if image.size() == newSize:
@@ -165,11 +157,29 @@ class ScribbleArea(QtGui.QWidget):
             painter.drawPath(path);
         self.update()
 
+    def drawLineTo(self):
+        """ Draw a temporary line  """
+        painter = QtGui.QPainter(self.image)
+        painter.setPen(QtGui.QPen(self.myPenColor, self.myPenWidth,
+                QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+        painter.drawPath(self.path);
+
     def delete(self):
         """ Deletes the currently selected stroke """
-        if self.selected >= 0:
-            print 'deleted', self.strokes[self.selected]
-            del(self.strokes[self.selected])
+        if self.selected:
+            print 'deleted', self.selected
+            self.clerk.deleteStroke(self.selected.id)
             self.draw()
 
+    def penColor(self):
+        return self.myPenColor
+        
+    def setPenColor(self,color):
+        self.myPenColor = color
+        print 'new color', color
 
+    def penWidth(self):
+        return self.myPenWidth
+        
+    def setPenWidth(self,width):
+        self.myPenWidth = width

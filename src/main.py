@@ -1,8 +1,13 @@
+#import sip
+#sip.setapi('QString', 2)
+#sip.setapi('QVariant', 2)
+
 from PyQt4 import QtCore, QtGui
 from dp.src.utils.utils import Utils
 import sys
 from dp.src.rpc.peer import Peer
 import datetime
+
 
 if __name__ == '__main__':
     # init QtGUI

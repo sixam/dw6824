@@ -2,30 +2,12 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 from dp.src.ui.main_window import MainWindow
 from PyQt4 import QtCore, QtGui
 import sys
+from rpc.common import PeerState,Request,Operation,OpType
 from threading import Thread
-from dp.src.rpc.client import Client
+from dp.src.rpc.clerk import Clerk
 from dp.src.rpc.responder import RPCresponder
 import xmlrpclib
 
-class PeerState:
-    """Stores all data concerning a peer's state
-
-    Contains:
-        - list of other peers
-        - dOPT structures
-        - drawn objects (strokes)
-
-    Is shared between UI and Network threads
-    
-    """
-    # NOTE: lock around access to the structure?
-    def __init__(self):
-        self.peers         = []
-        self.request_queue = []
-        self.request_log   = []
-        self.state_vector  = []
-        self.strokes       = []
-        
 
 class Peer:
     def __init__(self,ip,port):

@@ -1,5 +1,5 @@
 from PyQt4 import QtCore, QtGui
-from dp.src.utils.utils import utils
+from dp.src.utils.utils import Utils
 import sys
 from dp.src.rpc.peer import Peer
 import datetime
@@ -7,10 +7,10 @@ import datetime
 if __name__ == '__main__':
     # init QtGUI
     n = datetime.datetime.now().__str__()
-    config = utils.getConfig()
+    config = Utils.getConfig()
     local_id = sys.argv[1]
-    #sys.stdout = open(utils.getLogPath('mainlog',local_id),'a')
-    #sys.stderr = open(utils.getLogPath('errorlog',local_id),'a')
+    #sys.stdout = open(Utils.getLogPath('mainlog',local_id),'a')
+    #sys.stderr = open(Utils.getLogPath('errorlog',local_id),'a')
 
     print "New Run: %s\n" % n
     sys.stderr.write("New Run: %s\n" % n)

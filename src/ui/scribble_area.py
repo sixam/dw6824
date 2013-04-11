@@ -1,15 +1,22 @@
 from PyQt4 import QtCore, QtGui
-from rpc.client import Client
+from rpc.clerk import Clerk
 from stroke import Stroke
 from tool import Tool
 
 class ScribbleArea(QtGui.QWidget):
-    def __init__(self, client,parent=None):
+    """ Main Area for drawing
+        =====================
+
+        Capture mouse events and update the state accordingly.
+        All the broadcasting is done by the clerk object
+
+    """
+    def __init__(self, state, parent=None):
         super(ScribbleArea, self).__init__(parent)
 
         self.setAttribute(QtCore.Qt.WA_StaticContents)
 
-        # Current State 
+        # Current mode 
         self.current_tool = Tool.PEN
 
         # Drawing state
@@ -18,23 +25,19 @@ class ScribbleArea(QtGui.QWidget):
         self.myPenWidth = 10.0
         self.myPenColor = QtGui.QColor(0,0,255)
 
-        # Select and move state
+        # Select and move state variables
         self.select_rect = QtCore.QRectF
         self.selected = -1
         self.moving = False
 
+        # Drawing canvas
         self.image = QtGui.QImage()
 
-        self.client = client
+        # RPC clerk
+        self.clerk = Clerk(state)
 
         # Drawing content
-        self.strokes = [];
-
-    def setPenColor(self, newColor):
-        self.myPenColor = newColor
-
-    def setPenWidth(self, newWidth):
-        self.myPenWidth = newWidth
+        self.strokes = state.strokes #local pointer to the node's structure
 
     def clearImage(self):
         self.image.fill(QtGui.QColor(255, 255, 255))
@@ -90,7 +93,7 @@ class ScribbleArea(QtGui.QWidget):
 
             elif self.current_tool == Tool.PEN and self.scribbling:
                 stroke = Stroke(self.controlPoints,self.myPenWidth,list(self.myPenColor.getRgb()))
-                self.client.addStroke(stroke)
+                self.clerk.addStroke(stroke)
                 self.strokes.append(stroke)
                 self.update()
                 self.scribbling = False
@@ -111,6 +114,7 @@ class ScribbleArea(QtGui.QWidget):
         super(ScribbleArea, self).resizeEvent(event)
 
     def drawLineTo(self):
+        """ Draw a temporary line  """
         painter = QtGui.QPainter(self.image)
         painter.setPen(QtGui.QPen(self.myPenColor, self.myPenWidth,
                 QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
@@ -126,12 +130,6 @@ class ScribbleArea(QtGui.QWidget):
         painter.drawImage(QtCore.QPoint(0, 0), image)
         self.image = newImage
 
-    def penColor(self):
-        return self.myPenColor
-
-    def penWidth(self):
-        return self.myPenWidth
-
     def draw(self):
         self.image.fill(QtGui.QColor(255, 255, 255))
         painter = QtGui.QPainter(self.image)
@@ -143,8 +141,9 @@ class ScribbleArea(QtGui.QWidget):
         self.update()
 
     def delete(self):
+        """ Deletes the currently selected stroke """
         if self.selected >= 0:
-            print 'deleted'
+            print 'deleted', self.strokes[self.selected]
             del(self.strokes[self.selected])
             self.draw()
 

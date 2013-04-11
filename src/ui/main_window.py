@@ -4,12 +4,12 @@ from tool import Tool
 from scribble_area import ScribbleArea
 
 class MainWindow(QtGui.QMainWindow):
-    def __init__(self,client):
+    def __init__(self,state):
         super(MainWindow, self).__init__()
 
         self.toolActs   = []
 
-        self.scribbleArea = ScribbleArea(client)
+        self.scribbleArea = ScribbleArea(state)
         self.setCentralWidget(self.scribbleArea)
 
         self.createActions()

@@ -2,12 +2,13 @@ from PyQt4 import QtCore, QtGui
 from dp.src.ui.stroke import Stroke
 
 class RPCresponder:
-    def __init__(self,window):
+    def __init__(self, state, window):
         # make all of the string functions available through
         # string.func_name
         import string
         self.string = string
         self.window = window
+        self.strokes = state.strokes
 
     def _listMethods(self):
         # implement this method so that system.listMethods
@@ -17,11 +18,11 @@ class RPCresponder:
 
     # RPC methods
     def get_strokes(self):
-        return self.window.scribbleArea.strokes
+        return self.strokes
 
     def add_stroke(self,strokeData):
         stroke = Stroke(**strokeData)
-        self.window.scribbleArea.strokes.append(stroke)
+        self.strokes.append(stroke)
         self.window.scribbleArea.draw()
         return True
 

@@ -1,7 +1,7 @@
 import ConfigParser
 import os
 
-class utils:
+class Utils:
 	def __init__(self):
 		pass
 	@staticmethod

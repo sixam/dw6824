@@ -18,3 +18,16 @@ class Stroke:
             path.lineTo(QtCore.QPointF(*pt));
         return path
 
+    def offsetPosBy(self,offset):
+        if isinstance(offset,QtCore.QPointF):
+            x = offset.x()
+            y = offset.y()
+        else:
+            x = offset[0]
+            y = offset[1]
+
+        for i,pt in enumerate(self.path):
+            pt[0] = pt[0] + x
+            pt[1] = pt[1] + y
+
+

@@ -1,4 +1,10 @@
 import xmlrpclib
+class MoveOp:
+    def __init__(self,id,offset):
+        self.id = id
+        self.offset = offset
+
+
 class Clerk:
     """ Clerk for the UI thread, handles the emission of RPC calls"""
     def __init__(self,state):
@@ -13,11 +19,14 @@ class Clerk:
 
         # broadcast to peers
         for srv in self.peers:
-            srv.add_stroke(s)
+            srv.addStroke(s)
             print srv,'sent stroke:',s
 
-    def moveStroke(self):
-        pass
+    def moveStroke(self,id,offset):
+        for srv in self.peers:
+            off = [offset.x(), offset.y()]
+            mOp = MoveOp(id,off)
+            srv.moveStroke(mOp)
 
     def deleteStroke(self):
         pass

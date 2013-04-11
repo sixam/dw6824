@@ -30,4 +30,3 @@ if __name__ == '__main__':
             peer.addPeer(ip_r,port_r)
 
     sys.exit(app.exec_())
-

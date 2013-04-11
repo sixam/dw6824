@@ -43,61 +43,86 @@ class ScribbleArea(QtGui.QWidget):
         self.image.fill(QtGui.QColor(255, 255, 255))
         self.update()
 
+################################ MOVE TOOL
+    def _moveStart(self, pos):
+        self.move_pos = pos
+        x = pos.x()
+        y = pos.y()
+        sel_rect = QtCore.QRectF(QtCore.QPointF(x-10,y-10),QtCore.QPointF(x+10,y+10))
+        self.selected = -1 #if the click is outside, we deselect
+        for s_id,stroke in enumerate(self.strokes): # check selection
+            if stroke.toPainterPath().intersects(sel_rect):
+                self.selected = s_id
+                break
+        self.original_move_pos = self.move_pos
+
+    def _moveUpdate(self,pos):
+        if self.selected != -1:
+            self.moving = True
+        if self.moving and self.selected >= 0: 
+            offset = pos - self.move_pos 
+            self.move_pos = pos
+            stroke = self.strokes[self.selected]
+            stroke.offsetPosBy(offset)
+            self.draw()
+
+    def _moveEnd(self,pos):
+        if self.moving and self.selected >= 0: 
+            offset = pos - self.original_move_pos 
+            self.clerk.moveStroke(self.selected,offset)
+            self.moving = False
+        else:
+            pass
+################################ END 
+
+################################ PEN TOOL
+    def _penStart(self,pos):
+        self.controlPoints = []
+        self.controlPoints.append([pos.x(),pos.y()]);
+        self.path = QtGui.QPainterPath(pos);
+        self.scribbling = True
+
+    def _penUpdate(self,pos):
+        if self.scribbling:
+            self.path.lineTo(pos);
+            self.controlPoints.append([pos.x(),pos.y()]);
+            self.drawLineTo()
+            self.update()
+
+    def _penEnd(self):
+        if self.scribbling:
+            stroke = Stroke(self.controlPoints,self.myPenWidth,list(self.myPenColor.getRgb()))
+            self.clerk.addStroke(stroke)
+            self.strokes.append(stroke)
+            self.update()
+            self.scribbling = False
+################################ END 
+
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
+            pos = event.posF()
             if self.current_tool == Tool.MOVE:
-                self.move_pos = event.posF()
-                x = event.posF().x()
-                y = event.posF().y()
-                sel_rect = QtCore.QRectF(QtCore.QPointF(x-10,y-10),QtCore.QPointF(x+10,y+10))
-                self.selected = -1 #if the click is outside, we deselect
-                for s_id,stroke in enumerate(self.strokes): # check selection
-                    if stroke.toPainterPath().intersects(sel_rect):
-                        self.selected = s_id
-                        break
-                pass
+                self._moveStart(pos)
             elif self.current_tool == Tool.PEN:
-                self.controlPoints = []
-                self.controlPoints.append([event.posF().x(),event.posF().y()]);
-                self.path = QtGui.QPainterPath(event.posF());
-                self.scribbling = True
+                self._penStart(pos)
             else:
                 pass
 
     def mouseMoveEvent(self, event):
         if (event.buttons() & QtCore.Qt.LeftButton):
+            pos = event.posF()
             if self.current_tool == Tool.MOVE:
-                if self.selected != -1:
-                    self.moving = True
-                if self.moving and self.selected >= 0: 
-                    offset = event.posF() - self.move_pos 
-                    self.move_pos = event.posF()
-                    stroke = self.strokes[self.selected]
-                    for i,pt in enumerate(stroke.path):
-                        pt[0] = pt[0] + offset.x()
-                        pt[1] = pt[1] + offset.y()
-                    self.draw()
-            elif self.current_tool == Tool.PEN and self.scribbling:
-                self.path.lineTo(event.posF());
-                self.controlPoints.append([event.posF().x(),event.posF().y()]);
-                self.drawLineTo()
-                self.update()
+                self._moveUpdate(pos)
+            elif self.current_tool == Tool.PEN:
+                self._penUpdate(pos)
 
     def mouseReleaseEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             if self.current_tool == Tool.MOVE:
-                if self.moving and self.selected >= 0: 
-                    self.moving = False
-                else :
-                    pass
-
-            elif self.current_tool == Tool.PEN and self.scribbling:
-                stroke = Stroke(self.controlPoints,self.myPenWidth,list(self.myPenColor.getRgb()))
-                self.clerk.addStroke(stroke)
-                self.strokes.append(stroke)
-                self.update()
-                self.scribbling = False
-
+                pos = event.posF()
+                self._moveEnd(pos)
+            elif self.current_tool == Tool.PEN:
+                self._penEnd()
             self.draw()
 
     def paintEvent(self, event):

@@ -20,9 +20,18 @@ class RPCresponder:
     def get_strokes(self):
         return self.strokes
 
-    def add_stroke(self,strokeData):
+    def addStroke(self,strokeData):
         stroke = Stroke(**strokeData)
         self.strokes.append(stroke)
+        self.window.scribbleArea.draw()
+        return True
+
+    def moveStroke(self,moveOp):
+        print moveOp
+        id = moveOp['id']
+        offset = moveOp['offset']
+        stroke = self.strokes[id]
+        stroke.offsetPosBy(offset)
         self.window.scribbleArea.draw()
         return True
 

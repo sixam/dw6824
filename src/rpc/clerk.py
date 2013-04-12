@@ -14,7 +14,7 @@ class Clerk:
     def addStroke(self,s):
         # NOTE : this should be lock-secured
         stroke_id = Utils.generateID()
-        #self._increase_vt()
+        self._increase_vt()
 
         op = Operation(type=OpType.ADD,stroke_id = stroke_id, stroke = s)
         p = Priority(op=op,state=self.state)
@@ -33,7 +33,7 @@ class Clerk:
     def deleteStroke(self,id):
         # NOTE : this should be lock-secured
         stroke_id = Utils.generateID()
-        self._increase_vt()
+        #vt = self.get_vt()
 
         op = Operation(type=OpType.DEL,stroke_id = id)
 

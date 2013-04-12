@@ -55,10 +55,10 @@ class PeerState:
                             self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt)
 
-                self.performOperation(rq.op)
-                self.log.append(rq)
-                self.vt[rq.sender] += 1
-                print '\tupdated vt', self.vt
+            self.performOperation(rq.op)
+            self.log.append(rq)
+            self.vt[rq.sender] += 1
+            print '\tupdated vt', self.vt
 
         to_del.sort()
         to_del.reverse()

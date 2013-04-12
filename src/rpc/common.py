@@ -136,7 +136,7 @@ class PeerState:
             else:
                 oi.type = OpType.NoOp
 
-        print '\033[32m--transformed\033[0m',ri,rj'\n'
+        print '\033[32m--transformed\033[0m',ri,rj,'\n'
 
         
 class Request:

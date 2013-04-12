@@ -49,7 +49,7 @@ class PeerState:
                             #rq.op = self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt)
 
-                self.performOperation(rq.op)
+                #self.performOperation(rq.op)
                 self.log.append(rq)
                 #if rq.sender != self.id:
                 self.vt[rq.sender] += 1

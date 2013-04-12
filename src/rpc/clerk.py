@@ -27,7 +27,20 @@ class Clerk:
         self._send(rq)
 
     def deleteStroke(self,id):
-        pass
+        # NOTE : this should be lock-secured
+        stroke_id = Utils.generateID()
+        self._increase_vt()
+
+        op = Operation(type=OpType.DEL,stroke_id = id)
+
+        rq = Request(sender = self.state.id, vt = self.state.vt, op = op,
+                priority = self._calculatePriority(op), 
+                request_id = Utils.generateID())
+
+        self.state.queue.append(rq)
+
+        # broadcast
+        self._send(rq)
  
     def moveStroke(self,id,offset):
         pass
@@ -44,7 +57,6 @@ class Clerk:
 
     def _send(self,rq):
         for srv in self.state.peers:
-            print srv
             t = Thread(target=self._send_worker,args=(rq,srv))
             t.daemon = True
             t.start()

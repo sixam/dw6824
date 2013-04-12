@@ -22,14 +22,10 @@ class RPCresponder:
         """ Unmarshalls the request and add it to the queue"""
         # NOTE : this should be lock-secured
 
-        try:
-            rq = Request(**rqData)
-            self.state.queue.append(rq)
-            print 'received', rq
-            return True
-        except:
-            print 'something went wrong'
-            return False
+        rq = Request(**rqData)
+        print 'received', rq
+        self.state.queue.append(rq)
+        return True
             
 
 

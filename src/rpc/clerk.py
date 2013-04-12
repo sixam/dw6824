@@ -16,16 +16,18 @@ class Clerk:
         self._increase_vt()
 
         op = Operation(type=OpType.ADD,stroke_id = id, stroke = s)
+        print 'adding',op
 
         rq = Request(sender = self.state.id, vt = self.state.vt, op = op,
-                priority = self._calculatePriority, request_id = 0)
+                priority = self._calculatePriority(op), request_id = 0)
+        print 'sending',rq
 
         self.state.queue.append(rq)
 
         # broadcast
         self._send(rq)
 
-    def _calculatePriority(self):
+    def _calculatePriority(self,op):
         return self.state.id
 
     def _send(self,rq):
@@ -41,10 +43,9 @@ class Clerk:
             try:
                 srv.enq(rq)
                 keep_running = False
-                print 'sent'
+                print 'sent', rq
             except:
                 pass
-                print 'shit happened'
             time.sleep(.01)
 
     def moveStroke(self,id,offset):

@@ -8,7 +8,8 @@ class Stroke:
         self.id    = id
 
     def __str__(self):
-        return "Stroke: {0}pts - width: {1}, color: {2}".format(len(self.path), self.width, self.color)
+        return "Stroke: {3} - {0}pts - width: {1}, color: {2}".format(len(self.path), 
+                self.width, self.color, self.id)
 
     def toPainterPath(self):
         points = self.path

@@ -1,3 +1,5 @@
+import copy
+
 class Priority:
     """Implements a priority object.
     Must be computed upon issuing an operation.
@@ -10,7 +12,7 @@ class Priority:
             self.pd = pd
             return
         self.pd = []
-        lq = state.queue[:]
+        lq = copy.deepcopy(state.queue)
         for qrq in lq:
             print 'Prioritu: qrq: ', qrq
             if qrq.op.opos == op.opos:

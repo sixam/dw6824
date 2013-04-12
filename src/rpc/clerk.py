@@ -38,9 +38,8 @@ class Clerk:
         """ Be careful when copying the state'vt : pointers ... """
         # NOTE : this should be lock-secured
 
-        op = Operation(type=OpType.DEL, stroke_id=s_id, pos=s_pos)
-        print op
-        return
+
+        op = Operation(type=OpType.DEL, stroke_id=s_id, pos=s_pos, stroke=self.state.strokes[s_pos])
         p = Priority(op=op,state=self.state)
 
         rq = Request(sender = self.state.id, vt = self.state.vt[:], op = op,
@@ -50,6 +49,8 @@ class Clerk:
         self.state.queue.append(rq)
 
         # broadcast
+        print 'rq.op', rq.op
+        print 'rq.op.stroke', rq.op.stroke
         print 'sending', rq
         self.state.executeOperations()
         self._send(rq)

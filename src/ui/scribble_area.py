@@ -168,6 +168,7 @@ class ScribbleArea(QtGui.QWidget):
         """ Deletes the currently selected stroke """
         if self.selected >= 0:
             self.clerk.deleteStroke(self.selected,self.strokes[self.selected].id)
+            self.selected = -1
 
     def penColor(self):
         return self.myPenColor

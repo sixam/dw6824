@@ -77,8 +77,10 @@ class PeerState:
             print 'added', op.stroke
             self.strokes.insert(op.pos,op.stroke);
         if op.type == OpType.DEL:
-            print 'deleted', op.stroke
-            #del self.strokes[op.pos]
+            print 'deleted', op.pos
+            print self.strokes
+            del self.strokes[op.pos]
+            print self.strokes
         self.window.scribbleArea.draw()
         pass
 

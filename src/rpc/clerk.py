@@ -18,7 +18,7 @@ class Clerk:
         op = Operation(type=OpType.ADD,stroke_id = stroke_id, stroke = s)
         p = Priority(op=op,state=self.state)
 
-        rq = Request(sender = self.state.id, vt = self.state.vt, op = op,
+        rq = Request(sender = self.state.id, vt = self.state.vt[:], op = op,
                 priority = p, 
                 request_id = Utils.generateID())
 
@@ -35,7 +35,7 @@ class Clerk:
 
         op = Operation(type=OpType.DEL,stroke_id = id)
 
-        rq = Request(sender = self.state.id, vt = self.state.vt, op = op,
+        rq = Request(sender = self.state.id, vt = self.state.vt[:], op = op,
                 priority = self._calculatePriority(op), 
                 request_id = Utils.generateID())
 
@@ -52,10 +52,6 @@ class Clerk:
 
     def _calculatePriority(self,op):
         return self.state.id
-
-
-    def _increase_vt(self):
-        self.state.vt[self.state.id] += 1
 
     def _send(self,rq):
         for srv in self.state.peers:

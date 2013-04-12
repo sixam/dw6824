@@ -36,7 +36,7 @@ class Request:
                 self.request_id,self.priority,self.op,self.vt,self.sender)
 
 class Operation:
-    def __init__(self,type=None,stroke_id=None,stroke=None):
+    def __init__(self,type=None,stroke_id=None,stroke=None,pos=0):
         if isinstance(stroke,dict):
             self.stroke = Stroke(**stroke)
         else:
@@ -44,6 +44,9 @@ class Operation:
 
         self.type = type
         self.stroke_id = stroke_id
+        self.stroke = stroke
+        self.pos = pos
+        self.opos = pos
 
     def __str__(self):
         return "{{ {0} {1} at }}".format(

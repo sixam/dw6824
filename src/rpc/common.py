@@ -33,14 +33,14 @@ class PeerState:
 
         print '\033[32m--execute\033[0m'
 
-        print '\tcurrent vt:',self.vt
+        #print '\tcurrent vt:',self.vt
 
         to_del = []
         lq = copy.deepcopy(self.queue)
         for i, rq in enumerate(lq):
-            print '\tunqueue vt:', rq.vt
+            #print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
-            print '\tcmp is:', cmp
+            #print '\tcmp is:', cmp
             if  cmp ==0 or cmp == -1:
                 #print rq.vt,'<=',self.vt
                 to_del.append(i)
@@ -54,7 +54,7 @@ class PeerState:
                             rq.op = self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt)
 
-                self.performOperation(rq.op)
+                #self.performOperation(rq.op)
                 self.log.append(rq)
                 self.vt[rq.sender] += 1
                 print '\tupdated vt', self.vt

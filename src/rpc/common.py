@@ -49,7 +49,9 @@ class PeerState:
 
                 #self.performOperation(rq.op)
                 self.log.append(rq)
-                self.vt[rq.sender] += 1
+                if rq.sender != self.id:
+                    self.vt[rq.sender] += 1
+                    print 'updated vt', self.vt
 
         to_del.sort()
         to_del.reverse()
@@ -59,7 +61,7 @@ class PeerState:
         for i in to_del:
            del self.queue[i] 
            
-        print '--done'
+        print '\033[31m--done\033[0m\n'
 
 
     def mostRecent(self,vt):

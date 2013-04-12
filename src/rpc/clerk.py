@@ -28,6 +28,8 @@ class Clerk:
         # broadcast
         self._send(rq)
 
+        self.state.executeOperations()
+
     def deleteStroke(self,id):
         # NOTE : this should be lock-secured
         stroke_id = Utils.generateID()

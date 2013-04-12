@@ -3,12 +3,11 @@ from rpc.common import Request
 
 class RPCresponder:
     """ Handles the processing of RPC requests"""
-    def __init__(self, state, window):
+    def __init__(self, state):
         # make all of the string functions available through
         # string.func_name
         import string
         self.string = string
-        self.window = window
         self.state = state
 
     def _listMethods(self):

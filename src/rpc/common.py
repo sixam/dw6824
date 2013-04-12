@@ -49,9 +49,9 @@ class PeerState:
 
                 #self.performOperation(rq.op)
                 self.log.append(rq)
-                if rq.sender != self.id:
-                    self.vt[rq.sender] += 1
-                    print 'updated vt', self.vt
+                #if rq.sender != self.id:
+                self.vt[rq.sender] += 1
+                print 'updated vt', self.vt
 
         to_del.sort()
         to_del.reverse()

@@ -1,5 +1,6 @@
 from ui.stroke import Stroke
 from rpc.priority import Priority
+from rpc.vt import VT
 
 class PeerState:
     """Stores all data concerning a peer's state
@@ -23,11 +24,53 @@ class PeerState:
 
     def executeOperations(self):
         #NOTE: should be locking
-        for i,request in enumerate(self.queue):
-            del self.queue[i]
+
+        print 'execute'
+
+        print 'queue',self.queue
+        print 'log', self.log
+
+        to_del = []
+        for i, rq in enumerate(self.queue):
+            if VT.cmp(rq.vt,self.vt) <= 0:
+                to_del.append(i)
+                if VT.cmp(rq.vt,self.vt) < 0:
+                    mr = self.mostRecent(rq.vt)
+                    while mr and rq.op.type != OpType.NoOp:
+                        if rq.vt[mr.sender] <= mr.vt[mr.sender]:
+                            rq.op = self.transform(rq,mr)
+
+                        mr = self.mostRecent(rq.vt)
+
+                self.performOperation(rq.op)
+                self.log.append(rq)
+                self.vt[rq.sender] += 1
+
+        to_del.sort()
+        to_del.reverse()
+
+        for i in to_del:
+           del self.queue[i] 
+
+        print 'queue',self.queue
+        print 'log', self.log
 
 
-            
+    def mostRecent(self,vt):
+        for i in range(len(self.log)-1,-1,-1):
+            if VT.cmp(self.log[i].vt,vt) <= 0:
+                return self.log[i]
+
+        return None
+
+    def performOperation(self,op):
+        print 'performed', op
+        pass
+
+    def transform(self,req1,req2):
+        print 'transformed'
+        pass
+
         
 class Request:
     def __init__(self,sender=-1,vt=None,op=None,priority=0,request_id=0):
@@ -72,3 +115,4 @@ class Operation:
 class OpType:
     ADD = 'ADD'
     DEL = 'DEL'
+    NoOp = 'NoOp'

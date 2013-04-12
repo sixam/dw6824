@@ -31,13 +31,13 @@ class PeerState:
 
         to_del = []
         for i, rq in enumerate(self.queue):
-            print rq.vt
+            print 'this vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             print 'cmp is:', cmp
-            if  cmp and cmp <= 0:
+            if  cmp ==0 or cmp == -1:
                 print rq.vt,'<=',self.vt
                 to_del.append(i)
-                if cmp and cmp < 0:
+                if cmp==-1:
                     print rq.vt,'<',self.vt
                     mr = self.mostRecent(rq.vt)
                     print 'mr', mr, '-op', rq.op

@@ -20,7 +20,7 @@ class VT:
             if r == 0 and (a[i] < b[i]):
                 r = -1
             if r == 1 and (a[i] < b[i]):
-                return None
+                return 2
             if r == -1 and (a[i] > b[i]):
-                return None
+                return 2
         return r

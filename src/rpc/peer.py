@@ -8,7 +8,6 @@ from dp.src.rpc.clerk import Clerk
 from dp.src.rpc.responder import RPCresponder
 import xmlrpclib
 
-
 class Peer:
     def __init__(self,ip,port):
         # Node state

@@ -26,7 +26,3 @@ class RPCresponder:
         print 'received', rq
         self.state.queue.append(rq)
         return True
-            
-
-
-

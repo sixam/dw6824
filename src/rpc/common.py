@@ -1,4 +1,6 @@
 from ui.stroke import Stroke
+from rpc.priority import Priority
+
 class PeerState:
     """Stores all data concerning a peer's state
 
@@ -18,6 +20,14 @@ class PeerState:
         self.log     = []
         self.vt      = [0 for x in range(3)]
         self.strokes = []
+
+    def executeOperations(self):
+        #NOTE: should be locking
+        for i,request in enumerate(self.queue):
+            del self.queue[i]
+
+
+            
         
 class Request:
     def __init__(self,sender=-1,vt=None,op=None,priority=0,request_id=0):
@@ -26,9 +36,13 @@ class Request:
         else:
             self.op = op 
 
+        if isinstance(priority,dict):
+            self.priority = Priority(**priority)
+        else:
+            self.priority = priority
+
         self.sender = sender
         self.vt = vt
-        self.priority = priority
         self.request_id = request_id
 
     def __str__(self):
@@ -36,7 +50,7 @@ class Request:
                 self.request_id,self.priority,self.op,self.vt,self.sender)
 
 class Operation:
-    def __init__(self,type=None,stroke_id=None,stroke=None,pos=0):
+    def __init__(self,type=None,stroke_id=None,stroke=None,pos=-1,opos=-1):
         if isinstance(stroke,dict):
             self.stroke = Stroke(**stroke)
         else:
@@ -46,7 +60,10 @@ class Operation:
         self.stroke_id = stroke_id
         self.stroke = stroke
         self.pos = pos
-        self.opos = pos
+        if opos == -1:
+            self.opos = pos
+        else: # unmarshalling
+            self.opos = opos
 
     def __str__(self):
         return "{{ {0} {1} at }}".format(

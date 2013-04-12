@@ -3,6 +3,7 @@ from threading import Thread
 from rpc.common import PeerState,Request,Operation,OpType
 import time
 from utils.utils import Utils
+from rpc.priority import Priority
 
 class Clerk:
     """ Clerk for the UI thread, handles the emission of RPC calls"""
@@ -16,9 +17,10 @@ class Clerk:
         self._increase_vt()
 
         op = Operation(type=OpType.ADD,stroke_id = stroke_id, stroke = s)
+        p = Priority(op=op,state=self.state)
 
         rq = Request(sender = self.state.id, vt = self.state.vt, op = op,
-                priority = self._calculatePriority(op), 
+                priority = p, 
                 request_id = Utils.generateID())
 
         self.state.queue.append(rq)

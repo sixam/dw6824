@@ -9,9 +9,9 @@ from dp.src.rpc.responder import RPCresponder
 import xmlrpclib
 
 class Peer:
-    def __init__(self,ip,port):
+    def __init__(self,ip,port,peer_id):
         # Node state
-        self.state = PeerState()
+        self.state = PeerState(peer_id)
 
         # Init main UI
         self.window = MainWindow(self.state)

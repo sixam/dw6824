@@ -14,8 +14,8 @@ class PeerState:
     
     """
     # NOTE: lock around access to the structure?
-    def __init__(self):
-        self.id      = 0
+    def __init__(self,peer_id):
+        self.id      = peer_id
         self.peers   = []
         self.queue   = []
         self.log     = []

@@ -33,7 +33,7 @@ class PeerState:
         for i, rq in enumerate(self.queue):
             print rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
-            print 'cmp is:'cmp
+            print 'cmp is:', cmp
             if  cmp and cmp <= 0:
                 print rq.vt,'<=',self.vt
                 to_del.append(i)
@@ -43,8 +43,8 @@ class PeerState:
                     print 'mr', mr, '-op', rq.op
                     while mr and rq.op.type != OpType.NoOp:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
+                            pass
                             #rq.op = self.transform(rq,mr)
-
                         mr = self.mostRecent(rq.vt)
 
                 #self.performOperation(rq.op)

@@ -11,6 +11,7 @@ class Priority:
             return
         self.pd = []
         for qrq in state.queue:
+            print 'Prioritu: qrq: ', qrq
             if qrq.op.opos == op.opos:
                 if Priority.compareLists(self.pd, qrq.priority.pd) < 0:
                     self.pd = qrq.priority.pd[:]

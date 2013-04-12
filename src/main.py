@@ -25,7 +25,8 @@ if __name__ == '__main__':
 
     ip = config.get(local_id,'ip')
     port = int(config.get(local_id,'port'))
-    peer = Peer(ip,port)
+    id = int(config.get(local_id,'id'));
+    peer = Peer(ip,port, id)
 
     if len(sys.argv) >= 3:
         for i in range(2,len(sys.argv)):

@@ -72,6 +72,6 @@ class Clerk:
                 print 'sent', rq
             except:
                 pass
-            time.sleep(.01)
+            time.sleep(1)
             print 'looping'
 

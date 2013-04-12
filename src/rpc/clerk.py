@@ -17,7 +17,7 @@ class Clerk:
         #st = Stroke(**s)
         print '\033[31m-acquire Clerk add s\033[0m'
 
-        #self.state.lock.acquire()
+        self.state.lock.acquire()
         stroke_id = Utils.generateID()
         pos = len(self.state.strokes)
 
@@ -35,7 +35,7 @@ class Clerk:
         print 'sending', rq
         self.state.executeOperations()
         print '\033[31m-reloease Clerk add s\033[0m'
-        #self.state.lock.release()
+        self.state.lock.release()
 
         self._send(rq)
 
@@ -44,7 +44,7 @@ class Clerk:
         """ Be careful when copying the state'vt : pointers ... """
         # NOTE : this should be lock-secured
         print '\033[31m-acquire Clerk del s\033[0m'
-        #self.state.lock.acquire()
+        self.state.lock.acquire()
 
         s_id = self.state.strokes[s_pos].id
         op = Operation(type=OpType.DEL, stroke_id=s_id, pos=s_pos, stroke=self.state.strokes[s_pos])
@@ -62,7 +62,7 @@ class Clerk:
         print 'sending', rq
         self.state.executeOperations()
         print '\033[31m-reloease Clerk del s\033[0m'
-        #self.state.lock.release()
+        self.state.lock.release()
 
         self._send(rq)
 

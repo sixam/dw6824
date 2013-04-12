@@ -21,7 +21,7 @@ class RPCresponder:
         """ Unmarshalls the request and add it to the queue"""
         # NOTE : this should be lock-secured
         print '\033[31m-acquire Responder\033[0m'
-        #self.state.lock.acquire()
+        self.state.lock.acquire()
 
         rq = Request(**rqData)
         self.state.queue.append(rq)
@@ -29,5 +29,5 @@ class RPCresponder:
 
         self.state.executeOperations()
         print '\033[31m-release Responder\033[0m'
-        #self.state.lock.release()
+        self.state.lock.release()
         return True

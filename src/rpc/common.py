@@ -51,7 +51,7 @@ class PeerState:
                     print 'rq-op', rq.op
                     while mr and rq.op.type != OpType.NoOp:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
-                            self.transform(rq,mr)
+                            #self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt)
 
                 self.performOperation(rq.op)

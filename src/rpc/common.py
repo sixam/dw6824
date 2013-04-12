@@ -102,7 +102,7 @@ class PeerState:
             elif PosI > PosJ:
                 oi.pos += 1
             else:
-                if oi.stroke_id == oj.stroke.stroke_id:
+                if oi.stroke.id== oj.stroke.id:
                     op.type = OpType.NoOp
                 else:
                     if pi > pj:

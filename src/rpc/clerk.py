@@ -74,8 +74,4 @@ class Clerk:
                 print 'looping'
                 pass
             time.sleep(1)
-<<<<<<< HEAD
-            print 'looping'
-=======
->>>>>>> 6ad42f3ab48a8fe69a06345df8446be3dfee2fff
 

@@ -34,9 +34,10 @@ class Clerk:
         # broadcast
         print 'sending', rq
         self.state.executeOperations()
-        self._send(rq)
         print '\033[31m-reloease Clerk add s\033[0m'
         self.state.lock.release()
+
+        self._send(rq)
 
 
     def deleteStroke(self,s_pos):
@@ -60,9 +61,10 @@ class Clerk:
         print 'rq.op.stroke', rq.op.stroke
         print 'sending', rq
         self.state.executeOperations()
-        self._send(rq)
         print '\033[31m-reloease Clerk del s\033[0m'
         self.state.lock.release()
+
+        self._send(rq)
 
     def moveStroke(self,s,offset):
         pass

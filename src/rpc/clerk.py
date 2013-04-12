@@ -15,6 +15,7 @@ class Clerk:
     def addStroke(self,s):
         # NOTE : this should be lock-secured
         #st = Stroke(**s)
+        self.state.lock.acquire()
         stroke_id = Utils.generateID()
         pos = len(self.state.strokes)
 
@@ -33,12 +34,15 @@ class Clerk:
         self.state.executeOperations()
         self._send(rq)
 
+        self.state.lock.release()
 
-    def deleteStroke(self,s_pos,s_id):
+
+    def deleteStroke(self,s_pos):
         """ Be careful when copying the state'vt : pointers ... """
         # NOTE : this should be lock-secured
+        self.state.lock.acquire()
 
-
+        s_id = self.state.strokes[s_pos].id
         op = Operation(type=OpType.DEL, stroke_id=s_id, pos=s_pos, stroke=self.state.strokes[s_pos])
         p = Priority(op=op,state=self.state)
 
@@ -54,6 +58,7 @@ class Clerk:
         print 'sending', rq
         self.state.executeOperations()
         self._send(rq)
+        self.state.lock.release()
 
     def moveStroke(self,s,offset):
         pass

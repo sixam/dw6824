@@ -20,9 +20,11 @@ class RPCresponder:
     def enq(self,rqData):
         """ Unmarshalls the request and add it to the queue"""
         # NOTE : this should be lock-secured
+        self.state.lock.acquire()
 
         rq = Request(**rqData)
         self.state.queue.append(rq)
 
         self.state.executeOperations()
+        self.state.lock.release()
         return True

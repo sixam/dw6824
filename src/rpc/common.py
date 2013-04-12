@@ -1,6 +1,7 @@
 from ui.stroke import Stroke
 from rpc.priority import Priority
 from rpc.vt import VT
+from threading import Lock
 
 class PeerState:
     """Stores all data concerning a peer's state
@@ -23,6 +24,8 @@ class PeerState:
         self.strokes = []
 
         self.window = None
+
+        self.lock = Lock()
 
     def executeOperations(self):
         #NOTE: should be locking

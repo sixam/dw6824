@@ -37,7 +37,7 @@ class PeerState:
 
         to_del = []
         lq = copy.deepcopy(self.queue)
-        for i, rq in lq:
+        for i, rq in enumerate(lq):
             print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             print '\tcmp is:', cmp

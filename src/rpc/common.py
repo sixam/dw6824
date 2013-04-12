@@ -26,16 +26,19 @@ class PeerState:
         #NOTE: should be locking
 
         print 'execute'
-
-        print 'queue',self.queue
-        print 'log', self.log
+        for rq in self.queue:
+            print rq
 
         to_del = []
         for i, rq in enumerate(self.queue):
+            print rq
             if VT.cmp(rq.vt,self.vt) <= 0:
+                print rq.vt,'<=',self.vt
                 to_del.append(i)
                 if VT.cmp(rq.vt,self.vt) < 0:
+                    print rq.vt,'<',self.vt
                     mr = self.mostRecent(rq.vt)
+                    print 'mr', mr, '-op', rq.op
                     while mr and rq.op.type != OpType.NoOp:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             rq.op = self.transform(rq,mr)
@@ -51,9 +54,8 @@ class PeerState:
 
         for i in to_del:
            del self.queue[i] 
-
-        print 'queue',self.queue
-        print 'log', self.log
+           
+        print 'done'
 
 
     def mostRecent(self,vt):

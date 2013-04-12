@@ -73,4 +73,5 @@ class Clerk:
             except:
                 pass
             time.sleep(.01)
+            print 'looping'
 

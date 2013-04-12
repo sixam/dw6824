@@ -23,8 +23,8 @@ class RPCresponder:
         # NOTE : this should be lock-secured
 
         rq = Request(**rqData)
-        print 'received', rq
         self.state.queue.append(rq)
+        print 'received', rq
 
         self.state.executeOperations()
         return True

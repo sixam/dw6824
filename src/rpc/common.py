@@ -19,12 +19,14 @@ class PeerState:
         self.strokes = []
         
 class Request:
-    def __init__(self,sender=-1,vt=None,op=None,priority=0,request_id=0):
+    def __init__(self,sender=-1,vt=None,op=None,priority=0,request_id=0, pos = 0, opos = 0):
         self.sender = sender
         self.vt = vt
         self.op = op 
         self.priority = priority
         self.request_id = request_id
+		self.pos = pos
+		self.opos = opos
 
 class Operation:
     def __init__(self,type=None,stroke_id=None,stroke=None):

@@ -37,6 +37,8 @@ class PeerState:
 
         to_del = []
         for i, rq in enumerate(self.queue):
+            if i in to_del:
+                continue
             #print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             #print '\tcmp is:', cmp
@@ -50,7 +52,6 @@ class PeerState:
                     print 'rq-op', rq.op
                     while mr and rq.op.type != OpType.NoOp:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
-                            pass
                             self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt)
 

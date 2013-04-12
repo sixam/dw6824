@@ -12,8 +12,7 @@ class Priority:
             self.pd = pd
             return
         self.pd = []
-        lq = copy.deepcopy(state.queue)
-        for qrq in lq:
+        for qrq in state.queue:
             print 'Prioritu: qrq: ', qrq
             if qrq.op.opos == op.opos:
                 if Priority.compareLists(self.pd, qrq.priority.pd) < 0:

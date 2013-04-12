@@ -27,26 +27,29 @@ class PeerState:
 
         print '\033[32m--execute\033[0m'
 
+        print 'current vt:',self.vt
+
         to_del = []
         for i, rq in enumerate(self.queue):
-            print rq
+            print rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
+            print 'cmp is:'cmp
             if  cmp and cmp <= 0:
                 print rq.vt,'<=',self.vt
                 to_del.append(i)
                 if cmp and cmp < 0:
                     print rq.vt,'<',self.vt
-                    #mr = self.mostRecent(rq.vt)
-                    #print 'mr', mr, '-op', rq.op
-                    #while mr and rq.op.type != OpType.NoOp:
-                        #if rq.vt[mr.sender] <= mr.vt[mr.sender]:
+                    mr = self.mostRecent(rq.vt)
+                    print 'mr', mr, '-op', rq.op
+                    while mr and rq.op.type != OpType.NoOp:
+                        if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             #rq.op = self.transform(rq,mr)
 
-                        #mr = self.mostRecent(rq.vt)
+                        mr = self.mostRecent(rq.vt)
 
                 #self.performOperation(rq.op)
-                #self.log.append(rq)
-                #self.vt[rq.sender] += 1
+                self.log.append(rq)
+                self.vt[rq.sender] += 1
 
         to_del.sort()
         to_del.reverse()

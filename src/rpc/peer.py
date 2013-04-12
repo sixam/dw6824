@@ -2,6 +2,7 @@ from SimpleXMLRPCServer import SimpleXMLRPCServer
 from PyQt4 import QtCore, QtGui
 import sys
 from rpc.common import PeerState,Request,Operation,OpType
+from dp.src.ui.main_window import MainWindow
 from threading import Thread
 from dp.src.rpc.clerk import Clerk
 from dp.src.rpc.responder import RPCresponder
@@ -13,6 +14,9 @@ class Peer:
         self.state = PeerState(peer_id)
 
         # Init main UI
+        self.window = MainWindow(self.state)
+        self.window.show()
+        self.state.window = self.window
 
         # Handler for the RPC requests
         self.RPCresponder = RPCresponder(self.state)

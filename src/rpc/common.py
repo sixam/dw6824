@@ -1,5 +1,4 @@
 from ui.stroke import Stroke
-from dp.src.ui.main_window import MainWindow
 from rpc.priority import Priority
 from rpc.vt import VT
 
@@ -23,8 +22,7 @@ class PeerState:
         self.vt      = [0 for x in range(3)]
         self.strokes = []
 
-        self.window = MainWindow(self.state)
-        self.window.show()
+        self.window = None
 
     def executeOperations(self):
         #NOTE: should be locking
@@ -83,7 +81,7 @@ class PeerState:
             print 'del op'
             del self.strokes[op.pos]
         print 'performed', op
-        self.w.scribble_area.draw()
+        self.window.scribbleArea.draw()
         pass
 
     def transform(self,req1,req2):

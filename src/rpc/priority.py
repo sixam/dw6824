@@ -6,7 +6,12 @@ class Priority:
 	Assumes that caller holds the lock on the state.
 	"""
 	def __init__(self, rq, state):
-		pass
+		self.pd = []
+		for qrq in state.queue:
+			if qrq.op.opos == op.opos:
+				if Priority.compareLists(self.pd, qrq.priority.pd) == 2:
+					self.pd = qrq.priority.pd[:]
+		self.pd.append(self.state.id);
 
 	@staticmethod
 	def compareLists(a, b):
@@ -29,8 +34,7 @@ class Priority:
 			m = len(b)
 			c = 2
 
-		for i in range(m):
-			k = m - 1 - i
+		for k in range(m):
 			if a[k] > b[k]:
 				return 1
 			if a[k] < b[k]:

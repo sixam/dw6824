@@ -25,6 +25,7 @@ class RPCresponder:
 
         rq = Request(**rqData)
         self.state.queue.append(rq)
+        print 'Responder, rq:' rq
 
         self.state.executeOperations()
         print '\033[31m-release Responder\033[0m'

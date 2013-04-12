@@ -4,6 +4,7 @@ from rpc.common import PeerState,Request,Operation,OpType
 import time
 from utils.utils import Utils
 from rpc.priority import Priority
+from ui.stroke import Stroke
 
 class Clerk:
     """ Clerk for the UI thread, handles the emission of RPC calls"""
@@ -13,6 +14,7 @@ class Clerk:
         
     def addStroke(self,s):
         # NOTE : this should be lock-secured
+        #st = Stroke(**s)
         stroke_id = Utils.generateID()
 
         op = Operation(type=OpType.ADD,stroke_id = stroke_id, stroke = s)
@@ -25,6 +27,7 @@ class Clerk:
         self.state.queue.append(rq)
 
         # broadcast
+        print 'sending', rq
         self.state.executeOperations()
         self._send(rq)
 
@@ -43,15 +46,7 @@ class Clerk:
 
         # broadcast
         self._send(rq)
- 
-    def moveStroke(self,id,offset):
-        pass
 
-    def editStroke(self,id,stroke):
-        pass
-
-    def _calculatePriority(self,op):
-        return self.state.id
 
     def _send(self,rq):
         for srv in self.state.peers:
@@ -65,7 +60,6 @@ class Clerk:
             try:
                 srv.enq(rq)
                 keep_running = False
-                print 'sent', rq
             except:
                 print 'looping'
                 pass

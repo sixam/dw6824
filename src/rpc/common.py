@@ -33,7 +33,7 @@ class PeerState:
 
         to_del = []
         for i, rq in enumerate(self.queue):
-            print 'this vt:', rq.vt
+            print 'unqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             print 'cmp is:', cmp
             if  cmp ==0 or cmp == -1:
@@ -49,7 +49,7 @@ class PeerState:
                             #rq.op = self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt)
 
-                #self.performOperation(rq.op)
+                self.performOperation(rq.op)
                 self.log.append(rq)
                 self.vt[rq.sender] += 1
                 print 'updated vt', self.vt
@@ -74,13 +74,11 @@ class PeerState:
 
     def performOperation(self,op):
         if op.type == OpType.ADD:
-            print 'add op'
+            print 'adding', op.stroke
             self.strokes.insert(op.pos,op.stroke);
         if op.type == OpType.DEL:
             print 'del op'
             del self.strokes[op.pos]
-        print 'performed', op
-        print 'draw shit'
         self.window.scribbleArea.draw()
         pass
 
@@ -118,7 +116,6 @@ class Operation:
 
         self.type = type
         self.stroke_id = stroke_id
-        self.stroke = stroke
         self.pos = pos
         if opos == -1:
             self.opos = pos

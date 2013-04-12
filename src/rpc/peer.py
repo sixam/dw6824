@@ -22,7 +22,7 @@ class Peer:
         self.RPCresponder = RPCresponder(self.state,self.window)
 
         # Accept incoming connections in a background thread
-        self.server = SimpleXMLRPCServer((ip,port))
+        self.server = SimpleXMLRPCServer((ip,port),allow_none = True)
         self.server.register_introspection_functions()
         self.server.register_instance(self.RPCresponder)
         t = Thread(target = self._run)

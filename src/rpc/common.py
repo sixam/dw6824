@@ -1,3 +1,4 @@
+from ui.stroke import Stroke
 class PeerState:
     """Stores all data concerning a peer's state
 
@@ -19,14 +20,16 @@ class PeerState:
         self.strokes = []
         
 class Request:
-    def __init__(self,sender=-1,vt=None,op=None,priority=0,request_id=0, pos = 0, opos = 0):
+    def __init__(self,sender=-1,vt=None,op=None,priority=0,request_id=0):
+        if isinstance(op,dict):
+            self.op = Operation(**op)
+        else:
+            self.op = op 
+
         self.sender = sender
         self.vt = vt
-        self.op = op 
         self.priority = priority
         self.request_id = request_id
-		self.pos = pos
-		self.opos = opos
 
     def __str__(self):
         return "< sd:{4} | vt:{3} | op:{2} | p:{1} | rid:{0} >".format(
@@ -34,15 +37,20 @@ class Request:
 
 class Operation:
     def __init__(self,type=None,stroke_id=None,stroke=None,pos=0):
+        if isinstance(stroke,dict):
+            self.stroke = Stroke(**stroke)
+        else:
+            self.stroke = stroke
+
         self.type = type
         self.stroke_id = stroke_id
         self.stroke = stroke
         self.pos = pos
-        self.old_pos = pos
+        self.opos = pos
 
     def __str__(self):
-        return "{{ {0} {1} at {2}({3}) }}".format(
-                self.type,self.stroke_id,self.pos,self.old_pos)
+        return "{{ {0} {1} at }}".format(
+                self.type,self.stroke_id)
 
 class OpType:
     ADD = 'ADD'

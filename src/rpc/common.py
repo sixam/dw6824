@@ -2,6 +2,7 @@ from ui.stroke import Stroke
 from rpc.priority import Priority
 from rpc.vt import VT
 from threading import Lock
+import copy
 
 class PeerState:
     """Stores all data concerning a peer's state
@@ -35,6 +36,7 @@ class PeerState:
         print '\tcurrent vt:',self.vt
 
         to_del = []
+        lq = copy.deepcopy(self.queue)
         for i, rq in enumerate(self.queue):
             print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
@@ -45,7 +47,8 @@ class PeerState:
                 if cmp==-1:
                     #print rq.vt,'<',self.vt
                     mr = self.mostRecent(rq.vt)
-                    print '\tmr', mr, '-op', rq.op
+                    print '\tmr', mr
+                    print 'rq-op', rq.op
                     while mr and rq.op.type != OpType.NoOp:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             rq.op = self.transform(rq,mr)

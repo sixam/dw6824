@@ -45,8 +45,7 @@ class PeerState:
                     print 'mr', mr, '-op', rq.op
                     while mr and rq.op.type != OpType.NoOp:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
-                            pass
-                            #rq.op = self.transform(rq,mr)
+                            rq.op = self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt)
 
                 self.performOperation(rq.op)
@@ -84,9 +83,54 @@ class PeerState:
         self.window.scribbleArea.draw()
         pass
 
-    def transform(self,req1,req2):
+    def transform(self,ri,rj):
+        oi = ri.op
+        oj = rj.op
+        PosI = oi.pos
+        PosJ = oj.pos
+
+        pi = ri.priority
+        pj = rj.priority
+
+
+        if oi.type == OpType.ADD and oj.type == OpType.ADD:
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                oi.pos += 1
+            else:
+                if oi.stroke_id == oj.stroke.stroke_id:
+                    op.type = OpType.NoOp
+                else:
+                    if pi > pj:
+                        oi.pos += 1
+                    else:
+                        pass
+
+
+        if oi.type == OpType.ADD and oj.type == OpType.DEL:
+            if PosI < PosJ:
+                pass
+            else:
+                oi.pos -= 1
+                
+            
+
+        if oi.type == OpType.DEL and oj.type == OpType.ADD:
+            if PosI < PosJ:
+                pass
+            else:
+                oi.pos += 1
+
+        if oi.type == OpType.DEL and oj.type == OpType.DEL:
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                oi.pos -= 1
+            else:
+                oi.type = OpType.NoOp
+
         print 'transformed'
-        pass
 
         
 class Request:

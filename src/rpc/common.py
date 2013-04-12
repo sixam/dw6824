@@ -26,16 +26,15 @@ class PeerState:
         #NOTE: should be locking
 
         print '\033[32m--execute\033[0m'
-        for rq in self.queue:
-            print rq
 
         to_del = []
         for i, rq in enumerate(self.queue):
             print rq
-            if VT.cmp(rq.vt,self.vt) <= 0:
+            cmp = VT.cmp(rq.vt,self.vt)
+            if  cmp and cmp <= 0:
                 print rq.vt,'<=',self.vt
                 to_del.append(i)
-                if VT.cmp(rq.vt,self.vt) < 0:
+                if cmp and cmp < 0:
                     print rq.vt,'<',self.vt
                     #mr = self.mostRecent(rq.vt)
                     #print 'mr', mr, '-op', rq.op

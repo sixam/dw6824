@@ -1,15 +1,19 @@
 from PyQt4 import QtCore, QtGui
+from utils.utils import Utils
 class Stroke:
     """Basic Stroke"""
-    def __init__(self, path=None, width=None, color=None, id=0):
+    def __init__(self, path=None, width=None, color=None, id='none'):
         self.path  = path
         self.width = width
         self.color = color
-        self.id    = id
+        if id == 'none':
+            self.id = Utils.generateID()
+        else:
+            self.id    = id
 
     def __str__(self):
         return "Stroke: {3} - {0}pts - width: {1}, color: {2}".format(len(self.path), 
-                self.width, self.color, self.id)
+                self.width, self.color, self.id[0:5])
 
     def toPainterPath(self):
         points = self.path

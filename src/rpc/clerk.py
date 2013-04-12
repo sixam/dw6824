@@ -16,8 +16,10 @@ class Clerk:
         # NOTE : this should be lock-secured
         #st = Stroke(**s)
         stroke_id = Utils.generateID()
+        pos = len(self.state.strokes)
 
-        op = Operation(type=OpType.ADD,stroke_id = stroke_id, stroke = s)
+        op = Operation(type=OpType.ADD,stroke_id = stroke_id, stroke = s,pos =
+                pos)
         p = Priority(op=op,state=self.state)
 
         rq = Request(sender = self.state.id, vt = self.state.vt[:], op = op,
@@ -32,21 +34,28 @@ class Clerk:
         self._send(rq)
 
 
-    def deleteStroke(self,id):
+    def deleteStroke(self,s_pos,s_id):
+        """ Be careful when copying the state'vt : pointers ... """
         # NOTE : this should be lock-secured
-        stroke_id = Utils.generateID()
 
-        op = Operation(type=OpType.DEL,stroke_id = id)
+        op = Operation(type=OpType.DEL, stroke_id=s_id, pos=s_pos)
+        print op
+        return
+        p = Priority(op=op,state=self.state)
 
         rq = Request(sender = self.state.id, vt = self.state.vt[:], op = op,
-                priority = self._calculatePriority(op), 
+                priority = p, 
                 request_id = Utils.generateID())
 
         self.state.queue.append(rq)
 
         # broadcast
+        print 'sending', rq
+        self.state.executeOperations()
         self._send(rq)
 
+    def moveStroke(self,s,offset):
+        pass
 
     def _send(self,rq):
         for srv in self.state.peers:

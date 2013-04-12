@@ -74,11 +74,11 @@ class PeerState:
 
     def performOperation(self,op):
         if op.type == OpType.ADD:
-            print 'adding', op.stroke
+            print 'added', op.stroke
             self.strokes.insert(op.pos,op.stroke);
         if op.type == OpType.DEL:
-            print 'del op'
-            del self.strokes[op.pos]
+            print 'deleted', op.stroke
+            #del self.strokes[op.pos]
         self.window.scribbleArea.draw()
         pass
 
@@ -105,7 +105,7 @@ class Request:
 
     def __str__(self):
         return "< sd:{4} | vt:{3} | op:{2} | p:{1} | rid:{0} >".format(
-                self.request_id,self.priority,self.op,self.vt,self.sender)
+                self.request_id[0:5],self.priority,self.op,self.vt,self.sender)
 
 class Operation:
     def __init__(self,type=None,stroke_id=None,stroke=None,pos=-1,opos=-1):
@@ -123,8 +123,8 @@ class Operation:
             self.opos = opos
 
     def __str__(self):
-        return "{{ {0} {1} at }}".format(
-                self.type,self.stroke_id)
+        return "{{ {0} {1} at {2}({3})}}".format(
+                self.type,self.stroke_id[0:5],self.pos,self.opos)
 
 class OpType:
     ADD = 'ADD'

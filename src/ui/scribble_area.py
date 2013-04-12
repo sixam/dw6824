@@ -28,7 +28,7 @@ class ScribbleArea(QtGui.QWidget):
 
         # Select and move state variables
         self.select_rect = QtCore.QRectF
-        self.selected = None
+        self.selected = -1
         self.moving = False
 
         # Drawing canvas
@@ -50,25 +50,26 @@ class ScribbleArea(QtGui.QWidget):
         x = pos.x()
         y = pos.y()
         sel_rect = QtCore.QRectF(QtCore.QPointF(x-10,y-10),QtCore.QPointF(x+10,y+10))
-        self.selected = None #if the click is outside, we deselect
-        for stroke in self.strokes: # check selection
+        self.selected = -1 #if the click is outside, we deselect
+        for i,stroke in enumerate(self.strokes): # check selection
             if stroke.toPainterPath().intersects(sel_rect):
-                self.selected = stroke
+                self.selected = i
+                print 'select:',self.strokes[self.selected]
                 break
         self.original_move_pos = self.move_pos
 
     def _moveUpdate(self,pos):
-        if self.selected != None:
+        if self.selected >=0 :
             self.moving = True
-        if self.moving and self.selected:
+        if self.moving and self.selected >= 0:
             offset = pos - self.move_pos 
             self.move_pos = pos
             self.draw()
 
     def _moveEnd(self,pos):
-        if self.moving and self.selected: 
+        if self.moving and self.selected >= 0: 
             offset = pos - self.original_move_pos 
-            self.clerk.moveStroke(self.selected.id,offset)
+            self.clerk.moveStroke(self.selected,offset)
             self.moving = False
         else:
             pass
@@ -121,7 +122,6 @@ class ScribbleArea(QtGui.QWidget):
                 self._moveEnd(pos)
             elif self.current_tool == Tool.PEN:
                 self._penEnd()
-            self.draw()
 
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
@@ -166,10 +166,8 @@ class ScribbleArea(QtGui.QWidget):
 
     def delete(self):
         """ Deletes the currently selected stroke """
-        if self.selected:
-            print 'deleted', self.selected
-            self.clerk.deleteStroke(self.selected.id)
-            self.draw()
+        if self.selected >= 0:
+            self.clerk.deleteStroke(self.selected,self.strokes[self.selected].id)
 
     def penColor(self):
         return self.myPenColor

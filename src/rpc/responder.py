@@ -1,14 +1,15 @@
 from PyQt4 import QtCore, QtGui
-from dp.src.ui.stroke import Stroke
+from rpc.common import Request
 
 class RPCresponder:
+    """ Handles the processing of RPC requests"""
     def __init__(self, state, window):
         # make all of the string functions available through
         # string.func_name
         import string
         self.string = string
         self.window = window
-        self.strokes = state.strokes
+        self.state = state
 
     def _listMethods(self):
         # implement this method so that system.listMethods
@@ -18,8 +19,18 @@ class RPCresponder:
 
     # RPC methods
     def enq(self,rqData):
-        #rq = Request(**rqData)
-        print rqData
-        return True
+        """ Unmarshalls the request and add it to the queue"""
+        # NOTE : this should be lock-secured
+
+        try:
+            rq = Request(**rqData)
+            self.state.queue.append(rq)
+            print 'received', rq
+            return True
+        except:
+            print 'something went wrong'
+            return False
+            
+
 
 

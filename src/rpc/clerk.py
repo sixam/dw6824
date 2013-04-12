@@ -2,33 +2,45 @@ import xmlrpclib
 from threading import Thread
 from rpc.common import PeerState,Request,Operation,OpType
 import time
+from utils.utils import Utils
 
 class Clerk:
     """ Clerk for the UI thread, handles the emission of RPC calls"""
     def __init__(self,state):
         self.state = state
 
-    def _increase_vt(self):
-        self.state.vt[self.state.id] += 1
         
     def addStroke(self,s):
-        id = 0
+        # NOTE : this should be lock-secured
+        stroke_id = Utils.generateID()
         self._increase_vt()
 
-        op = Operation(type=OpType.ADD,stroke_id = id, stroke = s)
-        print 'adding',op
+        op = Operation(type=OpType.ADD,stroke_id = stroke_id, stroke = s)
 
         rq = Request(sender = self.state.id, vt = self.state.vt, op = op,
-                priority = self._calculatePriority(op), request_id = 0)
-        print 'sending',rq
+                priority = self._calculatePriority(op), 
+                request_id = Utils.generateID())
 
         self.state.queue.append(rq)
 
         # broadcast
         self._send(rq)
 
+    def deleteStroke(self,id):
+        pass
+ 
+    def moveStroke(self,id,offset):
+        pass
+
+    def editStroke(self,id,stroke):
+        pass
+
     def _calculatePriority(self,op):
         return self.state.id
+
+
+    def _increase_vt(self):
+        self.state.vt[self.state.id] += 1
 
     def _send(self,rq):
         for srv in self.state.peers:
@@ -48,12 +60,3 @@ class Clerk:
                 pass
             time.sleep(.01)
 
-    def moveStroke(self,id,offset):
-        pass
-
-    def editStroke(self,id,stroke):
-        pass
-
-    def deleteStroke(self,id):
-        for srv in self.peers:
-            srv.deleteStroke(id)

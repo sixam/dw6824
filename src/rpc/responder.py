@@ -24,7 +24,6 @@ class RPCresponder:
 
         rq = Request(**rqData)
         self.state.queue.append(rq)
-        print 'received', rq
 
         self.state.executeOperations()
         return True

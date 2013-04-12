@@ -16,7 +16,7 @@ class Peer:
         # Init main UI
         self.window = MainWindow(self.state)
         self.window.show()
-        #self.state.window = self.window
+        self.state.window = self.window
 
         # Handler for the RPC requests
         self.RPCresponder = RPCresponder(self.state)

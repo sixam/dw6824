@@ -25,9 +25,9 @@ class Clerk:
         self.state.queue.append(rq)
 
         # broadcast
+        self.state.executeOperations()
         self._send(rq)
 
-        self.state.executeOperations()
 
     def deleteStroke(self,id):
         # NOTE : this should be lock-secured

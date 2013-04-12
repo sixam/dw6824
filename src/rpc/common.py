@@ -81,6 +81,7 @@ class PeerState:
             print 'del op'
             del self.strokes[op.pos]
         print 'performed', op
+        print 'draw shit'
         self.window.scribbleArea.draw()
         pass
 

@@ -158,7 +158,6 @@ class ScribbleArea(QtGui.QWidget):
         self.update()
 
     def drawLineTo(self):
-        return
         """ Draw a temporary line  """
         painter = QtGui.QPainter(self.image)
         painter.setPen(QtGui.QPen(self.myPenColor, self.myPenWidth,

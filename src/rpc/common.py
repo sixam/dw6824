@@ -156,7 +156,7 @@ class Request:
         self.request_id = request_id
 
     def __str__(self):
-        return "< sd:{4} | vt:{3} | op:{2} | p:{1} | rid:{0} >".format(
+        return "< sd:{4} | vt:{3} | op:{2} | {1} | rid:{0} >".format(
                 self.request_id[0:5],self.priority,self.op,self.vt,self.sender)
 
 class Operation:

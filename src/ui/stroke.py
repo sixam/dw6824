@@ -1,3 +1,4 @@
+import copy
 from PyQt4 import QtCore, QtGui
 from utils.utils import Utils
 class Stroke:
@@ -14,6 +15,13 @@ class Stroke:
     def __str__(self):
         return "Stroke: {3} - {0}pts - width: {1}, color: {2}".format(len(self.path), 
                 self.width, self.color, self.id[0:5])
+    def __deepcopy__(self):
+        new = Stroke()
+        new.path = copy.deepcopy(self.path);
+        new.width = copy.deepcopy(self.width);
+        new.color = copy.deepcopy(self.color);
+        new.id = copy.deepcopy(self.id)
+
 
     def toPainterPath(self):
         points = self.path

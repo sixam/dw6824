@@ -1,3 +1,4 @@
+import copy
 from ui.stroke import Stroke
 from rpc.priority import Priority
 from rpc.vt import VT
@@ -159,6 +160,14 @@ class Request:
     def __str__(self):
         return "< sd:{4} | vt:{3} | op:{2} | {1} | rid:{0} >".format(
                 self.request_id[0:5],self.priority,self.op,self.vt,self.sender)
+    def __deepcopy__(self):
+        new = Request()
+        new.op = copy.deepcopy(self.op)
+        new.vt = copy.deepcopy(self.vt)
+        new.priority = copy.deepcopy(self.priority)
+        new.sender = copy.deepcopy(self.sender)
+        new.request_id = copy.deepcopy(self.request_id)
+       
 
 class Operation:
     def __init__(self,type=None,stroke_id=None,stroke=None,pos=-1,opos=-1):
@@ -178,6 +187,14 @@ class Operation:
     def __str__(self):
         return "{{ {0} {1} at {2}({3})}}".format(
                 self.type,self.stroke_id[0:5],self.pos,self.opos)
+
+    def __deepcopy__(self):
+        new = Operation()
+        new.stroke = copy.deepcopy(self.stroke)
+        new.type = copy.deepcopy(self.type)
+        new.stroke_id = copy.deepcopy(self.stroke_id)
+        new.ops = copy.deepcopy(self.pos)
+        new.opos = copy.deepcopy(self.opos)
 
 class OpType:
     ADD = 'ADD'

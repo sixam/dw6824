@@ -25,6 +25,10 @@ class Priority:
     def __str__(self):
         return "p:{0}".format(self.pd)
 
+    def __deepcopy__(self):
+        new = Priority()
+        new.pd = copy.deepcopy(self.pd)
+
     @staticmethod
     def compareLists(a, b):
         # 0 a == b

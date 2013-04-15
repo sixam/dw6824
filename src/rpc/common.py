@@ -51,12 +51,6 @@ class PeerState(QtCore.QObject):
         self.queue.append(rq)
         self.lock.release()
 
-    def appendManyToQueue(self, rqs):
-        self.lock.acquire()
-        for rq in rqs:
-            self.queue.append(rq)
-        self.lock.release()
-
     def getStrokes(self):
         self.lock.acquire()
         cp = copy.deepcopy(self.strokes)
@@ -288,7 +282,7 @@ class Request:
        
 
 class Operation:
-    def __init__(self,type=None,stroke_id='none',stroke=None,pos=-1,opos=-1):
+    def __init__(self,type=None,stroke_id='none',stroke=None,pos=-1,opos=-1,offset=0):
         if isinstance(stroke,dict):
             self.stroke = Stroke(**stroke)
         else:
@@ -297,6 +291,7 @@ class Operation:
         self.type = type
         self.stroke_id = stroke_id
         self.pos = pos
+        self.offset = offset
         if opos == -1:
             self.opos = pos
         else: # unmarshalling

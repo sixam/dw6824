@@ -69,8 +69,10 @@ class PeerState(QtCore.QObject):
                     mr = self.mostRecent(rq.vt)
                     print '\tmr', mr
                     print 'rq-op', rq.op
-                    while mr and rq.op.type != OpType.NoOp:
+                    loopy = 0
+                    while mr and rq.op.type != OpType.NoOp and loopy < 30:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
+                            loopy += 1
                             self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt)
 

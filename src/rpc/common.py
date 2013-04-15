@@ -42,8 +42,9 @@ class PeerState(QtCore.QObject):
 
     def getStrokes(self):
         self.lock.acquire()
-        return copy.deepcopy(self.strokes)
+        cp = copy.deepcopy(self.strokes)
         self.lock.release()
+        return cp
 
     def executeOperations(self):
         #NOTE: should be locking
@@ -87,8 +88,13 @@ class PeerState(QtCore.QObject):
            del self.queue[i] 
            
         print '\033[31m--done\033[0m\n'
-        self.lock.release()
+
         # Send signal to UI
+
+        self.lock.release()
+        self.newStrokesSignal.emit()
+
+
 
 
     def mostRecent(self,vt):

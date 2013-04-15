@@ -29,6 +29,7 @@ class Clerk:
                 request_id = Utils.generateID())
 
         self.state.appendToQueue(rq)
+        print 'ck appended to queue'
 
         # broadcast
         print 'sending', rq

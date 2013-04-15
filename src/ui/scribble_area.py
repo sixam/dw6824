@@ -41,14 +41,15 @@ class ScribbleArea(QtGui.QWidget):
         self.state = state    # This should never be to the left of an assignment
                               # fields should never be accessed, only methods!
 
-        self.strokes = state.getStrokes()
+        self.strokes = self.state.getStrokes()
 
     def clearImage(self):
         self.image.fill(QtGui.QColor(255, 255, 255))
         self.update()
 
     def strokesSignalHandler(self):
-        self.strokes = state.getStrokes()
+        self.strokes = self.state.getStrokes()
+        self.draw()
         print 'got signal'
 
 ################################ MOVE TOOL

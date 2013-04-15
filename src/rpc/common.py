@@ -160,33 +160,15 @@ class PeerState(QtCore.QObject):
     def transform(self,ri,rj):
         oi = ri.op
         oj = rj.op
-        PosI = oi.pos
-        PosJ = oj.pos
-
-        pi = ri.priority
-        pj = rj.priority
 
 
-        if oi.type == OpType.ADD and oj.type == OpType.ADD:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                oi.pos += 1
-            else:
-                if oi.stroke.id== oj.stroke.id:
-                    oi.type = OpType.NoOp
-                else:
-                    if pi > pj:
-                        oi.pos += 1
-                    else:
-                        pass
+        if oi.type == OpType.ADD:
+            self.transADD(ri,rj)
+        if oi.type == OpType.DEL:
+            self.transDEL(ri,rj)
+        if oi.type == OpType.MOVE:
+            self.transMOVE(ri,rj)
 
-
-        if oi.type == OpType.ADD and oj.type == OpType.DEL:
-            if PosI < PosJ:
-                pass
-            else:
-                oi.pos -= 1
                 
             
 
@@ -205,6 +187,42 @@ class PeerState(QtCore.QObject):
                 oi.type = OpType.NoOp
 
         print '\033[32m--transformed\033[0m',ri,rj,'\n'
+
+    def transADD(self,ri,rj):
+        oi = ri.op
+        oj = rj.op
+
+        PosI = oi.pos
+        PosJ = oj.pos
+
+        pi = ri.priority
+        pj = rj.priority
+
+        if oj.type == OpType.ADD:
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                oi.pos += 1
+            else:
+                if oi.stroke.id== oj.stroke.id:
+                    oi.type = OpType.NoOp
+                else:
+                    if pi > pj:
+                        oi.pos += 1
+                    else:
+                        pass
+
+        if oj.type == OpType.DEL:
+            if PosI < PosJ:
+                pass
+            else:
+                oi.pos -= 1
+        
+    def transDEL(self):
+        pass
+    def transMOVE(self):
+        pass
+    
 
         
 class Request:

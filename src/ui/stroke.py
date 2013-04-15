@@ -3,7 +3,7 @@ from PyQt4 import QtCore, QtGui
 from utils.utils import Utils
 class Stroke:
     """Basic Stroke"""
-    def __init__(self, path=None, width=None, color=None, id='none'):
+    def __init__(self, path=[], width=0, color=[0,0,0], id='none'):
         self.path  = path
         self.width = width
         self.color = color
@@ -15,14 +15,14 @@ class Stroke:
     def __str__(self):
         return "Stroke: {3} - {0}pts - width: {1}, color: {2}".format(len(self.path), 
                 self.width, self.color, self.id[0:5])
-    def __deepcopy__(self):
-        new = Stroke()
-        new.path = copy.deepcopy(self.path);
-        new.width = copy.deepcopy(self.width);
-        new.color = copy.deepcopy(self.color);
-        new.id = copy.deepcopy(self.id)
-        return new
 
+    def __copy__(self):
+        new = Stroke()
+        new.path = copy.copy(self.path);
+        new.width = copy.copy(self.width);
+        new.color = copy.copy(self.color);
+        new.id = copy.copy(self.id)
+        return new
 
     def toPainterPath(self):
         points = self.path

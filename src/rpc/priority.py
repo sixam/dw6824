@@ -25,9 +25,9 @@ class Priority:
     def __str__(self):
         return "p:{0}".format(self.pd)
 
-    def __deepcopy__(self):
+    def __copy__(self):
         new = Priority()
-        new.pd = copy.deepcopy(self.pd)
+        new.pd = copy.copy(self.pd)
         return new
 
     @staticmethod

@@ -142,7 +142,7 @@ class PeerState:
 
         
 class Request:
-    def __init__(self,sender=-1,vt=None,op=None,priority=0,request_id=0):
+    def __init__(self,sender=-1,vt=None,op=None,priority=0,request_id='none'):
         if isinstance(op,dict):
             self.op = Operation(**op)
         else:
@@ -160,18 +160,18 @@ class Request:
     def __str__(self):
         return "< sd:{4} | vt:{3} | op:{2} | {1} | rid:{0} >".format(
                 self.request_id[0:5],self.priority,self.op,self.vt,self.sender)
-    def __deepcopy__(self):
+    def __copy__(self):
         new = Request()
-        new.op = copy.deepcopy(self.op)
-        new.vt = copy.deepcopy(self.vt)
-        new.priority = copy.deepcopy(self.priority)
-        new.sender = copy.deepcopy(self.sender)
-        new.request_id = copy.deepcopy(self.request_id)
+        new.op = copy.copy(self.op)
+        new.vt = copy.copy(self.vt)
+        new.priority = copy.copy(self.priority)
+        new.sender = copy.copy(self.sender)
+        new.request_id = copy.copy(self.request_id)
         return new
        
 
 class Operation:
-    def __init__(self,type=None,stroke_id=None,stroke=None,pos=-1,opos=-1):
+    def __init__(self,type=None,stroke_id='none',stroke=None,pos=-1,opos=-1):
         if isinstance(stroke,dict):
             self.stroke = Stroke(**stroke)
         else:
@@ -189,13 +189,13 @@ class Operation:
         return "{{ {0} {1} at {2}({3})}}".format(
                 self.type,self.stroke_id[0:5],self.pos,self.opos)
 
-    def __deepcopy__(self):
+    def __copy__(self):
         new = Operation()
-        new.stroke = copy.deepcopy(self.stroke)
-        new.type = copy.deepcopy(self.type)
-        new.stroke_id = copy.deepcopy(self.stroke_id)
-        new.ops = copy.deepcopy(self.pos)
-        new.opos = copy.deepcopy(self.opos)
+        new.stroke = copy.copy(self.stroke)
+        new.type = copy.copy(self.type)
+        new.stroke_id = copy.copy(self.stroke_id)
+        new.ops = copy.copy(self.pos)
+        new.opos = copy.copy(self.opos)
         return new
 
 class OpType:

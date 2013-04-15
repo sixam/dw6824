@@ -94,9 +94,9 @@ class PeerState(QtCore.QObject):
                     #print '\tmr', mr
                     #print 'rq-op', rq.op
                     while mr and rq.op.type != OpType.NoOp:
+                        print 'looping mr'
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             self.transform(rq,mr)
-                            print 'looping mr'
                         mr = self.mostRecent(rq.vt, logcopy)
 
 
@@ -143,8 +143,8 @@ class PeerState(QtCore.QObject):
         print '----------------------------------------------------------------------\n'
 
     def mostRecent(self,vt, logcopy):
+        print '-----most-recent----'
         for i in range(len(logcopy)-1,-1,-1):
-            print '-----most-recent----'
             if VT.cmp(logcopy[i].vt,vt) > 0:
                 print '\033[32mbad',logcopy[i],'\033[0m'
                 pass
@@ -152,7 +152,7 @@ class PeerState(QtCore.QObject):
                 print '\033[33mgood',logcopy[i],'\033[0m'
                 del logcopy[i]
                 return self.log[i]
-            print '---------------------'
+        print '---------------------'
 
         return None
 

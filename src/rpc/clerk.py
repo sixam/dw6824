@@ -59,7 +59,8 @@ class Clerk:
     def _genMove(self, s_pos, offset):
         sp = self.state.getSnapshot()
         s_id = sp.strokes[s_pos].id
-        op = Operation(type=OpType.MOVE, stroke_id=s_id, pos=s_pos, offset=offset ,)
+        op = Operation(type=OpType.MOVE, stroke_id=s_id, pos=s_pos,
+                stroke=sp.strokes[s_pos], offset=offset)
         p = Priority(op=op,state=sp)
         rq = Request(sender = sp.id, vt = sp.vt[:], op = op,
                 priority = p,

@@ -35,6 +35,7 @@ class PeerState(QtCore.QObject):
         self.lock = Lock()
 
     def getSnapshot(self):
+        print 'snapshot (lock)'
         self.lock.acquire()
         cp = PeerState(0);
         cp.id = self.id
@@ -43,18 +44,23 @@ class PeerState(QtCore.QObject):
         cp.vt = self.vt[:]
         cp.strokes = copy.deepcopy(self.strokes)
         self.lock.release()
+        print 'snapshot (unlock)'
         return cp
 
 
     def appendToQueue(self, rq):
+        print 'append (lock)'
         self.lock.acquire()
         self.queue.append(rq)
         self.lock.release()
+        print 'append (unlock)'
 
     def getStrokes(self):
+        print 'get strokes (lock)'
         self.lock.acquire()
         cp = copy.deepcopy(self.strokes)
         self.lock.release()
+        print 'get strokes (unlock)'
         return cp
 
     def executeOperations(self):
@@ -63,6 +69,7 @@ class PeerState(QtCore.QObject):
         #print '\033[32m--execute\033[0m'
 
         #print '\tcurrent vt:',self.vt
+        print 'execute (lock)'
         self.lock.acquire()
         self.printQueue()
 
@@ -103,6 +110,7 @@ class PeerState(QtCore.QObject):
 
         self.printLog()
         self.lock.release()
+        print 'execute (unlock)'
 
         # Send signal to UI
         self.newStrokesSignal.emit()

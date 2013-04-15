@@ -3,9 +3,10 @@ from ui.stroke import Stroke
 from rpc.priority import Priority
 from rpc.vt import VT
 from threading import Lock
+from PyQt4 import QtCore, QtGui
 import copy
 
-class PeerState:
+class PeerState(QtCore.QObject):
     """Stores all data concerning a peer's state
 
     Contains:
@@ -16,8 +17,12 @@ class PeerState:
     Is shared between UI and Network threads
     
     """
+
+    newStrokesSignal = QtCore.pyqtSignal()
+
     # NOTE: lock around access to the structure?
     def __init__(self, peer_id):
+        super(PeerState, self).__init__()
         self.id      = peer_id
         self.peers   = []
         self.queue   = []
@@ -26,6 +31,8 @@ class PeerState:
         self.strokes = []
 
         self.window = None
+
+        print self.newStrokesSignal
 
         self.lock = Lock()
 

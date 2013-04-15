@@ -33,6 +33,9 @@ class Peer:
         """ Accept incoming connection till exit  """
         self.server.serve_forever()
 
+    def test(self):
+        print "ok it tested right"
+
     def addPeer(self,ip,port):
         """ Add a new peer """
 

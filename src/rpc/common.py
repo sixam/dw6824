@@ -139,7 +139,7 @@ class PeerState(QtCore.QObject):
                 oi.pos += 1
             else:
                 if oi.stroke.id== oj.stroke.id:
-                    op.type = OpType.NoOp
+                    oi.type = OpType.NoOp
                 else:
                     if pi > pj:
                         oi.pos += 1

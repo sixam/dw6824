@@ -35,6 +35,18 @@ class PeerState(QtCore.QObject):
 
         self.lock = Lock()
 
+    def getSnapshot(self):
+        self.lock.acquire()
+        cp = PeerState(0);
+        cp.id = self.id
+        cp.queue = copy.deepcopy(self.queue)
+        cp.log = []
+        cp.vt = self.vt[:]
+        cp.strokes = copy.deepcopy(self.strokes)
+        self.lock.release()
+        return cp
+
+
     def appendToQueue(self, rq):
         self.lock.acquire()
         self.queue.append(rq)

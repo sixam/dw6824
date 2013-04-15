@@ -47,11 +47,12 @@ class Clerk:
 
 
     def _genAdd(self, s):
-        pos = len(self.state.strokes)
+        sp = self.state.getSnapshot()
+        pos = len(sp.strokes)
         op = Operation(type=OpType.ADD,stroke_id = s.id, stroke = s,pos =
                 pos)
-        p = Priority(op=op,state=self.state)
-        rq = Request(sender = self.state.id, vt = self.state.vt[:], op = op,
+        p = Priority(op=op,state=sp)
+        rq = Request(sender = sp.id, vt = sp.vt[:], op = op,
                 priority = p, 
                 request_id = Utils.generateID())
 
@@ -59,24 +60,26 @@ class Clerk:
 
 
     def _genDel(self, s_pos):
-        s_id = self.state.strokes[s_pos].id
-        op = Operation(type=OpType.DEL, stroke_id=s_id, pos=s_pos, stroke=self.state.strokes[s_pos])
-        p = Priority(op=op,state=self.state)
+        sp = self.state.getSnapshot()
+        s_id = sp.strokes[s_pos].id
+        op = Operation(type=OpType.DEL, stroke_id=s_id, pos=s_pos, stroke=sp.strokes[s_pos])
+        p = Priority(op=op,state=sp)
 
-        rq = Request(sender = self.state.id, vt = self.state.vt[:], op = op,
+        rq = Request(sender = sp.id, vt = sp.vt[:], op = op,
                 priority = p, 
                 request_id = Utils.generateID())
         return rq
 
 
     def _genMove(self, s_pos, offset):
-        s_id = self.state.strokes[s_pos].id
-        nstroke = copy.copy(self.state.strokes[s_pos]);
+        sp = self.state.getSnapshot()
+        s_id = sp.strokes[s_pos].id
+        nstroke = copy.copy(sp.strokes[s_pos]);
         nstroke.offsetPosBy(offset)
         op = Operation(type=OpType.MOV, stroke_id=s_id, pos=s_pos, 
                 stroke = nstroke)
-        p = Priority(op=op,state=self.state)
-        rq = Request(sender = self.state.id, vt = self.state.vt[:], op = op,
+        p = Priority(op=op,state=sp)
+        rq = Request(sender = sp.id, vt = sp.vt[:], op = op,
                 priority = p,
                 request_id = Utils.generateID())
 
@@ -85,7 +88,8 @@ class Clerk:
 
 
     def moveStroke(self,s_pos,offset):
-        stroke = copy.copy(self.state.strokes[s_pos])
+        sp = self.state.getSnapshot()
+        stroke = copy.copy(sp.strokes[s_pos])
         rq = self._genMove(s_pos, offset)
 
         rqs = Utils.movToDelAdd(rq);

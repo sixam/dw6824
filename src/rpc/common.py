@@ -37,6 +37,7 @@ class PeerState(QtCore.QObject):
     def getSnapshot(self):
         print 'snapshot (lock)'
         self.lock.acquire()
+        print 'snapshot (locked)'
         cp = PeerState(0);
         cp.id = self.id
         cp.queue = copy.deepcopy(self.queue)
@@ -51,6 +52,7 @@ class PeerState(QtCore.QObject):
     def appendToQueue(self, rq):
         print 'append (lock)'
         self.lock.acquire()
+        print 'append (locked)'
         self.queue.append(rq)
         self.lock.release()
         print 'append (unlock)'
@@ -58,6 +60,7 @@ class PeerState(QtCore.QObject):
     def getStrokes(self):
         print 'get strokes (lock)'
         self.lock.acquire()
+        print 'get strokes (locked)'
         cp = copy.deepcopy(self.strokes)
         self.lock.release()
         print 'get strokes (unlock)'
@@ -71,6 +74,7 @@ class PeerState(QtCore.QObject):
         #print '\tcurrent vt:',self.vt
         print 'execute (lock)'
         self.lock.acquire()
+        print 'execute (locked)'
         self.printQueue()
 
         to_del = []
@@ -92,6 +96,7 @@ class PeerState(QtCore.QObject):
                     while mr and rq.op.type != OpType.NoOp:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             self.transform(rq,mr)
+                            print 'looping mr'
                         mr = self.mostRecent(rq.vt, logcopy)
 
 
@@ -139,13 +144,15 @@ class PeerState(QtCore.QObject):
 
     def mostRecent(self,vt, logcopy):
         for i in range(len(logcopy)-1,-1,-1):
+            print '-----most-recent----'
             if VT.cmp(logcopy[i].vt,vt) > 0:
-                #print '\033[32mbad',logcopy[i],'\033[0m'
+                print '\033[32mbad',logcopy[i],'\033[0m'
                 pass
             if VT.cmp(logcopy[i].vt,vt) <= 0:
-                #print '\033[33mgood',logcopy[i],'\033[0m'
+                print '\033[33mgood',logcopy[i],'\033[0m'
                 del logcopy[i]
                 return self.log[i]
+            print '---------------------'
 
         return None
 

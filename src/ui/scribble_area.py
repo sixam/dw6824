@@ -38,11 +38,16 @@ class ScribbleArea(QtGui.QWidget):
         self.clerk = Clerk(state)
 
         # Drawing content
-        self.strokes = state.strokes #local pointer to the node's structure
+        self.state = state    # This should never be to the left of an assignment
+                              # fields should never be accessed, only methods!
+        self.strokes = state.getStrokes()
 
     def clearImage(self):
         self.image.fill(QtGui.QColor(255, 255, 255))
         self.update()
+
+    def strokesSignalHandler(self):
+        pass
 
 ################################ MOVE TOOL
     def _moveStart(self, pos):

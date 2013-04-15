@@ -36,12 +36,22 @@ class PeerState(QtCore.QObject):
 
         self.lock = Lock()
 
+    def appendToQueue(self, rq):
+        self.lock.acquire()
+        self.queue.append(rq)
+        self.lock.release()
+    def getStrokes(self):
+        self.lock.acquire()
+        return copy.deepcopy(self.strokes)
+        self.lock.release()
+
     def executeOperations(self):
         #NOTE: should be locking
 
         print '\033[32m--execute\033[0m'
 
         #print '\tcurrent vt:',self.vt
+        self.lock.acquire()
 
         to_del = []
         for i, rq in enumerate(self.queue):
@@ -77,6 +87,8 @@ class PeerState(QtCore.QObject):
            del self.queue[i] 
            
         print '\033[31m--done\033[0m\n'
+        self.lock.release()
+        # Send signal to UI
 
 
     def mostRecent(self,vt):

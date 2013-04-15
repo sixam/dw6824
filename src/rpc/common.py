@@ -159,30 +159,12 @@ class PeerState(QtCore.QObject):
         oi = ri.op
         oj = rj.op
 
-
         if oi.type == OpType.ADD:
             self.transADD(ri,rj)
         if oi.type == OpType.DEL:
             self.transDEL(ri,rj)
         if oi.type == OpType.MOVE:
             self.transMOVE(ri,rj)
-
-                
-            
-
-        if oi.type == OpType.DEL and oj.type == OpType.ADD:
-            if PosI < PosJ:
-                pass
-            else:
-                oi.pos += 1
-
-        if oi.type == OpType.DEL and oj.type == OpType.DEL:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                oi.pos -= 1
-            else:
-                oi.type = OpType.NoOp
 
         print '\033[32m--transformed\033[0m',ri,rj,'\n'
 
@@ -222,10 +204,58 @@ class PeerState(QtCore.QObject):
 
         
     def transDEL(self):
-        pass
+        oi = ri.op
+        oj = rj.op
+
+        PosI = oi.pos
+        PosJ = oj.pos
+
+        pi = ri.priority
+        pj = rj.priority
+
+        if oj.type == OpType.ADD:
+            if PosI < PosJ:
+                pass
+            else:
+                oi.pos += 1
+
+        if oj.type == OpType.DEL:
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                oi.pos -= 1
+            else:
+                oi.type = OpType.NoOp
+
+        if oj.type == OpType.MOVE:
+            pass
+
     def transMOVE(self):
-        pass
-    
+        oi = ri.op
+        oj = rj.op
+
+        PosI = oi.pos
+        PosJ = oj.pos
+
+        pi = ri.priority
+        pj = rj.priority
+
+        if oj.type == OpType.ADD:
+            if PosI < PosJ:
+                pass
+            else:
+                oi.pos += 1
+
+        if oj.type == OpType.DEL:
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                oi.pos -= 1
+            else:
+                oi.type = OpType.NoOp
+
+        if oj.type == OpType.MOVE:
+            pass
 
         
 class Request:

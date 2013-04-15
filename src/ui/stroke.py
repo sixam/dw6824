@@ -3,7 +3,7 @@ from PyQt4 import QtCore, QtGui
 from utils.utils import Utils
 class Stroke:
     """Basic Stroke"""
-    def __init__(self, path=[], width=0, color=[0,0,0], id='none'):
+    def __init__(self, path=[], width=0, color=[0,0,0,255], id='none'):
         self.path  = path
         self.width = width
         self.color = color

@@ -32,7 +32,6 @@ class PeerState(QtCore.QObject):
 
         self.window = None
 
-
         self.lock = Lock()
 
     def appendToQueue(self, rq):
@@ -55,7 +54,7 @@ class PeerState(QtCore.QObject):
     def executeOperations(self):
         #NOTE: should be locking
 
-        print '\033[32m--execute\033[0m'
+        #print '\033[32m--execute\033[0m'
 
         #print '\tcurrent vt:',self.vt
         self.lock.acquire()
@@ -74,8 +73,8 @@ class PeerState(QtCore.QObject):
                 if cmp==-1:
                     #print rq.vt,'<',self.vt
                     mr = self.mostRecent(rq.vt, logcopy)
-                    print '\tmr', mr
-                    print 'rq-op', rq.op
+                    #print '\tmr', mr
+                    #print 'rq-op', rq.op
                     loopy = 0
                     while mr and rq.op.type != OpType.NoOp and loopy < 30:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
@@ -87,30 +86,48 @@ class PeerState(QtCore.QObject):
             self.performOperation(rq.op)
             self.log.append(rq)
             self.vt[rq.sender] += 1
-            print '\tupdated vt', self.vt
 
         to_del.sort()
         to_del.reverse()
 
-        print '\tdel', to_del
-
         for i in to_del:
            del self.queue[i] 
            
-        print '\033[31m--done\033[0m\n'
+        #print '\033[31m--done\033[0m\n'
+
+
+        self.printLog()
+        self.printQueue()
+        self.lock.release()
 
         # Send signal to UI
-
-        self.lock.release()
         self.newStrokesSignal.emit()
 
+    def printQueue(self):
+        print '\n-------------------- QUEUE -------------------------------------------'
+        for rq in self.queue:
+            if rq.op.type == OpType.ADD:
+                print '\033[32m',rq,'\033[0m'
+            else:
+                print '\033[31m',rq,'\033[0m'
+        print '----------------------------------------------------------------------\n'
+
+    def printLog(self):
+        print '\n-------------------- LOG ---------------------------------------------'
+        for rq in self.log:
+            if rq.op.type == OpType.ADD:
+                print '\033[32m',rq,'\033[0m'
+            else:
+                print '\033[31m',rq,'\033[0m'
+        print '----------------------------------------------------------------------\n'
 
     def mostRecent(self,vt, logcopy):
         for i in range(len(logcopy)-1,-1,-1):
             if VT.cmp(logcopy[i].vt,vt) > 0:
-                print '\033[32mbad',logcopy[i],'\033[0m'
+                #print '\033[32mbad',logcopy[i],'\033[0m'
+                pass
             if VT.cmp(logcopy[i].vt,vt) <= 0:
-                print '\033[33mgood',logcopy[i],'\033[0m'
+                #print '\033[33mgood',logcopy[i],'\033[0m'
                 del logcopy[i]
                 return self.log[i]
 
@@ -118,10 +135,10 @@ class PeerState(QtCore.QObject):
 
     def performOperation(self,op):
         if op.type == OpType.ADD:
-            print 'added', op.stroke
+            #print 'added', op.stroke
             self.strokes.insert(op.pos,op.stroke);
         if op.type == OpType.DEL:
-            print 'deleted', op.pos
+            #print 'deleted', op.pos
             print self.strokes
             del self.strokes[op.pos]
             print self.strokes

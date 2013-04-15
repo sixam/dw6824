@@ -50,7 +50,6 @@ class ScribbleArea(QtGui.QWidget):
     def strokesSignalHandler(self):
         self.strokes = self.state.getStrokes()
         self.draw()
-        print 'got signal'
 
 ################################ MOVE TOOL
     def _moveStart(self, pos):
@@ -62,7 +61,7 @@ class ScribbleArea(QtGui.QWidget):
         for i,stroke in enumerate(self.strokes): # check selection
             if stroke.toPainterPath().intersects(sel_rect):
                 self.selected = i
-                print 'select:',self.strokes[self.selected]
+                print '\033[34mselected:',self.strokes[self.selected],'\033[0m'
                 break
         self.original_move_pos = self.move_pos
 

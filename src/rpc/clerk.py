@@ -16,15 +16,13 @@ class Clerk:
     def addStroke(self,s):
         # NOTE : this should be lock-secured
         #st = Stroke(**s)
-        print '\033[31m-acquire Clerk add s\033[0m'
 
         rq = self._genAdd(s)
         self.state.appendToQueue(rq)
 
         # broadcast
-        print 'sending', rq
+        #print 'sending', rq
         self.state.executeOperations()
-        print '\033[31m-reloease Clerk add s\033[0m'
 
         self._send(rq)
 
@@ -32,16 +30,14 @@ class Clerk:
     def deleteStroke(self,s_pos):
         """ Be careful when copying the state'vt : pointers ... """
         # NOTE : this should be lock-secured
-        print '\033[31m-acquire Clerk del s\033[0m'
         rq = self._genDel(s_pos)
         self.state.appendToQueue(rq)
 
         # broadcast
-        print 'rq.op', rq.op
-        print 'rq.op.stroke', rq.op.stroke
-        print 'sending', rq
+        #print 'rq.op', rq.op
+        #print 'rq.op.stroke', rq.op.stroke
+        #print 'sending', rq
         self.state.executeOperations()
-        print '\033[31m-reloease Clerk del s\033[0m'
 
         self._send(rq)
 

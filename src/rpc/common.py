@@ -98,7 +98,7 @@ class PeerState(QtCore.QObject):
         for i in to_del:
            del self.queue[i] 
            
-        #print '\033[31m--done\033[0m\n'
+        print '\033[31m--done\033[0m\n'
 
 
         self.printLog()
@@ -151,7 +151,8 @@ class PeerState(QtCore.QObject):
             del self.strokes[op.pos]
             print self.strokes
         if op.type == OpType.MOVE:
-            self.strokes[op.pos].offsetPosBy(op.offset)
+            print 'I am moving', op
+            #self.strokes[op.pos].offsetPosBy(op.offset)
             print self.strokes
             
         self.window.scribbleArea.draw()
@@ -322,8 +323,8 @@ class Operation:
             self.opos = opos
 
     def __str__(self):
-        return "{{ {0} {1} at {2}({3})}}".format(
-                self.type,self.stroke_id[0:5],self.pos,self.opos)
+        return "{{ {0} {1} at {2}({3})}} - {4}".format(
+                self.type,self.stroke_id[0:5],self.pos,self.opos,self.offset)
 
     def __copy__(self):
         new = Operation()

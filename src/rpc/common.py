@@ -29,10 +29,17 @@ class PeerState(QtCore.QObject):
         self.log     = []
         self.vt      = [0 for x in range(3)]
         self.strokes = []
+        self.prqs    = []
 
         self.window = None
 
         self.lock = Lock()
+
+    def getPastRequests(self):
+        self.lock.acquire()
+        cp = copy.deepcopy(self.prqs);
+        self.lock.release()
+        return cp
 
     def getSnapshot(self):
         print 'snapshot (lock)'
@@ -81,6 +88,7 @@ class PeerState(QtCore.QObject):
         for i, rq in enumerate(self.queue):
             if i in to_del:
                 continue
+            self.prqs.append(rq.request_id);
             #print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             #print '\tcmp is:', cmp

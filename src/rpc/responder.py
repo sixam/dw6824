@@ -1,5 +1,6 @@
 from PyQt4 import QtCore, QtGui
-from rpc.common import Request
+from rpc.common import Request, Operation, OpType
+from utils.utils import Utils
 
 class RPCresponder:
     """ Handles the processing of RPC requests"""
@@ -22,10 +23,19 @@ class RPCresponder:
         # NOTE : this should be lock-secured
         print '\033[31m-acquire Responder\033[0m'
 
-        rq = Request(**rqData)
-        self.state.appendToQueue(rq)
-        print 'Responder, rq:', rq
 
+        rq = Request(**rqData)
+        print 'Responder, rq:', rq
+        print 'type:', rq.op.type
+        print rq.op.type == OpType.MOV
+        if rq.op.type == OpType.MOV:
+            rqs = Utils.movToDelAdd(rq)
+            print 'MOVE EVENT. rqs:', rqs
+            self.state.appendManyToQueue(rqs)
+        else:
+            print 'ciao'
+            self.state.appendToQueue(rq)
+        print 'ciao'
         self.state.executeOperations()
         print '\033[31m-release Responder\033[0m'
         return True

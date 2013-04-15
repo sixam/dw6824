@@ -40,6 +40,12 @@ class PeerState(QtCore.QObject):
         self.queue.append(rq)
         self.lock.release()
 
+    def appendManyToQueue(self, rqs):
+        self.lock.acquire()
+        for rq in rqs:
+            self.queue.append(rq)
+        self.lock.release()
+
     def getStrokes(self):
         self.lock.acquire()
         cp = copy.deepcopy(self.strokes)
@@ -189,8 +195,8 @@ class Request:
         self.request_id = request_id
 
     def __str__(self):
-        return "< sd:{4} | vt:{3} | op:{2} | {1} | rid:{0} >".format(
-                self.request_id[0:5],self.priority,self.op,self.vt,self.sender)
+        return "< sd:{4} | vt:{3} | op:{2} | {1} |  rid:{0} >".format(
+                self.request_id[0:5], self.priority,self.op,self.vt,self.sender)
     def __copy__(self):
         new = Request()
         new.op = copy.copy(self.op)
@@ -232,4 +238,5 @@ class Operation:
 class OpType:
     ADD = 'ADD'
     DEL = 'DEL'
+    MOV = 'MOV'
     NoOp = 'NoOp'

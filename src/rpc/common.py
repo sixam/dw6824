@@ -99,7 +99,7 @@ class PeerState(QtCore.QObject):
                             self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt, logcopy)
 
-
+            print 'before perform'
             self.performOperation(rq.op)
             self.log.append(rq)
             self.vt[rq.sender] += 1
@@ -143,16 +143,16 @@ class PeerState(QtCore.QObject):
         print '----------------------------------------------------------------------\n'
 
     def mostRecent(self,vt, logcopy):
-        print '-----most-recent----'
+        #print '-----most-recent----'
         for i in range(len(logcopy)-1,-1,-1):
             if VT.cmp(logcopy[i].vt,vt) > 0:
-                print '\033[32mbad',logcopy[i],'\033[0m'
+                #print '\033[32mbad',logcopy[i],'\033[0m'
                 pass
             if VT.cmp(logcopy[i].vt,vt) <= 0:
-                print '\033[33mgood',logcopy[i],'\033[0m'
+                #print '\033[33mgood',logcopy[i],'\033[0m'
                 del logcopy[i]
                 return self.log[i]
-        print '---------------------'
+        #print '---------------------'
 
         return None
 
@@ -177,6 +177,8 @@ class PeerState(QtCore.QObject):
         oi = ri.op
         oj = rj.op
 
+        print 'starting transform'
+
         if oi.type == OpType.ADD:
             self.transADD(ri,rj)
         if oi.type == OpType.DEL:
@@ -187,6 +189,8 @@ class PeerState(QtCore.QObject):
         print '\033[32m--transformed\033[0m',ri,rj,'\n'
 
     def transADD(self,ri,rj):
+
+        print 'in trans ADD'
         oi = ri.op
         oj = rj.op
 
@@ -215,13 +219,14 @@ class PeerState(QtCore.QObject):
                 pass
             else:
                 oi.pos -= 1
-        if oj.type == OpType.MOV:
+        if oj.type == OpType.MOVE:
             # This will have to change if we want to insert. 
             # Either move at p+1 or don't move if prioritu blah blah
             pass
 
         
     def transDEL(self):
+        print 'in trans DEL'
         oi = ri.op
         oj = rj.op
 
@@ -257,6 +262,7 @@ class PeerState(QtCore.QObject):
                     pass
 
     def transMOVE(self):
+        print 'in trans MOVE'
         oi = ri.op
         oj = rj.op
 

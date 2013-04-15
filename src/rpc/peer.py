@@ -18,6 +18,8 @@ class Peer:
         self.window.show()
         self.state.window = self.window
 
+        self.state.newStrokesSignal.connect(self.window.scribbleArea.strokesSignalHandler)
+
         # Handler for the RPC requests
         self.RPCresponder = RPCresponder(self.state)
 

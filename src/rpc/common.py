@@ -32,7 +32,6 @@ class PeerState(QtCore.QObject):
 
         self.window = None
 
-        print self.newStrokesSignal
 
         self.lock = Lock()
 
@@ -40,6 +39,7 @@ class PeerState(QtCore.QObject):
         self.lock.acquire()
         self.queue.append(rq)
         self.lock.release()
+
     def getStrokes(self):
         self.lock.acquire()
         return copy.deepcopy(self.strokes)

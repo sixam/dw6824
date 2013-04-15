@@ -72,6 +72,7 @@ class ScribbleArea(QtGui.QWidget):
         if self.moving and self.selected >= 0:
             offset = pos - self.move_pos 
             self.move_pos = pos
+            self.strokes[self.selected].offsetPosBy(offset)
             self.draw()
 
     def _moveEnd(self,pos):

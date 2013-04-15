@@ -66,7 +66,7 @@ class Clerk:
         stroke = copy.copy(self.state.strokes[s_pos])
         self.deleteStroke(s_pos)
         stroke.offsetPosBy(offset)
-        self.add_stroke(stroke)
+        self.addStroke(stroke)
         pass
 
     def _send(self,rq):

@@ -103,7 +103,10 @@ class PeerState(QtCore.QObject):
 
     def mostRecent(self,vt, logcopy):
         for i in range(len(logcopy)-1,-1,-1):
+            if VT.cmp(logcopy[i].vt,vt) > 0:
+                print '\033[32mbad',logcopy[i],'\033[0m'
             if VT.cmp(logcopy[i].vt,vt) <= 0:
+                print '\033[33mgood',logcopy[i],'\033[0m'
                 del logcopy[i]
                 return self.log[i]
 

@@ -75,7 +75,7 @@ class PeerState(QtCore.QObject):
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             loopy += 1
                             self.transform(rq,mr)
-                        mrt = self.mostRecent(rq.vt, logcopy)
+                        mr = self.mostRecent(rq.vt, logcopy)
 
 
             self.performOperation(rq.op)
@@ -97,8 +97,6 @@ class PeerState(QtCore.QObject):
 
         self.lock.release()
         self.newStrokesSignal.emit()
-
-
 
 
     def mostRecent(self,vt, logcopy):

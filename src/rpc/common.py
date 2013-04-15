@@ -33,6 +33,10 @@ class PeerState:
         self.lock.acquire()
         self.queue.append(rq)
         self.lock.release()
+    def getStrokes(self):
+        self.lock.acquire()
+        return copy.deepcopy(self.strokes)
+        self.lock.release()
 
     def executeOperations(self):
         #NOTE: should be locking
@@ -77,6 +81,7 @@ class PeerState:
            
         print '\033[31m--done\033[0m\n'
         self.lock.release()
+        # Send signal to UI
 
 
     def mostRecent(self,vt):

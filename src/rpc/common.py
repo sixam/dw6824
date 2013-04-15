@@ -152,7 +152,7 @@ class PeerState(QtCore.QObject):
             print self.strokes
         if op.type == OpType.MOVE:
             print 'I am moving', op
-            #self.strokes[op.pos].offsetPosBy(op.offset)
+            self.strokes[op.pos].offsetPosBy(op.offset)
             print self.strokes
             
         self.window.scribbleArea.draw()
@@ -307,7 +307,7 @@ class Request:
        
 
 class Operation:
-    def __init__(self,type=None,stroke_id='none',stroke=None,pos=-1,opos=-1,offset=0):
+    def __init__(self,type=None,stroke_id='none',stroke=None,pos=-1,opos=-1,offset=[0,0]):
         if isinstance(stroke,dict):
             self.stroke = Stroke(**stroke)
         else:

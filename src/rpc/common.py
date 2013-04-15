@@ -157,6 +157,7 @@ class PeerState(QtCore.QObject):
         return None
 
     def performOperation(self,op):
+        print 'start performing'
         if op.type == OpType.ADD:
             #print 'added', op.stroke
             self.strokes.insert(op.pos,op.stroke);
@@ -171,7 +172,7 @@ class PeerState(QtCore.QObject):
             print self.strokes
             
         self.window.scribbleArea.draw()
-        pass
+        print 'done performing'
 
     def transform(self,ri,rj):
         oi = ri.op

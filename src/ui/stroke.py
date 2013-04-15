@@ -21,6 +21,7 @@ class Stroke:
         new.width = copy.deepcopy(self.width);
         new.color = copy.deepcopy(self.color);
         new.id = copy.deepcopy(self.id)
+        return new
 
 
     def toPainterPath(self):

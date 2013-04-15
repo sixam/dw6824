@@ -167,6 +167,7 @@ class Request:
         new.priority = copy.deepcopy(self.priority)
         new.sender = copy.deepcopy(self.sender)
         new.request_id = copy.deepcopy(self.request_id)
+        return new
        
 
 class Operation:
@@ -195,6 +196,7 @@ class Operation:
         new.stroke_id = copy.deepcopy(self.stroke_id)
         new.ops = copy.deepcopy(self.pos)
         new.opos = copy.deepcopy(self.opos)
+        return new
 
 class OpType:
     ADD = 'ADD'

@@ -28,6 +28,7 @@ class Priority:
     def __deepcopy__(self):
         new = Priority()
         new.pd = copy.deepcopy(self.pd)
+        return new
 
     @staticmethod
     def compareLists(a, b):

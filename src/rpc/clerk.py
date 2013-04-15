@@ -84,14 +84,7 @@ class Clerk:
 
 
     def moveStroke(self,s_pos,offset):
-        sp = self.state.getSnapshot()
-        stroke = copy.copy(sp.strokes[s_pos])
-        rq = self._genMove(s_pos, offset)
-
-        rqs = Utils.movToDelAdd(rq);
-        self.state.appendManyToQueue(rqs)
-        self.state.executeOperations()
-        self._send(rq)
+        pass
 
     def _send(self,rq):
         for srv in self.state.peers:

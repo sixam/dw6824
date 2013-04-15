@@ -70,6 +70,7 @@ class PeerState(QtCore.QObject):
 
         #print '\tcurrent vt:',self.vt
         self.lock.acquire()
+        self.printQueue()
 
         to_del = []
         for i, rq in enumerate(self.queue):
@@ -109,7 +110,6 @@ class PeerState(QtCore.QObject):
 
 
         self.printLog()
-        self.printQueue()
         self.lock.release()
 
         # Send signal to UI

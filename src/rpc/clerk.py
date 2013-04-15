@@ -18,11 +18,9 @@ class Clerk:
         #st = Stroke(**s)
         print '\033[31m-acquire Clerk add s\033[0m'
 
-        stroke_id = Utils.generateID()
-        #s.id = stroke_id
         pos = len(self.state.strokes)
 
-        op = Operation(type=OpType.ADD,stroke_id = stroke_id, stroke = s,pos =
+        op = Operation(type=OpType.ADD,stroke_id = s.id, stroke = s,pos =
                 pos)
         p = Priority(op=op,state=self.state)
 
@@ -65,9 +63,8 @@ class Clerk:
         self._send(rq)
 
     def moveStroke(self,s_pos,offset):
-        self.deleteStroke(s_pos)
-
         stroke = copy.copy(self.state.strokes[s_pos])
+        self.deleteStroke(s_pos)
         stroke.offsetPosBy(offset)
         self.add_stroke(stroke)
         pass

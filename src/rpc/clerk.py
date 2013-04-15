@@ -72,7 +72,7 @@ class Clerk:
         s_id = sp.strokes[s_pos].id
         nstroke = copy.copy(sp.strokes[s_pos]);
         nstroke.offsetPosBy(offset)
-        op = Operation(type=OpType.MOV, stroke_id=s_id, pos=s_pos, 
+        op = Operation(type=OpType.MOVE, stroke_id=s_id, pos=s_pos, 
                 stroke = nstroke)
         p = Priority(op=op,state=sp)
         rq = Request(sender = sp.id, vt = sp.vt[:], op = op,

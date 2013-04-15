@@ -152,6 +152,10 @@ class PeerState(QtCore.QObject):
             print self.strokes
             del self.strokes[op.pos]
             print self.strokes
+        if op.type == OpType.MOVE:
+            self.strokes[op.pos].offsetPosBy(op.offset)
+            print self.strokes
+            
         self.window.scribbleArea.draw()
         pass
 
@@ -228,7 +232,15 @@ class PeerState(QtCore.QObject):
                 oi.type = OpType.NoOp
 
         if oj.type == OpType.MOVE:
-            pass
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                pass
+            else: # PosI == PosJ
+                if pi < pj:
+                    oi.type = OpType.NoOp
+                else:
+                    pass
 
     def transMOVE(self):
         oi = ri.op
@@ -241,21 +253,29 @@ class PeerState(QtCore.QObject):
         pj = rj.priority
 
         if oj.type == OpType.ADD:
-            if PosI < PosJ:
-                pass
-            else:
-                oi.pos += 1
+            pass # they always commute for our add == append
 
         if oj.type == OpType.DEL:
             if PosI < PosJ:
                 pass
             elif PosI > PosJ:
                 oi.pos -= 1
-            else:
-                oi.type = OpType.NoOp
+            else: # PosI == PosJ
+                if pi < pj:
+                    oi.type = OpType.NoOp
+                else:
+                    pass
 
         if oj.type == OpType.MOVE:
-            pass
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                pass
+            else: # PosI == PosJ
+                if pi < pj:
+                    oi.type = OpType.NoOp
+                else:
+                    pass
 
         
 class Request:
@@ -318,5 +338,5 @@ class Operation:
 class OpType:
     ADD = 'ADD'
     DEL = 'DEL'
-    MOV = 'MOV'
+    MOVE = 'MOV'
     NoOp = 'NoOp'

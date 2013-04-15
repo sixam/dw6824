@@ -5,6 +5,7 @@ import time
 from utils.utils import Utils
 from rpc.priority import Priority
 from ui.stroke import Stroke
+import copy
 
 class Clerk:
     """ Clerk for the UI thread, handles the emission of RPC calls"""
@@ -18,6 +19,7 @@ class Clerk:
         print '\033[31m-acquire Clerk add s\033[0m'
 
         stroke_id = Utils.generateID()
+        #s.id = stroke_id
         pos = len(self.state.strokes)
 
         op = Operation(type=OpType.ADD,stroke_id = stroke_id, stroke = s,pos =
@@ -62,7 +64,12 @@ class Clerk:
 
         self._send(rq)
 
-    def moveStroke(self,s,offset):
+    def moveStroke(self,s_pos,offset):
+        self.deleteStroke(s_pos)
+
+        stroke = copy.copy(self.state.strokes[s_pos])
+        stroke.offsetPosBy(offset)
+        self.add_stroke(stroke)
         pass
 
     def _send(self,rq):

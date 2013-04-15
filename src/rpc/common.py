@@ -88,10 +88,8 @@ class PeerState(QtCore.QObject):
                     mr = self.mostRecent(rq.vt, logcopy)
                     #print '\tmr', mr
                     #print 'rq-op', rq.op
-                    loopy = 0
-                    while mr and rq.op.type != OpType.NoOp and loopy < 30:
+                    while mr and rq.op.type != OpType.NoOp:
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
-                            loopy += 1
                             self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt, logcopy)
 
@@ -217,6 +215,11 @@ class PeerState(QtCore.QObject):
                 pass
             else:
                 oi.pos -= 1
+        if oj.type == OpType.MOV:
+            # This will have to change if we want to insert. 
+            # Either move at p+1 or don't move if prioritu blah blah
+            pass
+
         
     def transDEL(self):
         pass

@@ -26,16 +26,7 @@ class RPCresponder:
 
         rq = Request(**rqData)
         print 'Responder, rq:', rq
-        print 'type:', rq.op.type
-        print rq.op.type == OpType.MOV
-        if rq.op.type == OpType.MOV:
-            rqs = Utils.movToDelAdd(rq)
-            print 'MOVE EVENT. rqs:', rqs
-            self.state.appendManyToQueue(rqs)
-        else:
-            print 'ciao'
-            self.state.appendToQueue(rq)
-        print 'ciao'
+        self.state.appendToQueue(rq)
         self.state.executeOperations()
         print '\033[31m-release Responder\033[0m'
         return True

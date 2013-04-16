@@ -94,7 +94,6 @@ class PeerState(QtCore.QObject):
         self.lock.acquire()
         print 'execute (locked)'
         self.printQueue()
-        self.printStrokes()
 
         to_del = []
         for i, rq in enumerate(self.queue):
@@ -134,6 +133,7 @@ class PeerState(QtCore.QObject):
 
 
         self.printLog()
+        self.printStrokes()
         self.lock.release()
         print 'execute (unlock)'
 

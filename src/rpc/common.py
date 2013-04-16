@@ -1,4 +1,4 @@
-import copy
+impor copy
 from ui.stroke import Stroke
 from rpc.priority import Priority
 from rpc.vt import VT
@@ -99,12 +99,12 @@ class PeerState(QtCore.QObject):
         for i, rq in enumerate(self.queue):
             if i in to_del:
                 continue
-            to_del.append(i)
             #print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             #print '\tcmp is:', cmp
             logcopy = copy.deepcopy(self.log)
             if  cmp ==0 or cmp == -1:
+                to_del.append(i)
                 #print rq.vt,'<=',self.vt
                 if cmp==-1:
                     #print rq.vt,'<',self.vt
@@ -117,10 +117,10 @@ class PeerState(QtCore.QObject):
                             self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt, logcopy)
 
-            print 'before perform'
-            self.performOperation(rq.op)
-            self.log.append(rq)
-            self.vt[rq.sender] += 1
+                print 'before perform'
+                self.performOperation(rq.op)
+                self.log.append(rq)
+                self.vt[rq.sender] += 1
 
         to_del.sort()
         to_del.reverse()

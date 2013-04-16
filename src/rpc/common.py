@@ -253,7 +253,7 @@ class PeerState(QtCore.QObject):
                     pass
 
         
-    def transDEL(self):
+    def transDEL(self, ri, rj):
         print 'in trans DEL'
         oi = ri.op
         oj = rj.op
@@ -289,7 +289,7 @@ class PeerState(QtCore.QObject):
                 else:
                     pass
 
-    def transMOVE(self):
+    def transMOVE(self,ri,rj):
         print 'in trans MOVE'
         oi = ri.op
         oj = rj.op

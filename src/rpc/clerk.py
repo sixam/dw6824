@@ -84,5 +84,5 @@ class Clerk:
                 print 'looping'
                 print 'Sending rq:', rq
                 pass
-            time.sleep(1)
+            time.sleep(0.01)
 

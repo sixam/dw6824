@@ -116,7 +116,6 @@ class PeerState(QtCore.QObject):
                             self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt, logcopy)
 
-                print 'before perform'
                 self.performOperation(rq.op)
                 self.log.append(rq)
                 self.vt[rq.sender] += 1
@@ -171,7 +170,8 @@ class PeerState(QtCore.QObject):
 
     def mostRecent(self,vt, logcopy):
         #print '-----most-recent----'
-        for i in range(len(logcopy)-1,-1,-1):
+        #for i in range(len(logcopy)-1,-1,-1):
+        for i in range(0,len(logcopy)):
             if VT.cmp(logcopy[i].vt,vt) > 0:
                 #print '\033[32mbad',logcopy[i],'\033[0m'
                 pass

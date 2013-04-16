@@ -63,6 +63,8 @@ class PeerState(QtCore.QObject):
         rid = rq.request_id
 
         if rid in self.prqs:
+            self.lock.release()
+            print 'append (unlock)'
             return False
 
         self.prqs.append(rq.request_id);

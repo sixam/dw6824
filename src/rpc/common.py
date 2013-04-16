@@ -411,7 +411,7 @@ class Operation:
         new.stroke = copy.copy(self.stroke)
         new.type = copy.copy(self.type)
         new.stroke_id = copy.copy(self.stroke_id)
-        new.ops = copy.copy(self.pos)
+        new.pos = copy.copy(self.pos)
         new.opos = copy.copy(self.opos)
         return new
 

@@ -16,6 +16,7 @@ class Clerk:
     def addStroke(self,s):
         rq = self._genAdd(s)
         rq_send = copy.copy(rq)
+        print 'REQUESTS',rq, rq_send
         self.state.appendToQueue(rq)
         self.state.executeOperations()
         self._send(rq_send)

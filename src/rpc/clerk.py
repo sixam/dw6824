@@ -14,33 +14,22 @@ class Clerk:
 
         
     def addStroke(self,s):
-        # NOTE : this should be lock-secured
-        #st = Stroke(**s)
-
         rq = self._genAdd(s)
         self.state.appendToQueue(rq)
-
-        # broadcast
-        #print 'sending', rq
         self.state.executeOperations()
-
         self._send(rq)
-
 
     def deleteStroke(self,s_pos):
-        """ Be careful when copying the state'vt : pointers ... """
-        # NOTE : this should be lock-secured
         rq = self._genDel(s_pos)
         self.state.appendToQueue(rq)
-
-        # broadcast
-        #print 'rq.op', rq.op
-        #print 'rq.op.stroke', rq.op.stroke
-        #print 'sending', rq
         self.state.executeOperations()
-
         self._send(rq)
 
+    def moveStroke(self,s_pos,offset):
+        rq = self._genMove(s_pos, offset)
+        self.state.appendToQueue(rq)
+        self.state.executeOperations()
+        self._send(rq)
 
     def _genAdd(self, s):
         sp = self.state.getSnapshot()
@@ -70,21 +59,14 @@ class Clerk:
     def _genMove(self, s_pos, offset):
         sp = self.state.getSnapshot()
         s_id = sp.strokes[s_pos].id
-        nstroke = copy.copy(sp.strokes[s_pos]);
-        nstroke.offsetPosBy(offset)
-        op = Operation(type=OpType.MOV, stroke_id=s_id, pos=s_pos, 
-                stroke = nstroke)
+        op = Operation(type=OpType.MOVE, stroke_id=s_id, pos=s_pos,
+                stroke=sp.strokes[s_pos], offset=offset)
         p = Priority(op=op,state=sp)
         rq = Request(sender = sp.id, vt = sp.vt[:], op = op,
                 priority = p,
                 request_id = Utils.generateID())
 
         return rq
-
-
-
-    def moveStroke(self,s_pos,offset):
-        pass
 
     def _send(self,rq):
         for srv in self.state.peers:
@@ -102,5 +84,5 @@ class Clerk:
                 print 'looping'
                 print 'Sending rq:', rq
                 pass
-            time.sleep(1)
+            time.sleep(0.01)
 

@@ -22,8 +22,10 @@ class RPCresponder:
         """ Unmarshalls the request and add it to the queue"""
 
         rq = Request(**rqData)
+
         print 'Responder, rq:', rq
-        print 'type:', rq.op.type
-        self.state.appendToQueue(rq)
+        appended = self.state.appendToQueue(rq)
+        if not appended:
+            return True
         self.state.executeOperations()
         return True

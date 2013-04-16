@@ -9,34 +9,46 @@ from dp.src.rpc.responder import RPCresponder
 import xmlrpclib
 
 class Peer:
-    def __init__(self,ip,port,peer_id):
+    def __init__(self,ip,port,peer_id,build_ui = True):
         # Node state
+        self.id = peer_id
         self.state = PeerState(peer_id)
+        self.name = '{0}:{1}'.format(ip,port)
 
         # Init main UI
-        self.window = MainWindow(self.state)
-        self.window.show()
-        self.state.window = self.window
-
-        self.state.newStrokesSignal.connect(self.window.scribbleArea.strokesSignalHandler)
+        if build_ui:
+            self.window = MainWindow(self.state)
+            self.window.show()
+            self.window.raise_()
+            self.state.window = self.window
+            self.state.newStrokesSignal.connect(self.window.scribbleArea.strokesSignalHandler)
 
         # Handler for the RPC requests
         self.RPCresponder = RPCresponder(self.state)
 
         # Accept incoming connections in a background thread
         self.server = SimpleXMLRPCServer((ip,port))
+        self.server.allow_reuse_address=True
         self.server.register_introspection_functions()
         self.server.register_instance(self.RPCresponder)
         t = Thread(target = self._run)
         t.daemon = True
         t.start()
 
+    def __str__(self):
+        return 'peer {0} : {1}'.format(self.id,self.name)
+
     def _run(self):
         """ Accept incoming connection till exit  """
-        self.server.serve_forever()
+        try:
+            self.server.serve_forever()
+        finally:
+            self.server.server_close()
 
-    def test(self):
-        print "ok it tested right"
+    def __del__(self):
+        pass
+        #self.server.server_close()
+        #del self.server
 
     def addPeer(self,ip,port):
         """ Add a new peer """

@@ -29,13 +29,22 @@ class PeerState(QtCore.QObject):
         self.log     = []
         self.vt      = [0 for x in range(3)]
         self.strokes = []
+        self.prqs    = []
 
         self.window = None
 
         self.lock = Lock()
 
-    def getSnapshot(self):
+    def getPastRequests(self):
         self.lock.acquire()
+        cp = copy.deepcopy(self.prqs);
+        self.lock.release()
+        return cp
+
+    def getSnapshot(self):
+        print 'snapshot (lock)'
+        self.lock.acquire()
+        print 'snapshot (locked)'
         cp = PeerState(0);
         cp.id = self.id
         cp.queue = copy.deepcopy(self.queue)
@@ -43,17 +52,36 @@ class PeerState(QtCore.QObject):
         cp.vt = self.vt[:]
         cp.strokes = copy.deepcopy(self.strokes)
         self.lock.release()
+        print 'snapshot (unlock)'
         return cp
 
+
     def appendToQueue(self, rq):
+        print 'append (lock)'
         self.lock.acquire()
+        print 'append (locked)'
+        rid = rq.request_id
+
+        print 'appending', rid, 'seen:', self.prqs
+        if rid in self.prqs:
+            print 'already seen'
+            self.lock.release()
+            print 'append (unlock)'
+            return False
+
+        self.prqs.append(rq.request_id);
         self.queue.append(rq)
         self.lock.release()
+        print 'append (unlock)'
+        return True
 
     def getStrokes(self):
+        print 'get strokes (lock)'
         self.lock.acquire()
+        print 'get strokes (locked)'
         cp = copy.deepcopy(self.strokes)
         self.lock.release()
+        print 'get strokes (unlock)'
         return cp
 
     def executeOperations(self):
@@ -62,33 +90,34 @@ class PeerState(QtCore.QObject):
         #print '\033[32m--execute\033[0m'
 
         #print '\tcurrent vt:',self.vt
+        print 'execute (lock)'
         self.lock.acquire()
+        print 'execute (locked)'
         self.printQueue()
 
         to_del = []
         for i, rq in enumerate(self.queue):
             if i in to_del:
                 continue
+            to_del.append(i)
             #print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             #print '\tcmp is:', cmp
             logcopy = copy.deepcopy(self.log)
             if  cmp ==0 or cmp == -1:
                 #print rq.vt,'<=',self.vt
-                to_del.append(i)
                 if cmp==-1:
                     #print rq.vt,'<',self.vt
                     mr = self.mostRecent(rq.vt, logcopy)
                     #print '\tmr', mr
                     #print 'rq-op', rq.op
-                    loopy = 0
-                    while mr and rq.op.type != OpType.NoOp and loopy < 30:
+                    while mr and rq.op.type != OpType.NoOp:
+                        print 'looping mr'
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
-                            loopy += 1
                             self.transform(rq,mr)
                         mr = self.mostRecent(rq.vt, logcopy)
 
-
+            print 'before perform'
             self.performOperation(rq.op)
             self.log.append(rq)
             self.vt[rq.sender] += 1
@@ -97,13 +126,15 @@ class PeerState(QtCore.QObject):
         to_del.reverse()
 
         for i in to_del:
-           del self.queue[i] 
+            print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
+            del self.queue[i] 
            
-        #print '\033[31m--done\033[0m\n'
+        print '\033[31m--done\033[0m\n'
 
 
         self.printLog()
         self.lock.release()
+        print 'execute (unlock)'
 
         # Send signal to UI
         self.newStrokesSignal.emit()
@@ -113,8 +144,10 @@ class PeerState(QtCore.QObject):
         for rq in self.queue:
             if rq.op.type == OpType.ADD:
                 print '\033[32m',rq,'\033[0m'
-            else:
+            elif rq.op.type == OpType.DEL:
                 print '\033[31m',rq,'\033[0m'
+            else:
+                print '\033[33m',rq,'\033[0m'
         print '----------------------------------------------------------------------\n'
 
     def printLog(self):
@@ -122,11 +155,14 @@ class PeerState(QtCore.QObject):
         for rq in self.log:
             if rq.op.type == OpType.ADD:
                 print '\033[32m',rq,'\033[0m'
-            else:
+            elif rq.op.type == OpType.DEL:
                 print '\033[31m',rq,'\033[0m'
+            else:
+                print '\033[33m',rq,'\033[0m'
         print '----------------------------------------------------------------------\n'
 
     def mostRecent(self,vt, logcopy):
+        #print '-----most-recent----'
         for i in range(len(logcopy)-1,-1,-1):
             if VT.cmp(logcopy[i].vt,vt) > 0:
                 #print '\033[32mbad',logcopy[i],'\033[0m'
@@ -135,10 +171,12 @@ class PeerState(QtCore.QObject):
                 #print '\033[33mgood',logcopy[i],'\033[0m'
                 del logcopy[i]
                 return self.log[i]
+        #print '---------------------'
 
         return None
 
     def performOperation(self,op):
+        print 'start performing'
         if op.type == OpType.ADD:
             #print 'added', op.stroke
             self.strokes.insert(op.pos,op.stroke);
@@ -147,20 +185,42 @@ class PeerState(QtCore.QObject):
             print self.strokes
             del self.strokes[op.pos]
             print self.strokes
+        if op.type == OpType.MOVE:
+            print 'I am moving', op
+            self.strokes[op.pos].offsetPosBy(op.offset)
+            print self.strokes
+            
         self.window.scribbleArea.draw()
-        pass
+        print 'done performing'
 
     def transform(self,ri,rj):
         oi = ri.op
         oj = rj.op
+
+        print 'starting transform'
+
+        if oi.type == OpType.ADD:
+            self.transADD(ri,rj)
+        if oi.type == OpType.DEL:
+            self.transDEL(ri,rj)
+        if oi.type == OpType.MOVE:
+            self.transMOVE(ri,rj)
+
+        print '\033[32m--transformed\033[0m',ri,rj,'\n'
+
+    def transADD(self,ri,rj):
+
+        print 'in trans ADD'
+        oi = ri.op
+        oj = rj.op
+
         PosI = oi.pos
         PosJ = oj.pos
 
         pi = ri.priority
         pj = rj.priority
 
-
-        if oi.type == OpType.ADD and oj.type == OpType.ADD:
+        if oj.type == OpType.ADD:
             if PosI < PosJ:
                 pass
             elif PosI > PosJ:
@@ -174,22 +234,35 @@ class PeerState(QtCore.QObject):
                     else:
                         pass
 
-
-        if oi.type == OpType.ADD and oj.type == OpType.DEL:
+        if oj.type == OpType.DEL:
             if PosI < PosJ:
                 pass
             else:
                 oi.pos -= 1
-                
-            
+        if oj.type == OpType.MOVE:
+            # This will have to change if we want to insert. 
+            # Either move at p+1 or don't move if prioritu blah blah
+            pass
 
-        if oi.type == OpType.DEL and oj.type == OpType.ADD:
+        
+    def transDEL(self):
+        print 'in trans DEL'
+        oi = ri.op
+        oj = rj.op
+
+        PosI = oi.pos
+        PosJ = oj.pos
+
+        pi = ri.priority
+        pj = rj.priority
+
+        if oj.type == OpType.ADD:
             if PosI < PosJ:
                 pass
             else:
                 oi.pos += 1
 
-        if oi.type == OpType.DEL and oj.type == OpType.DEL:
+        if oj.type == OpType.DEL:
             if PosI < PosJ:
                 pass
             elif PosI > PosJ:
@@ -197,7 +270,52 @@ class PeerState(QtCore.QObject):
             else:
                 oi.type = OpType.NoOp
 
-        print '\033[32m--transformed\033[0m',ri,rj,'\n'
+        if oj.type == OpType.MOVE:
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                pass
+            else: # PosI == PosJ
+                if pi < pj:
+                    oi.type = OpType.NoOp
+                else:
+                    pass
+
+    def transMOVE(self):
+        print 'in trans MOVE'
+        oi = ri.op
+        oj = rj.op
+
+        PosI = oi.pos
+        PosJ = oj.pos
+
+        pi = ri.priority
+        pj = rj.priority
+
+        if oj.type == OpType.ADD:
+            pass # they always commute for our add == append
+
+        if oj.type == OpType.DEL:
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                oi.pos -= 1
+            else: # PosI == PosJ
+                if pi < pj:
+                    oi.type = OpType.NoOp
+                else:
+                    pass
+
+        if oj.type == OpType.MOVE:
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                pass
+            else: # PosI == PosJ
+                if pi < pj:
+                    oi.type = OpType.NoOp
+                else:
+                    pass
 
         
 class Request:
@@ -228,8 +346,9 @@ class Request:
         new.request_id = copy.copy(self.request_id)
         return new
        
+
 class Operation:
-    def __init__(self,type=None,stroke_id='none',stroke=None,pos=-1,opos=-1):
+    def __init__(self,type=None,stroke_id='none',stroke=None,pos=-1,opos=-1,offset=[0,0]):
         if isinstance(stroke,dict):
             self.stroke = Stroke(**stroke)
         else:
@@ -238,14 +357,15 @@ class Operation:
         self.type = type
         self.stroke_id = stroke_id
         self.pos = pos
+        self.offset = offset
         if opos == -1:
             self.opos = pos
         else: # unmarshalling
             self.opos = opos
 
     def __str__(self):
-        return "{{ {0} {1} at {2}({3})}}".format(
-                self.type,self.stroke_id[0:5],self.pos,self.opos)
+        return "{{ {0} {1} at {2}({3})}} - {4}".format(
+                self.type,self.stroke_id[0:5],self.pos,self.opos,self.offset)
 
     def __copy__(self):
         new = Operation()
@@ -259,5 +379,5 @@ class Operation:
 class OpType:
     ADD = 'ADD'
     DEL = 'DEL'
-    MOV = 'MOV'
+    MOVE = 'MOV'
     NoOp = 'NoOp'

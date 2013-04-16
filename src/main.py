@@ -14,6 +14,7 @@ if __name__ == '__main__':
     n = datetime.datetime.now().__str__()
     config = Utils.getConfig()
     local_id = sys.argv[1]
+
     #sys.stdout = open(Utils.getLogPath('mainlog',local_id),'a')
     #sys.stderr = open(Utils.getLogPath('errorlog',local_id),'a')
 
@@ -26,7 +27,8 @@ if __name__ == '__main__':
     ip = config.get(local_id,'ip')
     port = int(config.get(local_id,'port'))
     id = int(config.get(local_id,'id'));
-    peer = Peer(ip,port, id)
+    build_ui = True
+    peer = Peer(ip,port, id,build_ui)
 
     if len(sys.argv) >= 3:
         for i in range(2,len(sys.argv)):

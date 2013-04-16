@@ -31,6 +31,13 @@ class Stroke:
             path.lineTo(QtCore.QPointF(*pt));
         return path
 
+    def getCenter(self):
+        x = 0
+        y = 0
+        n = len(self.path)
+        if n > 0:
+            for pt in self.path:
+
     def offsetPosBy(self,offset):
         if isinstance(offset,QtCore.QPointF):
             x = offset.x()

@@ -1,4 +1,4 @@
-impor copy
+import copy
 from ui.stroke import Stroke
 from rpc.priority import Priority
 from rpc.vt import VT

@@ -165,7 +165,7 @@ class PeerState(QtCore.QObject):
     def printStrokes(self):
         print '\n-------------------- STROKES ---------------------------------------------'
         for s in self.strokes:
-            print '[', s.id[0:5], ']'
+            print s
         print '-------------------- STROKES ---------------------------------------------'
 
     def mostRecent(self,vt, logcopy):

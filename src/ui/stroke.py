@@ -13,8 +13,10 @@ class Stroke:
             self.id    = id
 
     def __str__(self):
-        return "Stroke: {3} - {0}pts - width: {1}, color: {2}".format(len(self.path), 
-                self.width, self.color, self.id[0:5])
+        c = self.getBarycenter()
+        return "Stroke : {0} - [{1},{2}]".format(self.id[0:5],c[0],c[1])
+        #return "Stroke: {3} - {0}pts - width: {1}, color: {2}".format(len(self.path), 
+                #self.width, self.color, self.id[0:5])
 
     def __copy__(self):
         new = Stroke()
@@ -31,12 +33,17 @@ class Stroke:
             path.lineTo(QtCore.QPointF(*pt));
         return path
 
-    def getCenter(self):
+    def getBarycenter(self):
         x = 0
         y = 0
         n = len(self.path)
         if n > 0:
             for pt in self.path:
+                x += pt[0]
+                y += pt[1]
+            x /= n
+            y /= n
+        return [x,y]
 
     def offsetPosBy(self,offset):
         if isinstance(offset,QtCore.QPointF):

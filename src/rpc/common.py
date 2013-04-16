@@ -187,7 +187,8 @@ class PeerState(QtCore.QObject):
         print 'start performing'
         if op.type == OpType.ADD:
             print 'add stroke at',op.pos, 'strokes length', len(self.strokes)
-            for i in range(len(self.strokes),op.pos+1):
+            m = len(self.strokes)
+            for i in range(m, op.pos+1):
                 print '\t adding None'
                 self.strokes.insert(i,None)
             if self.strokes[op.pos]:

@@ -25,7 +25,7 @@ class RPCresponder:
 
         print 'Responder, rq:', rq
         appended = self.state.appendToQueue(rq)
-        if !appended:
+        if not appended:
             return True
         self.state.executeOperations()
         return True

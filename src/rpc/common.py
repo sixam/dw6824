@@ -94,6 +94,7 @@ class PeerState(QtCore.QObject):
         self.lock.acquire()
         print 'execute (locked)'
         self.printQueue()
+        self.printStrokes()
 
         to_del = []
         for i, rq in enumerate(self.queue):
@@ -160,6 +161,12 @@ class PeerState(QtCore.QObject):
             else:
                 print '\033[33m',rq,'\033[0m'
         print '----------------------------------------------------------------------\n'
+
+    def printStrokes(self):
+        print '\n-------------------- STROKES ---------------------------------------------'
+        for s in self.strokes:
+            print '[', s.id[0:5], ']'
+        print '-------------------- STROKES ---------------------------------------------'
 
     def mostRecent(self,vt, logcopy):
         #print '-----most-recent----'

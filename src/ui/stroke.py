@@ -14,7 +14,7 @@ class Stroke:
 
     def __str__(self):
         c = self.getBarycenter()
-        return "Stroke : %s - [%03.02f,%03.02f] - c: {0}".format(self.color) % (self.id[0:5],c[0],c[1])
+        return "Stroke : %s - [%01.02f,%01.02f] - c: {0}".format(self.color) % (self.id[0:5],c[0]/1024,c[1]/768)
         #return "Stroke: {3} - {0}pts - width: {1}, color: {2}".format(len(self.path), 
                 #self.width, self.color, self.id[0:5])
 

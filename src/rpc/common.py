@@ -186,9 +186,23 @@ class PeerState(QtCore.QObject):
     def performOperation(self,op):
         print 'start performing'
         if op.type == OpType.ADD:
-            for i in range(len(self.strokes),op.pos):
+            print 'add stroke at ',op.pos, 'queue length'
+            for i in range(len(self.strokes),op.pos+1):
+                print '\t adding None'
                 self.strokes.insert(i,None)
-            self.strokes.insert(op.pos,op.stroke);
+            if self.strokes[op.pos]:
+                print '\t inserting'
+                self.strokes.insert(op.pos,op.stroke)
+            else: # none: replace
+                print '\t replacing a none'
+                self.strokes[op.pos]=op.stroke
+            print 'strokes after perf:'
+            for s in self.strokes:
+                if s:
+                    print '\t',s
+                else:
+                    print '\t',none
+            print '\n'
         if op.type == OpType.DEL:
             print self.strokes
             del self.strokes[op.pos]

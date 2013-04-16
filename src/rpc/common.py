@@ -170,8 +170,8 @@ class PeerState(QtCore.QObject):
 
     def mostRecent(self,vt, logcopy):
         #print '-----most-recent----'
-        #for i in range(len(logcopy)-1,-1,-1):
-        for i in range(0,len(logcopy)):
+        for i in range(len(logcopy)-1,-1,-1):
+        #for i in range(0,len(logcopy)):
             if VT.cmp(logcopy[i].vt,vt) > 0:
                 #print '\033[32mbad',logcopy[i],'\033[0m'
                 pass
@@ -413,7 +413,7 @@ class Operation:
         new.stroke_id = copy.copy(self.stroke_id)
         new.pos = copy.copy(self.pos)
         new.opos = copy.copy(self.opos)
-        new,offset = self.offset
+        new.offset = self.offset
         return new
 
 class OpType:

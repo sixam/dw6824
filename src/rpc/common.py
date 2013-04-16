@@ -99,13 +99,13 @@ class PeerState(QtCore.QObject):
         for i, rq in enumerate(self.queue):
             if i in to_del:
                 continue
+            to_del.append(i)
             #print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             #print '\tcmp is:', cmp
             logcopy = copy.deepcopy(self.log)
             if  cmp ==0 or cmp == -1:
                 #print rq.vt,'<=',self.vt
-                to_del.append(i)
                 if cmp==-1:
                     #print rq.vt,'<',self.vt
                     mr = self.mostRecent(rq.vt, logcopy)
@@ -126,7 +126,8 @@ class PeerState(QtCore.QObject):
         to_del.reverse()
 
         for i in to_del:
-           del self.queue[i] 
+            print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
+            del self.queue[i] 
            
         print '\033[31m--done\033[0m\n'
 

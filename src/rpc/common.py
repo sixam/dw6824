@@ -242,7 +242,15 @@ class PeerState(QtCore.QObject):
         if oj.type == OpType.MOVE:
             # This will have to change if we want to insert. 
             # Either move at p+1 or don't move if prioritu blah blah
-            pass
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                pass
+            else: # PosI == PosJ
+                if pi > pj:
+                    oi.pos += 1 # This is a bit weird, just like the one in add/add
+                else:
+                    pass
 
         
     def transDEL(self):
@@ -293,7 +301,15 @@ class PeerState(QtCore.QObject):
         pj = rj.priority
 
         if oj.type == OpType.ADD:
-            pass # they always commute for our add == append
+            if PosI < PosJ:
+                pass
+            elif PosI > PosJ:
+                oi.pos += 1
+            else:
+                if pi > pj:
+                    oi.pos += 1 # This is strange
+                else:
+                    pass
 
         if oj.type == OpType.DEL:
             if PosI < PosJ:

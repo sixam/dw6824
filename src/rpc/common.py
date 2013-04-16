@@ -203,6 +203,7 @@ class PeerState(QtCore.QObject):
                 else:
                     print '\t',none
             print '\n'
+
         if op.type == OpType.DEL:
             print self.strokes
             del self.strokes[op.pos]

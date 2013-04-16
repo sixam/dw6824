@@ -62,7 +62,6 @@ class PeerState(QtCore.QObject):
         print 'append (locked)'
         rid = rq.request_id
 
-        print 'appending', rid, 'seen:', self.prqs
         if rid in self.prqs:
             print 'already seen'
             self.lock.release()
@@ -132,6 +131,7 @@ class PeerState(QtCore.QObject):
         print '\033[31m--done\033[0m\n'
 
 
+        self.printQueue()
         self.printLog()
         self.printStrokes()
         self.lock.release()
@@ -165,8 +165,8 @@ class PeerState(QtCore.QObject):
     def printStrokes(self):
         print '\n-------------------- STROKES ---------------------------------------------'
         print len(self.strokes), 'strokes'
-        for s in self.strokes:
-            print s
+        for i,s in enumerate(self.strokes):
+            print i,'-',s
         print '--------------------------------------------------------------------------'
 
     def mostRecent(self,vt, logcopy):

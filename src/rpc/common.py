@@ -126,7 +126,6 @@ class PeerState(QtCore.QObject):
         to_del.reverse()
 
         for i in to_del:
-        self.printStrokes()
             print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
             del self.queue[i] 
            
@@ -187,7 +186,7 @@ class PeerState(QtCore.QObject):
     def performOperation(self,op):
         print 'start performing'
         if op.type == OpType.ADD:
-            for i in range(len(self.strokes),op.pos) 
+            for i in range(len(self.strokes),op.pos):
                 self.strokes.insert(i,None)
             self.strokes.insert(op.pos,op.stroke);
         if op.type == OpType.DEL:

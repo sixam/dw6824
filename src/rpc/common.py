@@ -60,9 +60,16 @@ class PeerState(QtCore.QObject):
         print 'append (lock)'
         self.lock.acquire()
         print 'append (locked)'
+        rid = rq.request_id
+
+        if rid in self.prqs:
+            return False
+
+        self.prqs.append(rq.request_id);
         self.queue.append(rq)
         self.lock.release()
         print 'append (unlock)'
+        return True
 
     def getStrokes(self):
         print 'get strokes (lock)'
@@ -88,7 +95,6 @@ class PeerState(QtCore.QObject):
         for i, rq in enumerate(self.queue):
             if i in to_del:
                 continue
-            self.prqs.append(rq.request_id);
             #print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             #print '\tcmp is:', cmp

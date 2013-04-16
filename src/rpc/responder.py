@@ -23,14 +23,9 @@ class RPCresponder:
 
         rq = Request(**rqData)
 
-        rid = rq.request_id
-        prq = self.state.getPastRequests()
-
-        if rid in prq:
-            print 'duplicate s**t'
-            return True
-
         print 'Responder, rq:', rq
-        self.state.appendToQueue(rq)
+        appended = self.state.appendToQueue(rq)
+        if !appended:
+            return True
         self.state.executeOperations()
         return True

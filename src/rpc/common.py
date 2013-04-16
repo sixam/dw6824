@@ -209,7 +209,7 @@ class PeerState(QtCore.QObject):
             print self.strokes
         if op.type == OpType.MOVE:
             print 'I am moving', op
-            self.strokes[op.pos].offsetPosBy(op.offset)
+            self.strokes[op.pos].moveTo(op.offset)
             print self.strokes
             
         self.window.scribbleArea.draw()

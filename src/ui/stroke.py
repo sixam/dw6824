@@ -45,6 +45,11 @@ class Stroke:
             y /= n
         return [x,y]
 
+    def moveTo(self,newpos):
+        c = self.getBarycenter()
+        offset = [newpos[0]-c[0],newpos[1]-c[1]]
+        self.offsetPosBy(offset)
+
     def offsetPosBy(self,offset):
         if isinstance(offset,QtCore.QPointF):
             x = offset.x()

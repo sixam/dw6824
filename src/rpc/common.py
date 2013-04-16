@@ -413,6 +413,7 @@ class Operation:
         new.stroke_id = copy.copy(self.stroke_id)
         new.pos = copy.copy(self.pos)
         new.opos = copy.copy(self.opos)
+        new,offset = self.offset
         return new
 
 class OpType:

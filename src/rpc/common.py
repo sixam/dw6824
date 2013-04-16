@@ -141,6 +141,7 @@ class PeerState(QtCore.QObject):
 
     def printQueue(self):
         print '\n-------------------- QUEUE -------------------------------------------'
+        print len(self.queue), 'requests'
         for rq in self.queue:
             if rq.op.type == OpType.ADD:
                 print '\033[32m',rq,'\033[0m'
@@ -152,6 +153,7 @@ class PeerState(QtCore.QObject):
 
     def printLog(self):
         print '\n-------------------- LOG ---------------------------------------------'
+        print len(self.log), 'requests'
         for rq in self.log:
             if rq.op.type == OpType.ADD:
                 print '\033[32m',rq,'\033[0m'

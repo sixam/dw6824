@@ -126,6 +126,7 @@ class PeerState(QtCore.QObject):
         to_del.reverse()
 
         for i in to_del:
+        self.printStrokes()
             print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
             del self.queue[i] 
            
@@ -164,9 +165,10 @@ class PeerState(QtCore.QObject):
 
     def printStrokes(self):
         print '\n-------------------- STROKES ---------------------------------------------'
+        print len(self.strokes), 'strokes'
         for s in self.strokes:
             print s
-        print '-------------------- STROKES ---------------------------------------------'
+        print '--------------------------------------------------------------------------'
 
     def mostRecent(self,vt, logcopy):
         #print '-----most-recent----'
@@ -185,10 +187,10 @@ class PeerState(QtCore.QObject):
     def performOperation(self,op):
         print 'start performing'
         if op.type == OpType.ADD:
-            #print 'added', op.stroke
+            for i in range(len(self.strokes),op.pos) 
+                self.strokes.insert(i,None)
             self.strokes.insert(op.pos,op.stroke);
         if op.type == OpType.DEL:
-            #print 'deleted', op.pos
             print self.strokes
             del self.strokes[op.pos]
             print self.strokes

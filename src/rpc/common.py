@@ -172,17 +172,28 @@ class PeerState(QtCore.QObject):
 
     def mostRecent(self,vt, logcopy):
         #print '-----most-recent----'
+        found = False
+        to_del = -1
         for i in range(len(logcopy)-1,-1,-1):
             if VT.cmp(logcopy[i].vt,vt) > 0:
                 #print '\033[32mbad',logcopy[i],'\033[0m'
                 pass
             if VT.cmp(logcopy[i].vt,vt) <= 0:
                 #print '\033[33mgood',logcopy[i],'\033[0m'
-                del logcopy[i]
-                return logcopy[i]
+                tofind = logcopy[i].request_id
+                to_del = i
+                Found = True
+                break
         #print '---------------------'
-
-        return None
+        if Found == True:
+            for rq in self.log:
+                if rq.request_id == tofind:
+                    pointer = rq
+                    break
+            del logcopy[to_del]
+            return pointer
+        else:
+            return None
 
     def performOperation(self,op):
         print 'start performing'

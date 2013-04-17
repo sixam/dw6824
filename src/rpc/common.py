@@ -55,13 +55,13 @@ class PeerState(QtCore.QObject):
                 continue
 
             print '\tunqueue vt:', rq.vt
-            cmp = VT.cmp(rq.vt,self.vt)
+            cmp = VT.cmp(rq.vt, self.vt)
 
-            if  cmp ==0 or cmp == -1:
+            if  cmp == 0 or cmp == -1:
                 to_del.append(i)
                 if cmp==-1:
                     for l in self.log:
-                        if VT.cmp(rq.vt, l.vt) == 2 and rq.vt[l.sender] <= l.vt[l.sender]:
+                        if (VT.cmp(rq.vt, l.vt) == 2 or VT.cmp(rq.vt, l.vt) == 0) and rq.vt[l.sender] <= l.vt[l.sender]:
                             self.transform(rq, l)
                 self.performOperation(rq.op)
                 self.log.append(rq)

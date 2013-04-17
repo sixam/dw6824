@@ -68,7 +68,7 @@ class PeerState(QtCore.QObject):
                             mr = None
                         if not mr or rq.op.type == OpType.NoOp:
                             break
-                        mr_i += 1
+                        mr_i -= 1
                         print 'MR is ',mr_i, mr
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             self.transform(rq,mr)

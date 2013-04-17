@@ -254,8 +254,8 @@ class PeerState(QtCore.QObject):
         oi = ri.op
         oj = rj.op
 
-        PosI = oi.opos
-        PosJ = oj.opos
+        PosI = oi.pos
+        PosJ = oj.pos
 
         pi = ri.priority
         pj = rj.priority

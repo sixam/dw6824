@@ -63,7 +63,7 @@ class PeerState(QtCore.QObject):
                     mr_i = self.mostRecent(rq.vt)
                     while True:
                         if mr_i >= 0:
-                            mr = self.log[i]
+                            mr = self.log[mr_i]
                         else:
                             mr = None
                         if not mr or rq.op.type == OpType.NoOp:

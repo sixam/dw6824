@@ -53,12 +53,12 @@ class PeerState(QtCore.QObject):
         for i, rq in enumerate(self.queue):
             if i in to_del:
                 continue
-            #print '\tunqueue vt:', rq.vt
+
+            print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
-            #print '\tcmp is:', cmp
+
             if  cmp ==0 or cmp == -1:
                 to_del.append(i)
-                #print rq.vt,'<=',self.vt
                 if cmp==-1:
                     mr_i = self.mostRecent(rq.vt)
                     while True:

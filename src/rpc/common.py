@@ -35,6 +35,159 @@ class PeerState(QtCore.QObject):
 
         self.lock = Lock()
 
+
+    def executeOperations(self):
+        #NOTE: should be locking
+
+        #print '\033[32m--execute\033[0m'
+
+        #print '\tcurrent vt:',self.vt
+        print 'execute (lock)'
+        self.lock.acquire()
+        print 'execute (locked)'
+        self.printQueue()
+
+        to_del = []
+        for i, rq in enumerate(self.queue):
+            if i in to_del:
+                continue
+            #print '\tunqueue vt:', rq.vt
+            cmp = VT.cmp(rq.vt,self.vt)
+            #print '\tcmp is:', cmp
+            logcopy = copy.deepcopy(self.log)
+            if  cmp ==0 or cmp == -1:
+                to_del.append(i)
+                #print rq.vt,'<=',self.vt
+                if cmp==-1:
+                    #print rq.vt,'<',self.vt
+                    mr_i = self.mostRecent(rq.vt)
+                    if mr_i >= 0:
+                        mr = self.log[i]
+                    else:
+                        mr = None
+                    print '\tmr', mr
+                    #print 'rq-op', rq.op
+                    while mr and rq.op.type != OpType.NoOp:
+                        print 'looping mr'
+                        if rq.vt[mr.sender] <= mr.vt[mr.sender]:
+                            self.transform(rq,mr)
+                        #mr = self.mostRecent(rq.vt, logcopy)
+                        mr_i -= 1
+                        if mr_i >= 0:
+                            mr = self.log[i]
+                        else:
+                            mr = None
+
+                self.performOperation(rq.op)
+                self.log.append(rq)
+                self.vt[rq.sender] += 1
+
+        to_del.sort()
+        to_del.reverse()
+
+        for i in to_del:
+            print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
+            del self.queue[i] 
+           
+        print '\033[31m--done\033[0m\n'
+
+
+        self.printQueue()
+        self.printLog()
+        self.printStrokes()
+        self.lock.release()
+        print 'execute (unlock)'
+
+        # Send signal to UI
+        self.newStrokesSignal.emit()
+
+
+
+    def printQueue(self):
+        print '\n-------------------- QUEUE -------------------------------------------'
+        print len(self.queue), 'requests'
+        for rq in self.queue:
+            if rq.op.type == OpType.ADD:
+                print '\033[32m',rq,'\033[0m'
+            elif rq.op.type == OpType.DEL:
+                print '\033[31m',rq,'\033[0m'
+            else:
+                print '\033[33m',rq,'\033[0m'
+        print '----------------------------------------------------------------------\n'
+
+    def printLog(self):
+        print '\n-------------------- LOG ---------------------------------------------'
+        print len(self.log), 'requests'
+        for rq in self.log:
+            if rq.op.type == OpType.ADD:
+                print '\033[32m',rq,'\033[0m'
+            elif rq.op.type == OpType.DEL:
+                print '\033[31m',rq,'\033[0m'
+            else:
+                print '\033[33m',rq,'\033[0m'
+        print '----------------------------------------------------------------------\n'
+
+    def printStrokes(self):
+        print '\n-------------------- STROKES ---------------------------------------------'
+        print len(self.strokes), 'strokes'
+        for i,s in enumerate(self.strokes):
+            print i,'-',s
+        print '--------------------------------------------------------------------------'
+
+
+    def nextLog(self, logcopy):
+        print 'NEXTLOG'
+        if not logcopy:
+            return None
+        tofind = logcopy.pop()
+        for rq in self.log:
+            if rq.request_id == tofind.request_id:
+                return rq
+        return None
+
+    def mostRecent(self,vt):
+        print '-----most-recent----'
+        for i in range(len(self.log)-1,-1,-1):
+            if VT.cmp(self.log[i].vt,vt) <= 0:
+                print '\033[33mgood',self.log[i],'\033[0m'
+                return i
+        return -1
+        print '---------------------'
+
+    def performOperation(self,op):
+        print 'start performing'
+        if op.type == OpType.ADD:
+            print 'add stroke at',op.pos, 'strokes length', len(self.strokes)
+            m = len(self.strokes)
+            for i in range(m, op.pos+1):
+                print '\t adding None'
+                self.strokes.insert(i,None)
+            if self.strokes[op.pos]:
+                print '\t inserting'
+                self.strokes.insert(op.pos,op.stroke)
+            else: # none: replace
+                print '\t replacing a none'
+                self.strokes[op.pos]=op.stroke
+            print 'strokes after perf:'
+            for s in self.strokes:
+                if s:
+                    print '\t',s
+                else:
+                    print '\t',none
+            print '\n'
+
+        if op.type == OpType.DEL:
+            print self.strokes
+            del self.strokes[op.pos]
+            print self.strokes
+        if op.type == OpType.MOVE:
+            print 'I am moving', op
+            self.strokes[op.pos].moveTo(op.offset)
+            print self.strokes
+            
+        self.window.scribbleArea.draw()
+        print 'done performing'
+
     def getPastRequests(self):
         self.lock.acquire()
         cp = copy.deepcopy(self.prqs);
@@ -82,181 +235,6 @@ class PeerState(QtCore.QObject):
         self.lock.release()
         print 'get strokes (unlock)'
         return cp
-
-    def executeOperations(self):
-        #NOTE: should be locking
-
-        #print '\033[32m--execute\033[0m'
-
-        #print '\tcurrent vt:',self.vt
-        print 'execute (lock)'
-        self.lock.acquire()
-        print 'execute (locked)'
-        self.printQueue()
-
-        to_del = []
-        for i, rq in enumerate(self.queue):
-            if i in to_del:
-                continue
-            #print '\tunqueue vt:', rq.vt
-            cmp = VT.cmp(rq.vt,self.vt)
-            #print '\tcmp is:', cmp
-            logcopy = copy.deepcopy(self.log)
-            if  cmp ==0 or cmp == -1:
-                to_del.append(i)
-                #print rq.vt,'<=',self.vt
-                if cmp==-1:
-                    #print rq.vt,'<',self.vt
-                    mr = self.mostRecent(rq.vt, logcopy)
-                    #print '\tmr', mr
-                    #print 'rq-op', rq.op
-                    while mr and rq.op.type != OpType.NoOp:
-                        print 'looping mr'
-                        if rq.vt[mr.sender] <= mr.vt[mr.sender]:
-                            self.transform(rq,mr)
-                        #mr = self.mostRecent(rq.vt, logcopy)
-                        mr = self.nextLog(logcopy)
-                        print 'END NEXTLOG'
-
-                self.performOperation(rq.op)
-                self.log.append(rq)
-                self.vt[rq.sender] += 1
-
-        to_del.sort()
-        to_del.reverse()
-
-        for i in to_del:
-            print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
-            del self.queue[i] 
-           
-        print '\033[31m--done\033[0m\n'
-
-
-        self.printQueue()
-        self.printLog()
-        self.printStrokes()
-        self.lock.release()
-        print 'execute (unlock)'
-
-        # Send signal to UI
-        self.newStrokesSignal.emit()
-
-    def nextLog(self, logcopy):
-        print 'NEXTLOG'
-        if not logcopy:
-            return None
-        tofind = logcopy.pop()
-        for rq in self.log:
-            if rq.request_id == tofind.request_id:
-                return rq
-        return None
-
-
-    def printQueue(self):
-        print '\n-------------------- QUEUE -------------------------------------------'
-        print len(self.queue), 'requests'
-        for rq in self.queue:
-            if rq.op.type == OpType.ADD:
-                print '\033[32m',rq,'\033[0m'
-            elif rq.op.type == OpType.DEL:
-                print '\033[31m',rq,'\033[0m'
-            else:
-                print '\033[33m',rq,'\033[0m'
-        print '----------------------------------------------------------------------\n'
-
-    def printLog(self):
-        print '\n-------------------- LOG ---------------------------------------------'
-        print len(self.log), 'requests'
-        for rq in self.log:
-            if rq.op.type == OpType.ADD:
-                print '\033[32m',rq,'\033[0m'
-            elif rq.op.type == OpType.DEL:
-                print '\033[31m',rq,'\033[0m'
-            else:
-                print '\033[33m',rq,'\033[0m'
-        print '----------------------------------------------------------------------\n'
-
-    def printStrokes(self):
-        print '\n-------------------- STROKES ---------------------------------------------'
-        print len(self.strokes), 'strokes'
-        for i,s in enumerate(self.strokes):
-            print i,'-',s
-        print '--------------------------------------------------------------------------'
-
-
-    def mostRecent(self,vt, logcopy):
-        print '-----most-recent----'
-        found = False
-        to_del = -1
-        for i in range(len(logcopy)-1,-1,-1):
-            if VT.cmp(logcopy[i].vt,vt) > 0:
-                print '\033[32mbad',logcopy[i],'\033[0m'
-                pass
-            if VT.cmp(logcopy[i].vt,vt) <= 0:
-                print '\033[33mgood',logcopy[i],'\033[0m'
-                del logcopy[i]
-                return self.log[i]
-        return None
-        print '---------------------'
-
-#    def mostRecent(self,vt, logcopy):
-#        print '-----most-recent----'
-#        found = False
-#        to_del = -1
-#        for i in range(len(logcopy)-1,-1,-1):
-#            if VT.cmp(logcopy[i].vt,vt) > 0:
-#                print '\033[32mbad',logcopy[i],'\033[0m'
-#                pass
-#            if VT.cmp(logcopy[i].vt,vt) <= 0:
-#                print '\033[33mgood',logcopy[i],'\033[0m'
-#                tofind = logcopy[i].request_id
-#                to_del = i
-#                Found = True
-#                break
-#        print '---------------------'
-#        if Found == True:
-#            for rq in self.log:
-#                if rq.request_id == tofind:
-#                    pointer = rq
-#                    break
-#            del logcopy[to_del]
-#            return pointer
-#        else:
-#            return None
-
-    def performOperation(self,op):
-        print 'start performing'
-        if op.type == OpType.ADD:
-            print 'add stroke at',op.pos, 'strokes length', len(self.strokes)
-            m = len(self.strokes)
-            for i in range(m, op.pos+1):
-                print '\t adding None'
-                self.strokes.insert(i,None)
-            if self.strokes[op.pos]:
-                print '\t inserting'
-                self.strokes.insert(op.pos,op.stroke)
-            else: # none: replace
-                print '\t replacing a none'
-                self.strokes[op.pos]=op.stroke
-            print 'strokes after perf:'
-            for s in self.strokes:
-                if s:
-                    print '\t',s
-                else:
-                    print '\t',none
-            print '\n'
-
-        if op.type == OpType.DEL:
-            print self.strokes
-            del self.strokes[op.pos]
-            print self.strokes
-        if op.type == OpType.MOVE:
-            print 'I am moving', op
-            self.strokes[op.pos].moveTo(op.offset)
-            print self.strokes
-            
-        self.window.scribbleArea.draw()
-        print 'done performing'
 
     def transform(self,ri,rj):
         oi = ri.op

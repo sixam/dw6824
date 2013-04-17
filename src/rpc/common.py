@@ -229,7 +229,7 @@ class PeerState(QtCore.QObject):
         self.window.scribbleArea.draw()
         print 'done performing'
 
-    def transform(self,ri,rj):
+    def transform(self,rj,ri):
         oi = ri.op
         oj = rj.op
 

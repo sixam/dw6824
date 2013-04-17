@@ -56,19 +56,19 @@ class PeerState(QtCore.QObject):
             #print '\tunqueue vt:', rq.vt
             cmp = VT.cmp(rq.vt,self.vt)
             #print '\tcmp is:', cmp
-            logcopy = copy.deepcopy(self.log)
             if  cmp ==0 or cmp == -1:
                 to_del.append(i)
                 #print rq.vt,'<=',self.vt
                 if cmp==-1:
+                    mr_i = self.mostRecent(rq.vt)
                     while True:
-                        mr_i = self.mostRecent(rq.vt)
                         if mr_i >= 0:
                             mr = self.log[i]
                         else:
                             mr = None
                         if not mr or rq.op.type == OpType.NoOp:
                             break
+                        mr_i -= 1
                         print 'MR is ', mr
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             self.transform(rq,mr)

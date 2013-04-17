@@ -61,24 +61,17 @@ class PeerState(QtCore.QObject):
                 to_del.append(i)
                 #print rq.vt,'<=',self.vt
                 if cmp==-1:
-                    #print rq.vt,'<',self.vt
-                    mr_i = self.mostRecent(rq.vt)
-                    if mr_i >= 0:
-                        mr = self.log[i]
-                    else:
-                        mr = None
-                    print '\tmr', mr
-                    #print 'rq-op', rq.op
-                    while mr and rq.op.type != OpType.NoOp:
-                        print 'looping mr'
-                        if rq.vt[mr.sender] <= mr.vt[mr.sender]:
-                            self.transform(rq,mr)
-                        #mr = self.mostRecent(rq.vt, logcopy)
-                        mr_i -= 1
+                    while True:
+                        mr_i = self.mostRecent(rq.vt)
                         if mr_i >= 0:
                             mr = self.log[i]
                         else:
                             mr = None
+                        print mr
+                        if rq.vt[mr.sender] <= mr.vt[mr.sender]:
+                            self.transform(rq,mr)
+                        if not mr or rq.op.type == OpType.NoOp:
+                            break
 
                 self.performOperation(rq.op)
                 self.log.append(rq)

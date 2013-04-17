@@ -68,15 +68,10 @@ class PeerState(QtCore.QObject):
                             mr = None
                         if not mr or rq.op.type == OpType.NoOp:
                             break
-
+                        mr_i -= 1
+                        print 'MR is ',mr_i, mr
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
-                            print 'MR is ',mr_i, mr
                             self.transform(rq,mr)
-
-                        while mr_i >=0:
-                            mr_i -= 1
-                            if VT.cmp(self.log[mr_i].vt,rq.vt) <= 0:
-                                break
 
                 self.performOperation(rq.op)
                 self.log.append(rq)
@@ -259,8 +254,8 @@ class PeerState(QtCore.QObject):
         oi = ri.op
         oj = rj.op
 
-        PosI = oi.pos
-        PosJ = oj.pos
+        PosI = oi.opos
+        PosJ = oj.opos
 
         pi = ri.priority
         pj = rj.priority

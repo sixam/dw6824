@@ -67,7 +67,7 @@ class PeerState(QtCore.QObject):
                             mr = self.log[i]
                         else:
                             mr = None
-                        print mr
+                        print 'MR is ', mr
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             self.transform(rq,mr)
                         if not mr or rq.op.type == OpType.NoOp:

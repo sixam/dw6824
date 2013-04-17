@@ -103,25 +103,25 @@ class PeerState(QtCore.QObject):
     def printQueue(self):
         print '\n-------------------- QUEUE -------------------------------------------'
         print len(self.queue), 'requests'
-        for rq in self.queue:
+        for i,rq in enumerate(self.queue):
             if rq.op.type == OpType.ADD:
-                print '\033[32m',rq,'\033[0m'
+                print '\033[32m',i,'-',rq,'\033[0m'
             elif rq.op.type == OpType.DEL:
-                print '\033[31m',rq,'\033[0m'
+                print '\033[31m',i,'-',rq,'\033[0m'
             else:
-                print '\033[33m',rq,'\033[0m'
+                print '\033[33m',i,'-',rq,'\033[0m'
         print '----------------------------------------------------------------------\n'
 
     def printLog(self):
         print '\n-------------------- LOG ---------------------------------------------'
         print len(self.log), 'requests'
-        for rq in self.log:
+        for i,rq in enumerate(self.log):
             if rq.op.type == OpType.ADD:
-                print '\033[32m',rq,'\033[0m'
+                print '\033[32m',i,'-',rq,'\033[0m'
             elif rq.op.type == OpType.DEL:
-                print '\033[31m',rq,'\033[0m'
+                print '\033[31m',i,'-',rq,'\033[0m'
             else:
-                print '\033[33m',rq,'\033[0m'
+                print '\033[33m',i,'-',rq,'\033[0m'
         print '----------------------------------------------------------------------\n'
 
     def printStrokes(self):

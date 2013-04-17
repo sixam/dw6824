@@ -45,6 +45,8 @@ class PeerState(QtCore.QObject):
         print 'execute (lock)'
         self.lock.acquire()
         print 'execute (locked)'
+        print '\n===== EXECUTE ==============='
+        print 'state', self.vt
         self.printQueue()
 
         to_del = []
@@ -100,6 +102,8 @@ class PeerState(QtCore.QObject):
 
         # Send signal to UI
         self.newStrokesSignal.emit()
+
+        print '========================= END EXECUTE\n'
 
 
 

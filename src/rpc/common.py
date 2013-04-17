@@ -73,7 +73,7 @@ class PeerState(QtCore.QObject):
                             print 'MR is ',mr_i, mr
                             self.transform(rq,mr)
 
-                        while mr_i >=0:
+                        while mr_i >=0
                             mr_i -= 1
                             if VT.cmp(self.log[mr_i].vt,rq.vt) <= 0:
                                 break
@@ -259,8 +259,8 @@ class PeerState(QtCore.QObject):
         oi = ri.op
         oj = rj.op
 
-        PosI = oi.opos
-        PosJ = oj.opos
+        PosI = oi.pos
+        PosJ = oj.pos
 
         pi = ri.priority
         pj = rj.priority

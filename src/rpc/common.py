@@ -60,19 +60,9 @@ class PeerState(QtCore.QObject):
             if  cmp ==0 or cmp == -1:
                 to_del.append(i)
                 if cmp==-1:
-                    mr_i = self.mostRecent(rq.vt)
-                    while True:
-                        if mr_i >= 0 and mr_i < len(self.log):
-                            mr = self.log[mr_i]
-                        else:
-                            mr = None
-                        if not mr or rq.op.type == OpType.NoOp:
-                            break
-                        mr_i -= 1
-                        print 'MR is ',mr_i, mr
-                        if rq.vt[mr.sender] <= mr.vt[mr.sender]:
-                            self.transform(rq,mr)
-
+                    for l in self.log:
+                        if VT.cmp(rq.vt, l.vt) == 2 and rq.vt[l.sender] <= l.vt[l.sender]:
+                            self.transform(rq, l)
                 self.performOperation(rq.op)
                 self.log.append(rq)
                 self.vt[rq.sender] += 1
@@ -254,8 +244,8 @@ class PeerState(QtCore.QObject):
         oi = ri.op
         oj = rj.op
 
-        PosI = oi.opos
-        PosJ = oj.opos
+        PosI = oi.pos
+        PosJ = oj.pos
 
         pi = ri.priority
         pj = rj.priority
@@ -298,8 +288,8 @@ class PeerState(QtCore.QObject):
         oi = ri.op
         oj = rj.op
 
-        PosI = oi.opos
-        PosJ = oj.opos
+        PosI = oi.pos
+        PosJ = oj.pos
 
         pi = ri.priority
         pj = rj.priority
@@ -334,8 +324,8 @@ class PeerState(QtCore.QObject):
         oi = ri.op
         oj = rj.op
 
-        PosI = oi.opos
-        PosJ = oj.opos
+        PosI = oi.pos
+        PosJ = oj.pos
 
         pi = ri.priority
         pj = rj.priority

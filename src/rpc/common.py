@@ -114,7 +114,9 @@ class PeerState(QtCore.QObject):
                         print 'looping mr'
                         if rq.vt[mr.sender] <= mr.vt[mr.sender]:
                             self.transform(rq,mr)
-                        mr = self.mostRecent(rq.vt, logcopy)
+                        #mr = self.mostRecent(rq.vt, logcopy)
+                        mr = self.nextLog(logcopy)
+                        print 'END NEXTLOG'
 
                 self.performOperation(rq.op)
                 self.log.append(rq)
@@ -138,6 +140,17 @@ class PeerState(QtCore.QObject):
 
         # Send signal to UI
         self.newStrokesSignal.emit()
+
+    def nextLog(self, logcopy):
+        print 'NEXTLOG'
+        if not logcopy:
+            return None
+        tofind = logcopy.pop()
+        for rq in self.log:
+            if rq.request_id == tofind.request_id:
+                return rq
+        return None
+
 
     def printQueue(self):
         print '\n-------------------- QUEUE -------------------------------------------'
@@ -170,30 +183,46 @@ class PeerState(QtCore.QObject):
             print i,'-',s
         print '--------------------------------------------------------------------------'
 
+
     def mostRecent(self,vt, logcopy):
-        #print '-----most-recent----'
+        print '-----most-recent----'
         found = False
         to_del = -1
         for i in range(len(logcopy)-1,-1,-1):
             if VT.cmp(logcopy[i].vt,vt) > 0:
-                #print '\033[32mbad',logcopy[i],'\033[0m'
+                print '\033[32mbad',logcopy[i],'\033[0m'
                 pass
             if VT.cmp(logcopy[i].vt,vt) <= 0:
-                #print '\033[33mgood',logcopy[i],'\033[0m'
-                tofind = logcopy[i].request_id
-                to_del = i
-                Found = True
-                break
-        #print '---------------------'
-        if Found == True:
-            for rq in self.log:
-                if rq.request_id == tofind:
-                    pointer = rq
-                    break
-            del logcopy[to_del]
-            return pointer
-        else:
-            return None
+                print '\033[33mgood',logcopy[i],'\033[0m'
+                del logcopy[i]
+                return self.log[i]
+        return None
+        print '---------------------'
+
+#    def mostRecent(self,vt, logcopy):
+#        print '-----most-recent----'
+#        found = False
+#        to_del = -1
+#        for i in range(len(logcopy)-1,-1,-1):
+#            if VT.cmp(logcopy[i].vt,vt) > 0:
+#                print '\033[32mbad',logcopy[i],'\033[0m'
+#                pass
+#            if VT.cmp(logcopy[i].vt,vt) <= 0:
+#                print '\033[33mgood',logcopy[i],'\033[0m'
+#                tofind = logcopy[i].request_id
+#                to_del = i
+#                Found = True
+#                break
+#        print '---------------------'
+#        if Found == True:
+#            for rq in self.log:
+#                if rq.request_id == tofind:
+#                    pointer = rq
+#                    break
+#            del logcopy[to_del]
+#            return pointer
+#        else:
+#            return None
 
     def performOperation(self,op):
         print 'start performing'
@@ -229,7 +258,7 @@ class PeerState(QtCore.QObject):
         self.window.scribbleArea.draw()
         print 'done performing'
 
-    def transform(self,rj,ri):
+    def transform(self,ri,rj):
         oi = ri.op
         oj = rj.op
 

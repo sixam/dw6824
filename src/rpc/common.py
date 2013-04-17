@@ -179,7 +179,7 @@ class PeerState(QtCore.QObject):
             if VT.cmp(logcopy[i].vt,vt) <= 0:
                 #print '\033[33mgood',logcopy[i],'\033[0m'
                 del logcopy[i]
-                return self.log[i]
+                return logcopy[i]
         #print '---------------------'
 
         return None

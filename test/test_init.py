@@ -18,24 +18,23 @@ class TestSimple(unittest.TestCase):
     """simple test"""
 
     def setUp(self):
-        config = Utils.getConfig()
-        servers = ['local1','local2']
+        self.servers = ['local1','local2']
         self.peers = []
         self.ips   = []
         self.ports = []
+        self.ids   = [0,1]
 
         app = QtGui.QApplication(sys.argv)
 
-        for server in servers:
-            local_id = server
+        for i,server in enumerate(self.servers):
+            local_id = self.ids[i]
             ip = 'localhost'
             while True:
                 try:
                     port = random.randint(1,8000)
-                    id = int(config.get(local_id,'id'));
                     noUI = False
                     build_ui = False
-                    peer = Peer(ip,port, id,build_ui)
+                    peer = Peer(ip,port, local_id,build_ui)
                     self.peers.append(peer)
                     self.ports.append(port)
                     self.ips.append(ip)
@@ -43,8 +42,8 @@ class TestSimple(unittest.TestCase):
                 except:
                     continue
                 
-        for i,server in enumerate(servers):
-            for j,server2 in enumerate(servers):
+        for i,server in enumerate(self.servers):
+            for j,server2 in enumerate(self.servers):
                 if server2 != server:
                     self.peers[i].addPeer(self.ips[j],self.ports[j])
 
@@ -52,15 +51,16 @@ class TestSimple(unittest.TestCase):
         pass
 
     def addServer(self,server):
-        local_id = server
+        local_id = len(self.servers)
+        self.ids.append(local_id)
+        self.servers.append(server)
         ip = 'localhost'
         while True:
             try:
                 port = random.randint(1,8000)
-                id = int(config.get(local_id,'id'));
                 noUI = False
                 build_ui = False
-                peer = Peer(ip,port, id,build_ui)
+                peer = Peer(ip,port, local_id,build_ui)
                 self.peers.append(peer)
                 self.ports.append(port)
                 self.ips.append(ip)
@@ -68,15 +68,11 @@ class TestSimple(unittest.TestCase):
             except:
                 continue
                 
-        for i,server in enumerate(servers):
-            for j,server2 in enumerate(servers):
-                if server2 != server:
+        for i,s in enumerate(self.servers):
+            for j,server2 in enumerate(self.servers):
+                if server2 != s and (s==server or server2 == server):
                     self.peers[i].addPeer(self.ips[j],self.ports[j])
 
-
-    def doStuff(self,ck):
-        s1 = Stroke(path=[[10,10],[10,20]])
-        ck.addStroke(s1)
     def assertStrokesEqual(self):
         Pass = True
         strokes = self.peers[0].getStrokes()
@@ -89,8 +85,6 @@ class TestSimple(unittest.TestCase):
                     if strokes[i] != stroke:
                         Pass = False
         self.assertTrue(Pass)
-                
-                
 
 # Test basic add/move/delete strokes
     def test_basic(self):
@@ -105,8 +99,10 @@ class TestSimple(unittest.TestCase):
         ck0.addStroke(s1)
         p0.kill()
         ck1.addStroke(s2)
+        p0.revive()
 
-        time.sleep(2)
+        time.sleep(1)
+
         self.assertStrokesEqual()
         pass
 

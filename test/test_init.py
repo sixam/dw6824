@@ -2,6 +2,7 @@ import unittest
 import sys
 import datetime
 import time
+from threading import Thread
 
 from PyQt4 import QtCore, QtGui
 
@@ -44,33 +45,53 @@ class TestSimple(unittest.TestCase):
         pass
 
 
+    def doStuff(self,ck):
+        print 'arg',ck
+        s1 = Stroke(path=[[10,10],[10,20]])
+        ck.addStroke(s1)
+        pass
+
 # Test basic add/move/delete strokes
     def test_basic(self):
         s1 = Stroke(path=[[10,10],[10,20]])
-        print s1
+        s2 = Stroke(path=[[30,10],[30,20]])
+        print s1.path
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = Clerk(p0.state)
         ck1 = Clerk(p1.state)
 
-        ck1.addStroke(s1)
-        print ck1
+        t0 = Thread(target=self.doStuff,args=[ck0])
+        t0.daemon = True
+        t1 = Thread(target=self.doStuff,args=[ck1])
+        t1.daemon = True
 
-        time.sleep(1)
+        
+        t0.start()
+        t1.start()
+        #ck0.addStroke(s1)
+        #ck1.addStroke(s2)
+
+        time.sleep(5)
+
+        print 'state'
+
         print 'waited'
         print 'incorrect ordering, got: wanted:'
-        raise NameError('bob')
+
+        self.assertEqual(len(p0.state.strokes),2)
+        #raise NameError('bob')
         pass
 
 # Test concurrent add/move/delete strokes
-    def test_concurrent_add_delete(self):
-        print 'incorrect ordering, got: wanted:'
-        pass
+    #def test_concurrent_add_delete(self):
+        #print 'incorrect ordering, got: wanted:'
+        #pass
 
 # Test unreliable add/move/delete strokes
-    def test_unreliable_add_delete(self):
-        print 'incorrect ordering, got: wanted:'
-        pass
+    #def test_unreliable_add_delete(self):
+        #print 'incorrect ordering, got: wanted:'
+        #pass
 
 # Test basic join/leave peers
 

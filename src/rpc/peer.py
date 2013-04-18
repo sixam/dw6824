@@ -33,7 +33,7 @@ class Peer:
         self.server.allow_reuse_address=True
         self.server.register_introspection_functions()
         self.server.register_instance(self.RPCresponder)
-        t = Thread(target = self._run)
+        t = Thread(target = self._run,name='{0}:{1}'.format(ip,port))
         t.daemon = True
         t.start()
 

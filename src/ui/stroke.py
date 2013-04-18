@@ -41,8 +41,8 @@ class Stroke:
             for pt in self.path:
                 x += pt[0]
                 y += pt[1]
-            x /= n
-            y /= n
+            x /= float(n)
+            y /= float(n)
         return [x,y]
 
     def moveTo(self,newpos):

@@ -18,7 +18,6 @@ class TestSimple(unittest.TestCase):
     """simple test"""
 
     def setUp(self):
-        # NOTE : problem with ports
         config = Utils.getConfig()
         servers = ['local1','local2']
         self.peers = []
@@ -30,7 +29,6 @@ class TestSimple(unittest.TestCase):
         for server in servers:
             local_id = server
             ip = 'localhost'
-            #port = int(config.get(local_id,'port'))
             while True:
                 try:
                     port = random.randint(1,8000)
@@ -52,6 +50,28 @@ class TestSimple(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def addServer(self,server):
+        local_id = server
+        ip = 'localhost'
+        while True:
+            try:
+                port = random.randint(1,8000)
+                id = int(config.get(local_id,'id'));
+                noUI = False
+                build_ui = False
+                peer = Peer(ip,port, id,build_ui)
+                self.peers.append(peer)
+                self.ports.append(port)
+                self.ips.append(ip)
+                break
+            except:
+                continue
+                
+        for i,server in enumerate(servers):
+            for j,server2 in enumerate(servers):
+                if server2 != server:
+                    self.peers[i].addPeer(self.ips[j],self.ports[j])
 
 
     def doStuff(self,ck):
@@ -84,6 +104,7 @@ class TestSimple(unittest.TestCase):
         self.assertEqual(len(p0.state.strokes),2)
         #raise NameError('bob')
         pass
+
 
  #Test concurrent add/move/delete strokes
     def test_concurrent_add_delete(self):

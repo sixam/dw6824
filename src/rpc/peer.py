@@ -49,14 +49,20 @@ class Peer:
             #self.server.server_close()
             #print 'server closed'
 
-    def __del__(self):
-        pass
-        #self.server.server_close()
-        #del self.server
+    def kill(self):
+        self.RPCresponder.kill()
+
+    def revive(self):
+        self.RPCresponder.revive()
+
+    def setUnreliable(self):
+        self.RPCresponder.setUnreliable()
+
+    def setReliable(self):
+        self.RPCresponder.setReliable()
 
     def addPeer(self,ip,port):
         """ Add a new peer """
-
         srv_name = 'http://%s:%s' % (ip, port)
         srv = xmlrpclib.Server(srv_name)
         self.state.peers.append(srv)

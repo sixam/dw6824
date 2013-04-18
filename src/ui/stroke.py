@@ -26,6 +26,20 @@ class Stroke:
         new.id = copy.copy(self.id)
         return new
 
+    def __cmp__(self, other):
+        eq = True
+        if self.path != other.path:
+            eq = False
+        if self.width != other.width:
+            eq = False
+        if self.color != other.color:
+            eq = False
+        if self.id != other.id:
+            eq = False
+        if eq:
+            return 0
+        return -1
+
     def toPainterPath(self):
         points = self.path
         path   = QtGui.QPainterPath(QtCore.QPointF(*points[0]));

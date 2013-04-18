@@ -68,3 +68,6 @@ class Peer:
         self.state.peers.append(srv)
         print self,'=> added peer:',srv_name
 
+    def getStrokes(self):
+        return self.state.getStrokes()
+

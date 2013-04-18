@@ -7,7 +7,7 @@ class VT:
         # 0 if a == b
         # 1 if a > b (b is a NON-STRICT prefix of a)
         # -1 if a < b 
-        # None if concurrent
+        # 2 if concurrent
         r = 0
         if a[0] > b[0]:
             r = 1

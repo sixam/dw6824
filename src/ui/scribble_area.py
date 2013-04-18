@@ -76,7 +76,7 @@ class ScribbleArea(QtGui.QWidget):
 
     def _moveEnd(self,pos):
         if self.moving and self.selected >= 0: 
-            offset = pos - self.original_move_pos 
+            offset = pos# - self.original_move_pos 
             self.clerk.moveStroke(self.selected,[offset.x(),offset.y()])
             self.moving = False
         else:
@@ -159,6 +159,8 @@ class ScribbleArea(QtGui.QWidget):
         self.image.fill(QtGui.QColor(255, 255, 255))
         painter = QtGui.QPainter(self.image)
         for stroke in self.strokes:
+            if not stroke:
+                continue
             painter.setPen(QtGui.QPen(QtGui.QColor(*stroke.color), stroke.width,
                 QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
             path = stroke.toPainterPath()

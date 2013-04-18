@@ -16,21 +16,25 @@ class Clerk:
     def addStroke(self,s):
         print 'sent', s
         rq = self._genAdd(s)
+        rq_send = copy.copy(rq)
+        print 'REQUESTS',rq, rq_send
         self.state.appendToQueue(rq)
         self.state.executeOperations()
-        self._send(rq)
+        self._send(rq_send)
 
     def deleteStroke(self,s_pos):
         rq = self._genDel(s_pos)
+        rq_send = copy.copy(rq)
         self.state.appendToQueue(rq)
         self.state.executeOperations()
-        self._send(rq)
+        self._send(rq_send)
 
     def moveStroke(self,s_pos,offset):
         rq = self._genMove(s_pos, offset)
+        rq_send = copy.copy(rq)
         self.state.appendToQueue(rq)
         self.state.executeOperations()
-        self._send(rq)
+        self._send(rq_send)
 
     def _genAdd(self, s):
         sp = self.state.getSnapshot()
@@ -85,5 +89,5 @@ class Clerk:
                 print 'looping'
                 print 'Sending rq:', rq
                 pass
-            time.sleep(0.01)
+            time.sleep(1)
 

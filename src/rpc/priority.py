@@ -12,7 +12,7 @@ class Priority:
             self.pd = pd
             return
         self.pd = []
-        for qrq in state.queue:
+        for qrq in state.log:
             print 'Prioritu: qrq: ', qrq
             if qrq.op.opos == op.opos:
                 if Priority.compareLists(self.pd, qrq.priority.pd) < 0:
@@ -26,8 +26,7 @@ class Priority:
         return "p:{0}".format(self.pd)
 
     def __copy__(self):
-        new = Priority()
-        new.pd = copy.copy(self.pd)
+        new = Priority(pd=copy.copy(self.pd))
         return new
 
     @staticmethod

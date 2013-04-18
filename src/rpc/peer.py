@@ -50,15 +50,19 @@ class Peer:
             #print 'server closed'
 
     def kill(self):
+        print self,'=> killed'
         self.RPCresponder.kill()
 
     def revive(self):
+        print self,'=> revived'
         self.RPCresponder.revive()
 
     def setUnreliable(self):
+        print self,'=> unreliable'
         self.RPCresponder.setUnreliable()
 
     def setReliable(self):
+        print self,'=> reliable'
         self.RPCresponder.setReliable()
 
     def addPeer(self,ip,port):

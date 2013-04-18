@@ -10,8 +10,8 @@ class RPCresponder:
         import string
         self.string = string
         self.state = state
-        self.unreliable = unreliable
-        self.dead = dead
+        self.unreliable = False
+        self.dead = False
 
     def _listMethods(self):
         # implement this method so that system.listMethods
@@ -37,7 +37,7 @@ class RPCresponder:
 
         if self.dead:
             print 'I am dead dude, fuck off'
-            return False
+            return 
             pass
 
         if self.unreliable:

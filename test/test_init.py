@@ -103,6 +103,7 @@ class TestSimple(unittest.TestCase):
         s2 = Stroke(path=[[10,10],[10,20]])
 
         ck0.addStroke(s1)
+        p0.kill()
         ck1.addStroke(s2)
 
         time.sleep(2)

@@ -16,6 +16,7 @@ class Peer:
         # Init main UI
         self.window = MainWindow(self.state)
         self.window.show()
+        self.window.raise_()
         self.state.window = self.window
 
         self.state.newStrokesSignal.connect(self.window.scribbleArea.strokesSignalHandler)

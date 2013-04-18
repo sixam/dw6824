@@ -57,6 +57,20 @@ class TestSimple(unittest.TestCase):
     def doStuff(self,ck):
         s1 = Stroke(path=[[10,10],[10,20]])
         ck.addStroke(s1)
+    def assertStrokesEqual(self):
+        Pass = True
+        strokes = self.peers[0].getStrokes()
+        for p in self.peers:
+            s = p.getStrokes()
+            if len(s) != len(strokes):
+                Pass = False
+            else:   
+                for i, stroke in enumerate(s):
+                    if strokes[i] != stroke:
+                        Pass = False
+        self.assertTrue(Pass)
+                
+                
 
 # Test basic add/move/delete strokes
     def test_basic(self):
@@ -71,18 +85,8 @@ class TestSimple(unittest.TestCase):
         ck0.addStroke(s1)
         ck1.addStroke(s2)
 
-        #t0 = Thread(target=self.doStuff,args=[ck0])
-        #t0.daemon = True
-        #t1 = Thread(target=self.doStuff,args=[ck1])
-        #t1.daemon = True
-
-        #t0.start()
-        #t1.start()
-
-        time.sleep(1)
-
-        self.assertEqual(len(p0.state.strokes),2)
-        #raise NameError('bob')
+        time.sleep(2)
+        self.assertStrokesEqual()
         pass
 
  #Test concurrent add/move/delete strokes

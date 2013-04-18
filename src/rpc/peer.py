@@ -30,7 +30,7 @@ class Peer:
 
         # Accept incoming connections in a background thread
         self.server = SimpleXMLRPCServer((ip,port),logRequests=True,bind_and_activate=False)
-        self.server.allow_reuse_address=True
+        #self.server.allow_reuse_address=True
         self.server.register_introspection_functions()
         self.server.register_instance(self.RPCresponder)
         t = Thread(target = self._run,name='{0}:{1}'.format(ip,port))
@@ -38,7 +38,7 @@ class Peer:
         t.start()
 
     def __str__(self):
-        return 'peer {0} : {1}'.format(self.id,self.name)
+        return 'peer {0} - {1}'.format(self.id,self.name)
 
     def _run(self):
         """ Accept incoming connection till exit  """

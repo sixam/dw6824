@@ -2,6 +2,7 @@ import unittest
 import sys
 import datetime
 import time
+import random
 from threading import Thread
 
 from PyQt4 import QtCore, QtGui
@@ -46,10 +47,10 @@ class TestSimple(unittest.TestCase):
 
 
     def doStuff(self,ck):
-        print 'arg',ck
         s1 = Stroke(path=[[10,10],[10,20]])
+        print s1
+        time.sleep(float(random.randint(1,10))/1000)
         ck.addStroke(s1)
-        pass
 
 # Test basic add/move/delete strokes
     def test_basic(self):
@@ -65,19 +66,11 @@ class TestSimple(unittest.TestCase):
         t0.daemon = True
         t1 = Thread(target=self.doStuff,args=[ck1])
         t1.daemon = True
-
         
         t0.start()
         t1.start()
-        #ck0.addStroke(s1)
-        #ck1.addStroke(s2)
 
-        time.sleep(5)
-
-        print 'state'
-
-        print 'waited'
-        print 'incorrect ordering, got: wanted:'
+        time.sleep(1)
 
         self.assertEqual(len(p0.state.strokes),2)
         #raise NameError('bob')

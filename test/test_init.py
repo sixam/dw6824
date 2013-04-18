@@ -14,6 +14,7 @@ from dp.src.rpc.clerk import Clerk
 
 
 
+
 class TestSimple(unittest.TestCase):
     """simple test"""
 
@@ -105,25 +106,69 @@ class TestSimple(unittest.TestCase):
         ck0.addStroke(s1)
         p0.kill()
         ck1.addStroke(s2)
+        time.sleep(1)
+        p0.revive()
 
         time.sleep(2)
         self.assertStrokesEqual()
-        pass
+
+    def test_delay(self):
+        p0 = self.peers[0]
+        p1 = self.peers[1]
+        ck0 = Clerk(p0.state)
+        ck1 = Clerk(p1.state)
+        
+        s = self.genRandomStrokes(8)
+        ck0.addStroke(s[0]);
+        ck1.addStroke(s[1])
+
+        time.sleep(1)
+        
+        p0.kill()
+        p1.kill()
+        
+        ck0.addStroke(s[2]);
+        ck0.addStroke(s[3]);
+        ck1.addStroke(s[4])
+        ck1.addStroke(s[5])
+        
+        time.sleep(1)
+        
+        p0.revive()
+        p1.revive()
+
+        time.sleep(1)
+
+        ck0.addStroke(s[6]);
+        ck1.addStroke(s[7])
+        
+        time.sleep(2)
+
+        self.assertStrokesEqual()
+
+
+    def genRandomStrokes(self, n):
+        s = []
+        for i in range(n):
+            a = [random.randint(0,100), random.randint(0,100)]
+            b = [random.randint(0,100), random.randint(0,100)]
+            s.append(Stroke(path = [a,b]));
+        return s
 
 
  #Test concurrent add/move/delete strokes
-    def test_concurrent_add_delete(self):
-        print 'incorrect ordering, got: wanted:'
-        pass
-
-# Test unreliable add/move/delete strokes
-    #def test_unreliable_add_delete(self):
-        #print 'incorrect ordering, got: wanted:'
-        #pass
-
-# Test basic join/leave peers
-
-# Test unreliable join/leave
-
-
-
+#    def test_concurrent_add_delete(self):
+#        print 'incorrect ordering, got: wanted:'
+#        pass
+#
+## Test unreliable add/move/delete strokes
+#    #def test_unreliable_add_delete(self):
+#        #print 'incorrect ordering, got: wanted:'
+#        #pass
+#
+## Test basic join/leave peers
+#
+## Test unreliable join/leave
+#
+#
+#

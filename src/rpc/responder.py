@@ -10,6 +10,8 @@ class RPCresponder:
         import string
         self.string = string
         self.state = state
+        self.unreliable = False
+        self.dead = False
 
     def _listMethods(self):
         # implement this method so that system.listMethods
@@ -17,9 +19,30 @@ class RPCresponder:
         return list_public_methods(self) + \
                 ['string.' + method for method in list_public_methods(self.string)]
 
+    def setUnreliable(self):
+        self.unreliable = True
+
+    def setReliable(self):
+        self.unreliable = False
+
+    def kill(self):
+        self.dead = True
+
+    def revive(self):
+        self.dead = False
+
     # RPC methods
     def enq(self,rqData):
         """ Unmarshalls the request and add it to the queue"""
+
+        if self.dead:
+            print 'I am dead dude, fuck off'
+            return 
+            pass
+
+        if self.unreliable:
+            print 'I am unreliable dude, ahah'
+            pass
 
         rq = Request(**rqData)
 

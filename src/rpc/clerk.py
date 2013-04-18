@@ -14,6 +14,7 @@ class Clerk:
 
         
     def addStroke(self,s):
+        print 'sent', s
         rq = self._genAdd(s)
         rq_send = copy.copy(rq)
         print 'REQUESTS',rq, rq_send
@@ -82,11 +83,12 @@ class Clerk:
         keep_running = True
         while keep_running :
             try:
+                print self.state.id, 'sent to',srv
                 srv.enq(rq)
                 keep_running = False
             except:
                 print 'looping'
-                print 'Sending rq:', rq
+                #print 'Sending rq:', rq
                 pass
-            time.sleep(1)
+            time.sleep(.1)
 

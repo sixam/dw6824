@@ -7,6 +7,7 @@ from threading import Thread
 from dp.src.rpc.clerk import Clerk
 from dp.src.rpc.responder import RPCresponder
 import xmlrpclib
+import socket
 
 class Peer:
     def __init__(self,ip,port,peer_id,build_ui = True):
@@ -30,7 +31,8 @@ class Peer:
 
         # Accept incoming connections in a background thread
         self.server = SimpleXMLRPCServer((ip,port),logRequests=True,bind_and_activate=False)
-        #self.server.allow_reuse_address=True
+        self.server.server_bind()
+        self.server.server_activate()
         self.server.register_introspection_functions()
         self.server.register_instance(self.RPCresponder)
         t = Thread(target = self._run,name='{0}:{1}'.format(ip,port))
@@ -42,11 +44,10 @@ class Peer:
 
     def _run(self):
         """ Accept incoming connection till exit  """
-        try:
-            self.server.serve_forever()
-        finally:
-            self.server.server_close()
-            print 'server closed'
+        self.server.serve_forever()
+        #finally:
+            #self.server.server_close()
+            #print 'server closed'
 
     def __del__(self):
         pass
@@ -59,5 +60,5 @@ class Peer:
         srv_name = 'http://%s:%s' % (ip, port)
         srv = xmlrpclib.Server(srv_name)
         self.state.peers.append(srv)
-        print 'added peer:',srv_name
+        print self,'=> added peer:',srv_name
 

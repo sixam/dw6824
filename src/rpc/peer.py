@@ -14,6 +14,8 @@ class Peer:
         self.id = peer_id
         self.state = PeerState(peer_id)
         self.name = '{0}:{1}'.format(ip,port)
+        
+        print ip,port
 
         # Init main UI
         if build_ui:
@@ -27,7 +29,7 @@ class Peer:
         self.RPCresponder = RPCresponder(self.state)
 
         # Accept incoming connections in a background thread
-        self.server = SimpleXMLRPCServer((ip,port))
+        self.server = SimpleXMLRPCServer((ip,port),logRequests=True,bind_and_activate=False)
         self.server.allow_reuse_address=True
         self.server.register_introspection_functions()
         self.server.register_instance(self.RPCresponder)
@@ -44,6 +46,7 @@ class Peer:
             self.server.serve_forever()
         finally:
             self.server.server_close()
+            print 'server closed'
 
     def __del__(self):
         pass

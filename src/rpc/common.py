@@ -190,7 +190,8 @@ class PeerState(QtCore.QObject):
             self.strokes[op.pos].offsetPosBy(op.offset)
             print self.strokes
             
-        self.window.scribbleArea.draw()
+        if self.window: #Dont call UI (for the tester)
+            self.window.scribbleArea.draw()
         print 'done performing'
 
     def transform(self,ri,rj):

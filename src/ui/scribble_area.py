@@ -41,6 +41,8 @@ class ScribbleArea(QtGui.QWidget):
         self.state = state    # This should never be to the left of an assignment
                               # fields should never be accessed, only methods!
 
+        self.log = state.log
+
         self.strokes = self.state.getStrokes()
 
     def clearImage(self):
@@ -61,7 +63,7 @@ class ScribbleArea(QtGui.QWidget):
         for i,stroke in enumerate(self.strokes): # check selection
             if stroke.toPainterPath().intersects(sel_rect):
                 self.selected = i
-                print '\033[34mselected:',self.strokes[self.selected],'\033[0m'
+                self.log.Print( '\033[34mselected:',self.strokes[self.selected],'\033[0m')
                 break
         self.original_move_pos = self.move_pos
 
@@ -185,7 +187,7 @@ class ScribbleArea(QtGui.QWidget):
         
     def setPenColor(self,color):
         self.myPenColor = color
-        print 'new color', color
+        self.log.Print( 'new color', color)
 
     def penWidth(self):
         return self.myPenWidth

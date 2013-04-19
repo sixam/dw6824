@@ -84,8 +84,6 @@ class PeerState(QtCore.QObject):
 
         self.log.Print( '========================= END EXECUTE\n')
 
-
-
     def printQueue(self):
         self.log.Print( '\n-------------------- QUEUE -------------------------------------------')
         self.log.Print( len(self.queue), 'requests')

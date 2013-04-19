@@ -31,7 +31,6 @@ class Request:
         new.request_id = copy.copy(self.request_id)
         new.context = self.context
         return new
-       
 
 class Operation:
     def __init__(self,type=None,stroke_id='none',stroke=None,pos=-1,opos=-1,offset=[0,0]):

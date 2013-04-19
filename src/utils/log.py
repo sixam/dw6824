@@ -5,18 +5,20 @@ class Log:
     def __init__(self, id):
         self.id = id
         self.log = logging.getLogger('log-%s' % self.id)
+        self.log.setLevel(logging.DEBUG)
         fname = Utils.getLogPath('mainlog', self.id)
         fhandle = logging.FileHandler(fname)
+        fhandle.setLevel(logging.DEBUG)
 
-        formatter = logging.Formatter('%(message)')
+        formatter = logging.Formatter('%(message)s')
         #%(levelname)s
         fhandle.setFormatter(formatter)
         self.log.addHandler(fhandle)
 
 
-    def log(*args):
+    def Print(self, *args):
         s = str()
         for arg in args:
             s += arg
-        s += '\n'
+            s += ' '
         self.log.info(s)

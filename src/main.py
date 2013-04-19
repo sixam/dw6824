@@ -26,6 +26,7 @@ if __name__ == '__main__':
     # init node 
 
     log = Log(local_id)
+    log.Print('ciao', local_id)
 
     ip = config.get(local_id,'ip')
     port = int(config.get(local_id,'port'))

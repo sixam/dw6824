@@ -95,7 +95,6 @@ class TestSimple(unittest.TestCase):
         ck1 = Clerk(p1.state)
 
         s1 = Stroke(path=[[10,10],[10,20]])
-        time.sleep(1)
         s2 = Stroke(path=[[10,10],[10,20]])
 
         ck0.addStroke(s1)
@@ -104,44 +103,38 @@ class TestSimple(unittest.TestCase):
 
         self.assertStrokesEqual()
 
-    #def test_delay(self):
-        #p0 = self.peers[0]
-        #p1 = self.peers[1]
-        #ck0 = Clerk(p0.state)
-        #ck1 = Clerk(p1.state)
+    def test_delay(self):
+        p0 = self.peers[0]
+        p1 = self.peers[1]
+        ck0 = Clerk(p0.state)
+        ck1 = Clerk(p1.state)
         
-        #s = self.genRandomStrokes(8)
-        #ck0.addStroke(s[0]);
-        #time.sleep(1)
-        #ck1.addStroke(s[1])
+        s = self.genRandomStrokes(12)
+        ck0.addStroke(s[0]);
+        ck1.addStroke(s[1])
+        time.sleep(1)
+        
+        p0.kill()
+        p1.kill()
+        
+        ck0.addStroke(s[2]);
+        ck0.addStroke(s[3]);
+        ck1.addStroke(s[4])
+        ck1.addStroke(s[5])
+        ck1.addStroke(s[9])
+        ck0.addStroke(s[10])
+        time.sleep(1)
+        
+        p0.revive()
+        p1.revive()
+        time.sleep(1)
 
-        #time.sleep(1)
-        
-        #p0.kill()
-        #p1.kill()
-        
-        #ck0.addStroke(s[2]);
-        #time.sleep(1)
-        #ck0.addStroke(s[3]);
-        #time.sleep(1)
-        #ck1.addStroke(s[4])
-        #time.sleep(1)
-        #ck1.addStroke(s[5])
-        
-        #time.sleep(1)
-        
-        #p0.revive()
-        #p1.revive()
+        ck0.addStroke(s[6]);
+        ck1.addStroke(s[7])
+        ck1.addStroke(s[8])
+        time.sleep(1)
 
-        #time.sleep(1)
-
-        #ck0.addStroke(s[6]);
-        #time.sleep(1)
-        #ck1.addStroke(s[7])
-        
-        #time.sleep(2)
-
-        #self.assertStrokesEqual()
+        self.assertStrokesEqual()
 
 
     def genRandomStrokes(self, n):

@@ -55,13 +55,16 @@ class PeerState(QtCore.QObject):
         for i, rq in enumerate(self.queue):
             if i in to_del:
                 continue
+            print 'RQ context (exec)',rq.context
+            print 'LOCAL context (exec)', self.context.keys()
             if COT.issublist(rq.context, self.context.keys()):
                 print 'ok'
                 to_del.append(i)
                 cd = COT.contextsdiff(self.context.keys(), rq.context)
-                COT.transform(rq, cd, self.context)
-                self.performOperation(rq.op)
-                self.context[rq.request_id] = rq
+                works = COT.transform(rq, cd, self.context)
+                if works:
+                    self.performOperation(rq.op)
+                    self.context[rq.request_id] = rq
             
         to_del.sort()
         to_del.reverse()

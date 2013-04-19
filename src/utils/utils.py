@@ -18,4 +18,6 @@ class Utils:
         return "%s/%s" % (os.environ.get('DW_BASE'), config.get('log', logtype) % (local_id) )
     @staticmethod
     def generateID():
-        return "{0}".format(random.getrandbits(128))
+        s="{0}".format(random.getrandbits(128))
+        s = s[1:5]
+        return s

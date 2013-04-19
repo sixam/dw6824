@@ -1,4 +1,4 @@
-from dp.src.rpc.commontypes import Request, Operation
+from dp.src.rpc.commontypes import Request, Operation, OpType
 class IT:
     @staticmethod
     def transform(o, ox):
@@ -14,14 +14,15 @@ class IT:
         print 'starting transform'
 
         if oi.type == OpType.ADD:
-            transADD(ri,rj)
+            IT.transADD(ri,rj)
         #if oi.type == OpType.DEL:
-            #transDEL(ri,rj)
+            #IT.transDEL(ri,rj)
         #if oi.type == OpType.MOVE:
-            #transMOVE(ri,rj)
+            #IT.transMOVE(ri,rj)
 
         print '\033[32m--transformed\033[0m',ri,rj,'\n'
 
+    @staticmethod
     def transADD(ri,rj):
 
         print 'in trans ADD'
@@ -33,6 +34,7 @@ class IT:
 
         pi = ri.priority
         pj = rj.priority
+
 
         if oj.type == OpType.ADD:
             if PosI < PosJ:

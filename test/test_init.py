@@ -12,6 +12,8 @@ from dp.src.rpc.peer import Peer
 from dp.src.ui.stroke import Stroke
 from dp.src.rpc.clerk import Clerk
 
+from nose.tools import *
+
 
 
 
@@ -155,8 +157,6 @@ class TestSimple(unittest.TestCase):
         ck0 = Clerk(p0.state)
         ck1 = Clerk(p1.state)
 
-        self.timeout(5)
-        
         s = self.genRandomStrokes(12)
 
         ck0.addStroke(s[0]);

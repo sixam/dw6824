@@ -142,6 +142,7 @@ class TestSimple(unittest.TestCase):
         self.assertStrokesEqual()
 
     def test_delay_02(self):
+        return
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = Clerk(p0.state)

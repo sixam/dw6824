@@ -1,5 +1,4 @@
 from PyQt4 import QtCore, QtGui
-from dp.src.rpc.commontypes import Request, Operation
 from utils.utils import Utils
 
 class RPCresponder:

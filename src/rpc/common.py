@@ -1,12 +1,10 @@
 from ui.stroke import Stroke
-from rpc.priority import Priority
-from rpc.vt import VT
-from dp.src.rpc.cot import COT
 from threading import Lock
 from PyQt4 import QtCore, QtGui
-from dp.src.rpc.commontypes import Request, Operation, OpType
 from dp.src.utils.log import Log
 import copy
+
+from dp.src.protocol.OperationEngine import OperationEngine
 
 class PeerState(QtCore.QObject):
     """Stores all data concerning a peer's state
@@ -25,21 +23,21 @@ class PeerState(QtCore.QObject):
     # NOTE: lock around access to the structure?
     def __init__(self, peer_id, log=None):
         super(PeerState, self).__init__()
-        self.id      = peer_id
-        self.peers   = []
-        self.queue   = []
-        self.log     = []
-        self.vt      = [0 for x in range(3)]
-        self.strokes = []
-        self.prqs    = []
-        self.context = {}
+        self.id      = peer_id # site ID
+        self.peers   = [] # known peers
+        self.strokes = [] # currently drawn strokes
+        self.prqs    = [] # past requests
 
+        # attached ui
         self.window = None
 
         self.lock = Lock()
+
+        # site log file
         self.log = log
 
-        self.cot = COT(log)
+        self.engine = OperationEngine(self.id)
+        self.engine.freezeSite(self.id)
 
 
     def executeOperations(self):

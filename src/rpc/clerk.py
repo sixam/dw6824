@@ -1,10 +1,8 @@
 import xmlrpclib
-from dp.src.rpc.commontypes import Request, Operation, OpType
 from threading import Thread
 from rpc.common import PeerState
 import time
 from utils.utils import Utils
-from rpc.priority import Priority
 from ui.stroke import Stroke
 import copy
 from dp.src.utils.log import Log

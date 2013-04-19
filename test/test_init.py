@@ -136,6 +136,18 @@ class TestSimple(unittest.TestCase):
 
         self.assertStrokesEqual()
 
+    def test_manypeers(self):
+        self.addMultipleServers(2)
+        cks = []
+        for i in range(self.peers):
+            cks.append(Clerk(self.peers[i].state));
+        s = self.genRandomStrokes(12)
+        for stroke in s:
+            i = random.randint() % len(self.peers)
+            cks[i].addStroke(stroke)
+        time.sleep(5)
+        self.assertStrokesEqual()
+
 
     def genRandomStrokes(self, n):
         s = []

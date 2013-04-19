@@ -175,11 +175,11 @@ class TestSimple(unittest.TestCase):
         p1.revive()
         time.sleep(1)
 
-        ck0.addStroke(s[6]);
-        ck1.addStroke(s[7])
-        ck0.addStroke(s[8]);
-        ck1.addStroke(s[9])
+        ck0.addStroke(s[5])
+        ck1.addStroke(s[6])
+
         time.sleep(1)
+        print 'timed out'
 
         self.assertStrokesEqual()
 

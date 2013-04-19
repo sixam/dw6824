@@ -18,21 +18,53 @@ class COT:
         print 'TRANS:',o
         print '\n'
 
+        # Sort cd by context dependencies 'hb.getOpsDifference'
+        # Go through all ops in cd
+
+        # do not transform original op
+        #o = copy.copy(o)
+
+        # transformed operation
+
         while cd:
-            print 'recurse'
             print 'cd:', cd
+            print 'all contexts:'
+            for c in cd:
+                print contexts[c]
+
+            # previously transformed op
             ox_id = cd.pop(0)
-            print 'ox_id:', ox_id
             ox = contexts[ox_id]
+            print 'ox_id:', ox_id
+
+            # At this point we should have some caching to avoid going through
+            # the recursion every time
+
+            # If not in cache, transform ox recursively
+
             co = o.context
-            print 'co',co
             cox = ox.context
+            print 'co',co
             print 'cox',cox
+
+            # new context difference
+            xcd = COT.contextsdiff(co, cox)
+
             print 'c_ox in c_o:', COT.issublist(cox,co)
-            COT.transform(ox, COT.contextsdiff(co, cox),contexts)
+
+            print 'recurse'
+            COT.transform(ox, xcd ,contexts)
+
+            print 'transformed op:',ox
+
             IT.transform(o, ox)
             o.context.append(ox_id)
-            print 'depth:',depth,'updated co:'
+            print 'depth:',depth,'updated co:', o
+
+    @staticmethod
+    def sortContextDifference(cd,contexts):
+        pass
+
 
     @staticmethod
     def issublist(co, ds):
@@ -52,7 +84,3 @@ class COT:
             dds.remove(c)
         return dds
 
-
-    @staticmethod
-    def contextdiffinplace(ds, co):
-        pass

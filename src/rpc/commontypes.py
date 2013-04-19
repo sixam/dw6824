@@ -40,10 +40,11 @@ class Operation:
         else:
             self.stroke = stroke
 
-        self.type = type
+        self.type      = type
         self.stroke_id = stroke_id
-        self.pos = pos
-        self.offset = offset
+        self.pos       = pos
+        self.offset    = offset
+
         if opos == -1:
             self.opos = pos
         else: # unmarshalling

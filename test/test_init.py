@@ -51,7 +51,11 @@ class TestSimple(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def addServer(self,server):
+    def addMultipleServers(self,n=1):
+        for i in range(n):
+            self.addServer()
+
+    def addServer(self,server=''):
         local_id = len(self.servers)
         self.ids.append(local_id)
         self.servers.append(server)
@@ -110,6 +114,7 @@ class TestSimple(unittest.TestCase):
         ck1 = Clerk(p1.state)
         
         s = self.genRandomStrokes(12)
+
         ck0.addStroke(s[0]);
         ck1.addStroke(s[1])
         time.sleep(1)

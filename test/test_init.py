@@ -108,35 +108,35 @@ class TestSimple(unittest.TestCase):
 
         self.assertStrokesEqual()
 
-    def test_delay(self):
-        p0 = self.peers[0]
-        p1 = self.peers[1]
-        ck0 = Clerk(p0.state)
-        ck1 = Clerk(p1.state)
-        
-        s = self.genRandomStrokes(12)
-
-        ck0.addStroke(s[0]);
-        ck1.addStroke(s[1])
-        time.sleep(1)
-        
-        p0.kill()
-        p1.kill()
-        
-        ck0.addStroke(s[2]);
-        ck1.addStroke(s[4])
-        time.sleep(1)
-        
-        p0.revive()
-        p1.revive()
-        time.sleep(1)
-
-        ck0.addStroke(s[6]);
-        ck1.addStroke(s[7])
-        time.sleep(1)
-
-        self.assertStrokesEqual()
-
+#    def test_delay(self):
+#        p0 = self.peers[0]
+#        p1 = self.peers[1]
+#        ck0 = Clerk(p0.state)
+#        ck1 = Clerk(p1.state)
+#        
+#        s = self.genRandomStrokes(12)
+#
+#        ck0.addStroke(s[0]);
+#        ck1.addStroke(s[1])
+#        time.sleep(1)
+#        
+#        p0.kill()
+#        p1.kill()
+#        
+#        ck0.addStroke(s[2]);
+#        ck1.addStroke(s[4])
+#        time.sleep(1)
+#        
+#        p0.revive()
+#        p1.revive()
+#        time.sleep(1)
+#
+#        ck0.addStroke(s[6]);
+#        ck1.addStroke(s[7])
+#        time.sleep(1)
+#
+#        self.assertStrokesEqual()
+#
         raise NameError
 
     #def test_manypeers(self):

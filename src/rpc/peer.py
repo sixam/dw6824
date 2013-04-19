@@ -1,6 +1,7 @@
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from PyQt4 import QtCore, QtGui
 import sys
+from dp.src.utils.log import Log
 from rpc.common import PeerState
 from dp.src.rpc.commontypes import Request, Operation
 from dp.src.ui.main_window import MainWindow
@@ -11,10 +12,11 @@ import xmlrpclib
 import socket
 
 class Peer:
-    def __init__(self,ip,port,peer_id,build_ui = True):
+    def __init__(self,ip,port,peer_id,build_ui = True, log = None):
         # Node state
         self.id = peer_id
-        self.state = PeerState(peer_id)
+        self.log = log
+        self.state = PeerState(peer_id, self.log)
         self.name = '{0}:{1}'.format(ip,port)
         
         print ip,port

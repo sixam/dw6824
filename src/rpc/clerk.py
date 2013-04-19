@@ -7,11 +7,13 @@ from utils.utils import Utils
 from rpc.priority import Priority
 from ui.stroke import Stroke
 import copy
+from dp.src.utils.log import Log
 
 class Clerk:
     """ Clerk for the UI thread, handles the emission of RPC calls"""
     def __init__(self,state):
         self.state = state
+        self.log = state.log
 
         
     def addStroke(self,s):

@@ -1,18 +1,21 @@
 from dp.src.rpc.it import IT
 import copy
+from dp.src.utils.log import Log
 
 
 class COT:
 
-    depth = 0
-    @staticmethod
-    def transform(o, cd, contexts):
+    def __init__(self, log):
+        self.log = log
+        self.it = IT(log)
+
+    def transform(self, o, cd, contexts):
         """ In place for o
             Everything else should be a copy!"""
 
-        COT.depth += 1
-        depth = COT.depth
-        print '\033[33mDEPTH:', COT.depth, '\033[0m'
+        self.depth += 1
+        depth = self.depth
+        print '\033[33mDEPTH:', self.depth, '\033[0m'
 
         print '\n'
         print 'TRANS:',o,cd
@@ -27,22 +30,20 @@ class COT:
             print 'co',co
             cox = ox.context
             print 'cox',cox
-            print 'c_ox in c_o:', COT.issublist(cox,co)
-            COT.transform(ox, COT.contextsdiff(co, cox),contexts)
-            IT.transform(o, ox)
+            print 'c_ox in c_o:', self.issublist(cox,co)
+            self.transform(ox, self.contextsdiff(co, cox),contexts)
+            self.it.transform(o, ox)
             o.context.append(ox_id)
             print 'depth:',depth,'updated co:'
 
-    @staticmethod
-    def issublist(co, ds):
+    def issublist(self, co, ds):
         for c in co:
             if c not in ds:
                 return False
         return True
 
-    @staticmethod
-    def contextsdiff(ds, co):
-        if not COT.issublist(co,ds):
+    def contextsdiff(self, ds, co):
+        if not self.issublist(co,ds):
             print '\033[33mERROR IN CONTEXT DIFF\033[0m'
             print ds
             print co
@@ -52,6 +53,3 @@ class COT:
         return dds
 
 
-    @staticmethod
-    def contextdiffinplace(ds, co):
-        pass

@@ -12,6 +12,7 @@ class RPCresponder:
         self.state = state
         self.unreliable = False
         self.dead = False
+        self.log = state.log
 
     def _listMethods(self):
         # implement this method so that system.listMethods

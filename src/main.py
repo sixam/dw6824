@@ -7,6 +7,7 @@ from dp.src.utils.utils import Utils
 import sys
 from dp.src.rpc.peer import Peer
 import datetime
+from dp.src.utils.log import Log
 
 
 if __name__ == '__main__':
@@ -24,11 +25,16 @@ if __name__ == '__main__':
 
     # init node 
 
+    log = Log(local_id)
+
     ip = config.get(local_id,'ip')
     port = int(config.get(local_id,'port'))
     id = int(config.get(local_id,'id'));
     build_ui = True
-    peer = Peer(ip,port, id,build_ui)
+    
+
+    peer = Peer(ip, port, id, build_ui, log)
+
 
     if len(sys.argv) >= 3:
         for i in range(2,len(sys.argv)):

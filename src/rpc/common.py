@@ -5,6 +5,7 @@ from dp.src.rpc.cot import COT
 from threading import Lock
 from PyQt4 import QtCore, QtGui
 from dp.src.rpc.commontypes import Request, Operation, OpType
+from dp.src.utils.log import Log
 import copy
 
 class PeerState(QtCore.QObject):
@@ -22,7 +23,7 @@ class PeerState(QtCore.QObject):
     newStrokesSignal = QtCore.pyqtSignal()
 
     # NOTE: lock around access to the structure?
-    def __init__(self, peer_id):
+    def __init__(self, peer_id, log=None):
         super(PeerState, self).__init__()
         self.id      = peer_id
         self.peers   = []
@@ -36,6 +37,9 @@ class PeerState(QtCore.QObject):
         self.window = None
 
         self.lock = Lock()
+        self.log = log
+
+        self.cot = COT(log)
 
 
     def executeOperations(self):
@@ -57,11 +61,11 @@ class PeerState(QtCore.QObject):
                 continue
             print 'RQ context (exec)',rq.context
             print 'LOCAL context (exec)', self.context.keys()
-            if COT.issublist(rq.context, self.context.keys()):
+            if self.cot.issublist(rq.context, self.context.keys()):
                 to_del.append(i)
-                cd = COT.contextsdiff(self.context.keys(), rq.context)
-                COT.depth = 0
-                COT.transform(rq, cd, self.context)
+                cd = self.cot.contextsdiff(self.context.keys(), rq.context)
+                self.cot.depth = 0
+                self.cot.transform(rq, cd, self.context)
                 self.performOperation(rq.op)
                 self.context[rq.request_id] = rq
             

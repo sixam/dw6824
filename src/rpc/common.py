@@ -56,6 +56,7 @@ class PeerState(QtCore.QObject):
             if i in to_del:
                 continue
             if COT.issublist(rq.context, self.context.keys()):
+                print 'ok'
                 to_del.append(i)
                 cd = COT.contextsdiff(self.context.keys(), rq.context)
                 COT.transform(rq, cd, self.context)

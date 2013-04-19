@@ -1,20 +1,24 @@
+import dp.src.rpc.common as com
 class IT:
     @staticmethod
     def transform(o, ox):
-        IT._transform(o.op, ox.op)
+        IT._transform(o, ox)
 
 
     @staticmethod
     def _transform(ri,rj):
 
+        oi = ri.op
+        oj = rj.op
+
         print 'starting transform'
 
-        if oi.type == OpType.ADD:
+        if oi.type == com.OpType.ADD:
             transADD(ri,rj)
-        if oi.type == OpType.DEL:
-            transDEL(ri,rj)
-        if oi.type == OpType.MOVE:
-            transMOVE(ri,rj)
+        #if oi.type == OpType.DEL:
+            #transDEL(ri,rj)
+        #if oi.type == OpType.MOVE:
+            #transMOVE(ri,rj)
 
         print '\033[32m--transformed\033[0m',ri,rj,'\n'
 
@@ -61,83 +65,3 @@ class IT:
                     pass
 
         
-    def transDEL( ri, rj):
-        print 'in trans DEL'
-        oi = ri.op
-        oj = rj.op
-
-        PosI = oi.pos
-        PosJ = oj.pos
-
-        pi = ri.priority
-        pj = rj.priority
-
-        if oj.type == OpType.ADD:
-            if PosI < PosJ:
-                pass
-            else:
-                oi.pos += 1
-
-        if oj.type == OpType.DEL:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                oi.pos -= 1
-            else:
-                oi.type = OpType.NoOp
-
-        if oj.type == OpType.MOVE:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                pass
-            else: # PosI == PosJ
-                if pi < pj:
-                    oi.type = OpType.NoOp
-                else:
-                    pass
-
-    def transMOVE(ri,rj):
-        print 'in trans MOVE'
-        oi = ri.op
-        oj = rj.op
-
-        PosI = oi.pos
-        PosJ = oj.pos
-
-        pi = ri.priority
-        pj = rj.priority
-
-        if oj.type == OpType.ADD:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                oi.pos += 1
-            else:
-                if pi > pj:
-                    oi.pos += 1 # This is strange
-                else:
-                    pass
-
-        if oj.type == OpType.DEL:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                oi.pos -= 1
-            else: # PosI == PosJ
-                if pi < pj:
-                    oi.type = OpType.NoOp
-                else:
-                    pass
-
-        if oj.type == OpType.MOVE:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                pass
-            else: # PosI == PosJ
-                if pi < pj:
-                    oi.type = OpType.NoOp
-                else:
-                    pass
-

@@ -8,13 +8,18 @@ class COT:
         """ In place for o
             Everything else should be a copy!"""
 
-        while cd:
-            print cd
+        print 'TRANS:',o,cd
+
+        if cd:
+            print 'CD:',cd
             ox_id = cd.pop(0)
-            ox = contexts[ox.request_id]
+            co = o.context
+            ox = contexts[ox_id]
             cx = ox.context
-            cd2 =COT.contextsdiff(co, cx)
-            COT.transform(ox, cd2, contexts)
+            print 'Co in Cx?',COT.issublist(co,cx)
+            print 'C(ox):',cx
+            cd =COT.contextsdiff(co, cx)
+            COT.transform(ox, cd, contexts)
             IT.transform(o, ox)
             o.context.append(ox.request_id)
 
@@ -27,6 +32,8 @@ class COT:
 
     @staticmethod
     def contextsdiff(ds, co):
+        if not COT.issublist(co,ds):
+            print '\033[33mERROR IN CONTEXT DIFF\033[0m'
         dds = copy.copy(ds)
         for c in co:
             dds.remove(c)

@@ -95,6 +95,7 @@ class TestSimple(unittest.TestCase):
         ck1 = Clerk(p1.state)
 
         s1 = Stroke(path=[[10,10],[10,20]])
+        time.sleep(1)
         s2 = Stroke(path=[[10,10],[10,20]])
 
         ck0.addStroke(s1)

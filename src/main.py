@@ -20,7 +20,6 @@ if __name__ == '__main__':
     #sys.stderr = open(Utils.getLogPath('errorlog',local_id),'a')
 
     print "New Run: %s\n" % n
-    sys.stderr.write("New Run: %s\n" % n)
     app = QtGui.QApplication(sys.argv)
 
     # init node 

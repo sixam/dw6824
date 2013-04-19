@@ -37,17 +37,17 @@ class RPCresponder:
         """ Unmarshalls the request and add it to the queue"""
 
         if self.dead:
-            print 'I am dead dude, fuck off'
+            self.log.Print( 'I am dead dude, fuck off')
             return 
             pass
 
         if self.unreliable:
-            print 'I am unreliable dude, ahah'
+            self.log.Print( 'I am unreliable dude, ahah')
             pass
 
         rq = Request(**rqData)
 
-        #print 'Responder, rq:', rq
+        #self.log.Print( 'Responder, rq:', rq)
         appended = self.state.appendToQueue(rq)
         if not appended:
             return True

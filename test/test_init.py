@@ -137,7 +137,7 @@ class TestSimple(unittest.TestCase):
 #
 #        self.assertStrokesEqual()
 #
-        raise NameError
+#        raise NameError
 
     #def test_manypeers(self):
         #self.addMultipleServers(20)

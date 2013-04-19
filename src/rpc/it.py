@@ -12,7 +12,7 @@ class IT:
         oi = ri.op
         oj = rj.op
 
-        print 'starting transform'
+        self.log.Print( 'starting transform')
 
         if oi.type == OpType.ADD:
             self.transADD(ri,rj)
@@ -21,11 +21,11 @@ class IT:
         #if oi.type == OpType.MOVE:
             #self.transMOVE(ri,rj)
 
-        print '\033[32m--transformed\033[0m',ri,rj,'\n'
+        self.log.Print( '\033[32m--transformed\033[0m',ri,rj,'\n')
 
     def transADD(self, ri,rj):
 
-        print 'in trans ADD'
+        self.log.Print( 'in trans ADD')
         oi = ri.op
         oj = rj.op
 

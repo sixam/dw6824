@@ -1,86 +1,55 @@
 from dp.src.rpc.it import IT
 import copy
+from dp.src.utils.log import Log
 
 
 class COT:
 
-    depth = 0
-    @staticmethod
-    def transform(o, cd, contexts):
+    def __init__(self, log):
+        self.log = log
+        self.it = IT(log)
+
+    def transform(self, o, cd, contexts):
         """ In place for o
             Everything else should be a copy!"""
 
-        COT.depth += 1
-        depth = COT.depth
-        print '\033[33mDEPTH:', COT.depth, '\033[0m'
+        self.depth += 1
+        depth = self.depth
+        self.log.Print( '\033[33mDEPTH:', self.depth, '\033[0m')
 
-        print '\n'
-        print 'TRANS:',o
-        print '\n'
-
-        # Sort cd by context dependencies 'hb.getOpsDifference'
-        # Go through all ops in cd
-
-        # do not transform original op
-        #o = copy.copy(o)
-
-        # transformed operation
+        self.log.Print( '\n')
+        self.log.Print( 'TRANS:',o,cd)
+        self.log.Print( '\n')
 
         while cd:
-            print 'cd:', cd
-            print 'all contexts:'
-            for c in cd:
-                print contexts[c]
-
-            # previously transformed op
+            self.log.Print( 'recurse')
             ox_id = cd.pop(0)
+            self.log.Print( 'cd:', cd)
             ox = contexts[ox_id]
-            print 'ox_id:', ox_id
-
-            # At this point we should have some caching to avoid going through
-            # the recursion every time
-
-            # If not in cache, transform ox recursively
-
             co = o.context
+            self.log.Print( 'co',co)
             cox = ox.context
-            print 'co',co
-            print 'cox',cox
-
-            # new context difference
-            xcd = COT.contextsdiff(co, cox)
-
-            print 'c_ox in c_o:', COT.issublist(cox,co)
-
-            print 'recurse'
-            COT.transform(ox, xcd ,contexts)
-
-            print 'transformed op:',ox
-
-            IT.transform(o, ox)
+            self.log.Print( 'cox',cox)
+            self.log.Print( 'c_ox in c_o:', self.issublist(cox,co))
+            self.transform(ox, self.contextsdiff(co, cox),contexts)
+            self.it.transform(o, ox)
             o.context.append(ox_id)
-            print 'depth:',depth,'updated co:', o
+            self.log.Print( 'depth:',depth,'updated co:')
 
-    @staticmethod
-    def sortContextDifference(cd,contexts):
-        pass
-
-
-    @staticmethod
-    def issublist(co, ds):
+    def issublist(self, co, ds):
         for c in co:
             if c not in ds:
                 return False
         return True
 
-    @staticmethod
-    def contextsdiff(ds, co):
-        if not COT.issublist(co,ds):
-            print '\033[33mERROR IN CONTEXT DIFF\033[0m'
-            print ds
-            print co
+    def contextsdiff(self, ds, co):
+        if not self.issublist(co,ds):
+            self.log.Print( '\033[33mERROR IN CONTEXT DIFF\033[0m')
+            self.log.Print( ds)
+            self.log.Print( co)
         dds = copy.copy(ds)
         for c in co:
             dds.remove(c)
         return dds
+
 

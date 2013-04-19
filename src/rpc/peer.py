@@ -1,6 +1,7 @@
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from PyQt4 import QtCore, QtGui
 import sys
+from dp.src.utils.log import Log
 from rpc.common import PeerState
 from dp.src.rpc.commontypes import Request, Operation
 from dp.src.ui.main_window import MainWindow
@@ -11,13 +12,14 @@ import xmlrpclib
 import socket
 
 class Peer:
-    def __init__(self,ip,port,peer_id,build_ui = True):
+    def __init__(self,ip,port,peer_id,build_ui = True, log = None):
         # Node state
         self.id = peer_id
-        self.state = PeerState(peer_id)
+        self.log = log
+        self.state = PeerState(peer_id, self.log)
         self.name = '{0}:{1}'.format(ip,port)
         
-        print ip,port
+        self.log.Print( ip,port)
 
         # Init main UI
         if build_ui:
@@ -46,24 +48,21 @@ class Peer:
     def _run(self):
         """ Accept incoming connection till exit  """
         self.server.serve_forever()
-        #finally:
-            #self.server.server_close()
-            #print 'server closed'
 
     def kill(self):
-        print self,'=> killed'
+        self.log.Print( self,'=> killed')
         self.RPCresponder.kill()
 
     def revive(self):
-        print self,'=> revived'
+        self.log.Print( self,'=> revived')
         self.RPCresponder.revive()
 
     def setUnreliable(self):
-        print self,'=> unreliable'
+        self.log.Print( self,'=> unreliable')
         self.RPCresponder.setUnreliable()
 
     def setReliable(self):
-        print self,'=> reliable'
+        self.log.Print( self,'=> reliable')
         self.RPCresponder.setReliable()
 
     def addPeer(self,ip,port):
@@ -71,7 +70,7 @@ class Peer:
         srv_name = 'http://%s:%s' % (ip, port)
         srv = xmlrpclib.Server(srv_name)
         self.state.peers.append(srv)
-        print self,'=> added peer:',srv_name
+        self.log.Print( self,'=> added peer:',srv_name)
 
     def getStrokes(self):
         return self.state.getStrokes()

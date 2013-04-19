@@ -1,31 +1,31 @@
 from dp.src.rpc.commontypes import Request, Operation, OpType
 class IT:
-    @staticmethod
-    def transform(o, ox):
-        IT._transform(o, ox)
+    def __init__(self, log):
+        self.log = log
+
+    def transform(self, o, ox):
+        self._transform(o, ox)
 
 
-    @staticmethod
-    def _transform(ri,rj):
+    def _transform(self, ri,rj):
 
         oi = ri.op
         oj = rj.op
 
-        print 'starting transform'
+        self.log.Print( 'starting transform')
 
         if oi.type == OpType.ADD:
-            IT.transADD(ri,rj)
+            self.transADD(ri,rj)
         #if oi.type == OpType.DEL:
-            #IT.transDEL(ri,rj)
+            #self.transDEL(ri,rj)
         #if oi.type == OpType.MOVE:
-            #IT.transMOVE(ri,rj)
+            #self.transMOVE(ri,rj)
 
-        print '\033[32m--transformed\033[0m',ri,rj,'\n'
+        self.log.Print( '\033[32m--transformed\033[0m',ri,rj,'\n')
 
-    @staticmethod
-    def transADD(ri,rj):
+    def transADD(self, ri,rj):
 
-        print 'in trans ADD'
+        self.log.Print( 'in trans ADD')
         oi = ri.op
         oj = rj.op
 

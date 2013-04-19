@@ -7,18 +7,20 @@ from utils.utils import Utils
 from rpc.priority import Priority
 from ui.stroke import Stroke
 import copy
+from dp.src.utils.log import Log
 
 class Clerk:
     """ Clerk for the UI thread, handles the emission of RPC calls"""
     def __init__(self,state):
         self.state = state
+        self.log = state.log
 
         
     def addStroke(self,s):
-        print 'sent', s
+        self.log.Print( 'sent', s)
         rq = self._genAdd(s)
         rq_send = copy.copy(rq)
-        print 'REQUESTS',rq, rq_send
+        self.log.Print( 'REQUESTS',rq, rq_send )
         self.state.appendToQueue(rq)
         self.state.executeOperations()
         self._send(rq_send)
@@ -87,8 +89,7 @@ class Clerk:
                 srv.enq(rq)
                 keep_running = False
             except:
-                print 'looping'
-                #print 'Sending rq:', rq
+                self.log.Print( 'looping')
                 pass
             time.sleep(.1)
 

@@ -7,6 +7,7 @@ from threading import Thread
 
 from PyQt4 import QtCore, QtGui
 
+from dp.src.utils.log import Log
 from dp.src.utils.utils import Utils
 from dp.src.rpc.peer import Peer
 from dp.src.ui.stroke import Stroke
@@ -32,12 +33,13 @@ class TestSimple(unittest.TestCase):
         for i,server in enumerate(self.servers):
             local_id = self.ids[i]
             ip = 'localhost'
+            log = Log(local_id)
             while True:
                 try:
                     port = random.randint(1,8000)
                     noUI = False
                     build_ui = False
-                    peer = Peer(ip,port, local_id,build_ui)
+                    peer = Peer(ip,port, local_id,build_ui, log)
                     self.peers.append(peer)
                     self.ports.append(port)
                     self.ips.append(ip)
@@ -92,18 +94,6 @@ class TestSimple(unittest.TestCase):
                     if strokes[i] != stroke:
                         Pass = False
         self.assertTrue(Pass)
-
-    def timeout(self,t):
-        print 'time'
-        t = Thread(target=self._timeout,args=(t,))
-        t.daemon = True
-        t.start()
-
-    def _timeout(self,t):
-        time.sleep(t)
-        raise RuntimeError('timed out : {0}s'.format(t))
-
-
 
 # Test basic add/move/delete strokes
     def test_basic(self):

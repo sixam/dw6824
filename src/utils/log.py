@@ -13,7 +13,8 @@ class Log:
         formatter = logging.Formatter('%(message)s')
         #%(levelname)s
         fhandle.setFormatter(formatter)
-        self.log.addHandler(fhandle)
+        if not self.log.handlers:
+            self.log.addHandler(fhandle)
 
 
     def Print(self, *args):

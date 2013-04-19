@@ -14,11 +14,9 @@ class COT:
             ox = contexts[ox.request_id]
             cx = ox.context
             cd2 =COT.contextsdiff(co, cx)
-            COT.transform(ox, cd2)
+            COT.transform(ox, cd2, contexts)
             IT.transform(o, ox)
             o.context.append(ox.request_id)
-
-
 
     @staticmethod
     def issublist(co, ds):

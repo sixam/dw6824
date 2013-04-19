@@ -80,6 +80,8 @@ class PeerState(QtCore.QObject):
         # Send signal to UI
         self.newStrokesSignal.emit()
 
+        print 'CONTEXT is :',self.context
+
         print '========================= END EXECUTE\n'
 
 

@@ -19,6 +19,6 @@ class Log:
     def Print(self, *args):
         s = str()
         for arg in args:
-            s += arg
+            s += str(arg)
             s += ' '
         self.log.info(s)

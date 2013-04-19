@@ -15,26 +15,26 @@ class COT:
 
         self.depth += 1
         depth = self.depth
-        print '\033[33mDEPTH:', self.depth, '\033[0m'
+        self.log.Print( '\033[33mDEPTH:', self.depth, '\033[0m')
 
-        print '\n'
-        print 'TRANS:',o,cd
-        print '\n'
+        self.log.Print( '\n')
+        self.log.Print( 'TRANS:',o,cd)
+        self.log.Print( '\n')
 
         while cd:
-            print 'recurse'
+            self.log.Print( 'recurse')
             ox_id = cd.pop(0)
-            print 'cd:', cd
+            self.log.Print( 'cd:', cd)
             ox = contexts[ox_id]
             co = o.context
-            print 'co',co
+            self.log.Print( 'co',co)
             cox = ox.context
-            print 'cox',cox
-            print 'c_ox in c_o:', self.issublist(cox,co)
+            self.log.Print( 'cox',cox)
+            self.log.Print( 'c_ox in c_o:', self.issublist(cox,co))
             self.transform(ox, self.contextsdiff(co, cox),contexts)
             self.it.transform(o, ox)
             o.context.append(ox_id)
-            print 'depth:',depth,'updated co:'
+            self.log.Print( 'depth:',depth,'updated co:')
 
     def issublist(self, co, ds):
         for c in co:
@@ -44,9 +44,9 @@ class COT:
 
     def contextsdiff(self, ds, co):
         if not self.issublist(co,ds):
-            print '\033[33mERROR IN CONTEXT DIFF\033[0m'
-            print ds
-            print co
+            self.log.Print( '\033[33mERROR IN CONTEXT DIFF\033[0m')
+            self.log.Print( ds)
+            self.log.Print( co)
         dds = copy.copy(ds)
         for c in co:
             dds.remove(c)

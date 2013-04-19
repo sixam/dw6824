@@ -59,7 +59,7 @@ class PeerState(QtCore.QObject):
                 to_del.append(i)
                 cd = COT.contextsdiff(self.context.keys(), rq.context)
                 COT.transform(rq, cd, self.context)
-                self.performOperation(rq)
+                self.performOperation(rq.op)
                 self.context[rq.request_id] = rq.context
             
         to_del.sort()
@@ -186,6 +186,7 @@ class PeerState(QtCore.QObject):
         cp.log = []
         cp.vt = self.vt[:]
         cp.strokes = copy.deepcopy(self.strokes)
+        cp.context = copy.deepcopy(self.context)
         self.lock.release()
         print 'snapshot (unlock)'
         return cp
@@ -221,7 +222,7 @@ class PeerState(QtCore.QObject):
 
         
 class Request:
-    def __init__(self,sender=-1,vt=None,op=None,priority=0,request_id='none'):
+    def __init__(self,sender=-1,vt=[],op=None,priority=0,request_id='none',context=[]):
         if isinstance(op,dict):
             self.op = Operation(**op)
         else:
@@ -235,10 +236,11 @@ class Request:
         self.sender = sender
         self.vt = vt
         self.request_id = request_id
+        self.context = context
 
     def __str__(self):
-        return "< sd:{4} | vt:{3} | op:{2} | {1} |  rid:{0} >".format(
-                self.request_id[0:5], self.priority,self.op,self.vt,self.sender)
+        return "< sd:{4} | ct:{3} | op:{2} | {1} |  rid:{0} >".format(
+                self.request_id[0:5], self.priority,self.op,self.context,self.sender)
     def __copy__(self):
         new = Request()
         new.op = copy.copy(self.op)
@@ -246,6 +248,7 @@ class Request:
         new.priority = copy.copy(self.priority)
         new.sender = copy.copy(self.sender)
         new.request_id = copy.copy(self.request_id)
+        new.context = self.context
         return new
        
 

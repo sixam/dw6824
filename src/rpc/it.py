@@ -5,7 +5,7 @@ class IT:
 
 
     @staticmethod
-    def transform(ri,rj):
+    def _transform(ri,rj):
 
         print 'starting transform'
 

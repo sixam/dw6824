@@ -44,6 +44,7 @@ class RPCresponder:
             print 'I am unreliable dude, ahah'
             pass
 
+        print 'DATA:',rqData
         rq = Request(**rqData)
 
         print 'Responder, rq:', rq

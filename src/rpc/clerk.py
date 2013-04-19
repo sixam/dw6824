@@ -44,7 +44,7 @@ class Clerk:
         p = Priority(op=op,state=sp)
         rq = Request(sender = sp.id, vt = sp.vt[:], op = op,
                 priority = p, 
-                request_id = Utils.generateID())
+                request_id = Utils.generateID(),context=sp.context.keys())
 
         return rq
 

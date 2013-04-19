@@ -17,10 +17,10 @@ class Clerk:
 
         
     def addStroke(self,s):
-        print 'sent', s
+        self.log.Print( 'sent', s)
         rq = self._genAdd(s)
         rq_send = copy.copy(rq)
-        print 'REQUESTS',rq, rq_send
+        self.log.Print( 'REQUESTS',rq, rq_send )
         self.state.appendToQueue(rq)
         self.state.executeOperations()
         self._send(rq_send)
@@ -89,8 +89,7 @@ class Clerk:
                 srv.enq(rq)
                 keep_running = False
             except:
-                print 'looping'
-                #print 'Sending rq:', rq
+                self.log.Print( 'looping')
                 pass
             time.sleep(.1)
 

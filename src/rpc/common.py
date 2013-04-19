@@ -45,22 +45,19 @@ class PeerState(QtCore.QObject):
     def executeOperations(self):
         #NOTE: should be locking
 
-        #print '\033[32m--execute\033[0m'
-
-        #print '\tcurrent vt:',self.vt
-        print 'execute (lock)'
+        self.log.Print( 'execute (lock)')
         self.lock.acquire()
-        print 'execute (locked)'
-        print '\n===== EXECUTE ==============='
-        print 'state', self.vt
+        self.log.Print( 'execute (locked)')
+        self.log.Print( '\n===== EXECUTE ===============')
+        self.log.Print( 'state', self.vt)
         self.printQueue()
 
         to_del = []
         for i, rq in enumerate(self.queue):
             if i in to_del:
                 continue
-            print 'RQ context (exec)',rq.context
-            print 'LOCAL context (exec)', self.context.keys()
+            self.log.Print( 'RQ context (exec)',rq.context)
+            self.log.Print( 'LOCAL context (exec)', self.context.keys())
             if self.cot.issublist(rq.context, self.context.keys()):
                 to_del.append(i)
                 cd = self.cot.contextsdiff(self.context.keys(), rq.context)
@@ -73,48 +70,47 @@ class PeerState(QtCore.QObject):
         to_del.reverse()
 
         for i in to_del:
-            #print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
             del self.queue[i] 
 
         self.printQueue()
         self.printContext()
         self.printStrokes()
         self.lock.release()
-        print 'execute (unlock)'
+        self.log.Print( 'execute (unlock)')
 
         # Send signal to UI
         self.newStrokesSignal.emit()
 
 
-        print '========================= END EXECUTE\n'
+        self.log.Print( '========================= END EXECUTE\n')
 
 
 
     def printQueue(self):
-        print '\n-------------------- QUEUE -------------------------------------------'
-        print len(self.queue), 'requests'
+        self.log.Print( '\n-------------------- QUEUE -------------------------------------------')
+        self.log.Print( len(self.queue), 'requests')
         for i,rq in enumerate(self.queue):
             if rq.op.type == OpType.ADD:
-                print '\033[32m',i,'-',rq,'\033[0m'
+                self.log.Print( '\033[32m',i,'-',rq,'\033[0m')
             elif rq.op.type == OpType.DEL:
-                print '\033[31m',i,'-',rq,'\033[0m'
+                self.log.Print( '\033[31m',i,'-',rq,'\033[0m')
             else:
-                print '\033[33m',i,'-',rq,'\033[0m'
-        print '----------------------------------------------------------------------\n'
+                self.log.Print( '\033[33m',i,'-',rq,'\033[0m')
+        self.log.Print( '----------------------------------------------------------------------\n')
 
     def printContext(self):
-        print '\n-------------------- CONTEXT  ---------------------------------------------'
-        print len(self.context), 'ops in context'
+        self.log.Print( '\n-------------------- CONTEXT  ---------------------------------------------')
+        self.log.Print( len(self.context), 'ops in context')
         for i,rq in enumerate(self.context):
-                print '\033[32m',i,'-',rq,'\033[0m'
-        print '----------------------------------------------------------------------\n'
+                self.log.Print( '\033[32m',i,'-',rq,'\033[0m')
+        self.log.Print( '----------------------------------------------------------------------\n')
 
     def printStrokes(self):
-        print '\n-------------------- STROKES ---------------------------------------------'
-        print len(self.strokes), 'strokes'
+        self.log.Print( '\n-------------------- STROKES ---------------------------------------------')
+        self.log.Print( len(self.strokes), 'strokes')
         for i,s in enumerate(self.strokes):
-            print i,'-',s
-        print '--------------------------------------------------------------------------'
+            self.log.Print( i,'-',s)
+        self.log.Print( '--------------------------------------------------------------------------')
 
 
     def performOperation(self,op):
@@ -128,18 +124,18 @@ class PeerState(QtCore.QObject):
                 self.strokes[op.pos]=op.stroke
             for s in self.strokes:
                 if s:
-                    print '\t',s
+                    self.log.Print( '\t',s)
                 else:
-                    print '\t',none
-            print '\n'
+                    self.log.Print( '\t',none)
+            self.log.Print( '\n')
 
         if op.type == OpType.DEL:
-            print self.strokes
+            self.log.Print( self.strokes)
             del self.strokes[op.pos]
-            print self.strokes
+            self.log.Print( self.strokes)
         if op.type == OpType.MOVE:
             self.strokes[op.pos].moveTo(op.offset)
-            print self.strokes
+            self.log.Print( self.strokes)
             
         if self.window: #Dont call UI (for the tester)
             self.window.scribbleArea.draw()
@@ -151,9 +147,9 @@ class PeerState(QtCore.QObject):
         return cp
 
     def getSnapshot(self):
-        print 'snapshot (lock)'
+        self.log.Print( 'snapshot (lock)')
         self.lock.acquire()
-        print 'snapshot (locked)'
+        self.log.Print( 'snapshot (locked)')
         cp = PeerState(0);
         cp.id = self.id
         cp.queue = copy.deepcopy(self.queue)
@@ -162,33 +158,33 @@ class PeerState(QtCore.QObject):
         cp.strokes = copy.deepcopy(self.strokes)
         cp.context = copy.deepcopy(self.context)
         self.lock.release()
-        print 'snapshot (unlock)'
+        self.log.Print( 'snapshot (unlock)')
         return cp
 
 
     def appendToQueue(self, rq):
-        print 'append (lock)'
+        self.log.Print( 'append (lock)')
         self.lock.acquire()
-        print 'append (locked)'
+        self.log.Print( 'append (locked)')
         rid = rq.request_id
 
         if rid in self.prqs:
-            print 'already seen'
+            self.log.Print( 'already seen')
             self.lock.release()
-            print 'append (unlock)'
+            self.log.Print( 'append (unlock)')
             return False
 
         self.prqs.append(rq.request_id);
         self.queue.append(rq)
         self.lock.release()
-        print 'append (unlock)'
+        self.log.Print( 'append (unlock)')
         return True
 
     def getStrokes(self):
-        print 'get strokes (lock)'
+        self.log.Print( 'get strokes (lock)')
         self.lock.acquire()
-        print 'get strokes (locked)'
+        self.log.Print( 'get strokes (locked)')
         cp = copy.deepcopy(self.strokes)
         self.lock.release()
-        print 'get strokes (unlock)'
+        self.log.Print( 'get strokes (unlock)')
         return cp

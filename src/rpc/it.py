@@ -1,4 +1,4 @@
-import dp.src.rpc.common as com
+from dp.src.rpc.commontypes import Request, Operation
 class IT:
     @staticmethod
     def transform(o, ox):
@@ -13,7 +13,7 @@ class IT:
 
         print 'starting transform'
 
-        if oi.type == com.OpType.ADD:
+        if oi.type == OpType.ADD:
             transADD(ri,rj)
         #if oi.type == OpType.DEL:
             #transDEL(ri,rj)

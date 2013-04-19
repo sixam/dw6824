@@ -124,11 +124,7 @@ class TestSimple(unittest.TestCase):
         p1.kill()
         
         ck0.addStroke(s[2]);
-        ck0.addStroke(s[3]);
         ck1.addStroke(s[4])
-        ck1.addStroke(s[5])
-        ck1.addStroke(s[9])
-        ck0.addStroke(s[10])
         time.sleep(1)
         
         p0.revive()
@@ -137,34 +133,35 @@ class TestSimple(unittest.TestCase):
 
         ck0.addStroke(s[6]);
         ck1.addStroke(s[7])
-        ck1.addStroke(s[8])
         time.sleep(1)
 
         self.assertStrokesEqual()
 
-    def test_manypeers(self):
-        self.addMultipleServers(20)
-        cks = []
-        for i in range(len(self.peers)):
-            cks.append(Clerk(self.peers[i].state));
-        s = self.genRandomStrokes(30)
-        for stroke in s:
-            i = random.randint(0,1024) % len(self.peers)
-            cks[i].addStroke(stroke)
-        time.sleep(10)
-        self.assertStrokesEqual()
+        raise NameError
 
-    def test_manypeers(self):
-        self.addMultipleServers(20)
-        cks = []
-        for i in range(len(self.peers)):
-            cks.append(Clerk(self.peers[i].state));
-        s = self.genRandomStrokes(30)
-        for stroke in s:
-            i = random.randint(0,1024) % len(self.peers)
-            cks[i].addStroke(stroke)
-        time.sleep(10)
-        self.assertStrokesEqual()
+    #def test_manypeers(self):
+        #self.addMultipleServers(20)
+        #cks = []
+        #for i in range(len(self.peers)):
+            #cks.append(Clerk(self.peers[i].state));
+        #s = self.genRandomStrokes(30)
+        #for stroke in s:
+            #i = random.randint(0,1024) % len(self.peers)
+            #cks[i].addStroke(stroke)
+        #time.sleep(10)
+        #self.assertStrokesEqual()
+
+    #def test_manypeers(self):
+        #self.addMultipleServers(20)
+        #cks = []
+        #for i in range(len(self.peers)):
+            #cks.append(Clerk(self.peers[i].state));
+        #s = self.genRandomStrokes(30)
+        #for stroke in s:
+            #i = random.randint(0,1024) % len(self.peers)
+            #cks[i].addStroke(stroke)
+        #time.sleep(10)
+        #self.assertStrokesEqual()
 
 #    def test_manydeath(self):
 #        self.addMultipleServers(20)

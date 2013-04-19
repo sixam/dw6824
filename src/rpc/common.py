@@ -61,10 +61,9 @@ class PeerState(QtCore.QObject):
                 print 'ok'
                 to_del.append(i)
                 cd = COT.contextsdiff(self.context.keys(), rq.context)
-                works = COT.transform(rq, cd, self.context)
-                if works:
-                    self.performOperation(rq.op)
-                    self.context[rq.request_id] = rq
+                COT.transform(rq, cd, self.context)
+                self.performOperation(rq.op)
+                self.context[rq.request_id] = rq
             
         to_del.sort()
         to_del.reverse()

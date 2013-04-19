@@ -102,6 +102,7 @@ class TestSimple(unittest.TestCase):
         s2 = Stroke(path=[[10,10],[10,20]])
 
         ck0.addStroke(s1)
+        time.sleep(1)
         ck1.addStroke(s2)
         time.sleep(1)
 
@@ -142,16 +143,35 @@ class TestSimple(unittest.TestCase):
         self.assertStrokesEqual()
 
     def test_manypeers(self):
-        self.addMultipleServers(2)
+        self.addMultipleServers(20)
         cks = []
-        for i in range(self.peers):
+        for i in range(len(self.peers)):
             cks.append(Clerk(self.peers[i].state));
-        s = self.genRandomStrokes(12)
+        s = self.genRandomStrokes(30)
         for stroke in s:
-            i = random.randint() % len(self.peers)
+            i = random.randint(0,1024) % len(self.peers)
             cks[i].addStroke(stroke)
-        time.sleep(5)
+        time.sleep(10)
         self.assertStrokesEqual()
+
+    def test_manypeers(self):
+        self.addMultipleServers(20)
+        cks = []
+        for i in range(len(self.peers)):
+            cks.append(Clerk(self.peers[i].state));
+        s = self.genRandomStrokes(30)
+        for stroke in s:
+            i = random.randint(0,1024) % len(self.peers)
+            cks[i].addStroke(stroke)
+        time.sleep(10)
+        self.assertStrokesEqual()
+
+#    def test_manydeath(self):
+#        self.addMultipleServers(20)
+#        for i in range(len(self.peers)):
+#            cks.append(Clerk(self.peers[i].state));
+#        s = self.genRandomStrokes(30)
+
 
 
     def genRandomStrokes(self, n):

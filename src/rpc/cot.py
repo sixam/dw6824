@@ -15,13 +15,14 @@ class COT:
         print '\033[33mDEPTH:', COT.depth, '\033[0m'
 
         print '\n'
-        print 'TRANS:',o,cd
+        print 'TRANS:',o
         print '\n'
 
         while cd:
             print 'recurse'
-            ox_id = cd.pop(0)
             print 'cd:', cd
+            ox_id = cd.pop(0)
+            print 'ox_id:', ox_id
             ox = contexts[ox_id]
             co = o.context
             print 'co',co

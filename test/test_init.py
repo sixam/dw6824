@@ -91,6 +91,18 @@ class TestSimple(unittest.TestCase):
                         Pass = False
         self.assertTrue(Pass)
 
+    def timeout(self,t):
+        print 'time'
+        t = Thread(target=self._timeout,args=(t,))
+        t.daemon = True
+        t.start()
+
+    def _timeout(self,t):
+        time.sleep(t)
+        raise RuntimeError('timed out : {0}s'.format(t))
+
+
+
 # Test basic add/move/delete strokes
     def test_basic(self):
         p0 = self.peers[0]
@@ -142,6 +154,8 @@ class TestSimple(unittest.TestCase):
         p1 = self.peers[1]
         ck0 = Clerk(p0.state)
         ck1 = Clerk(p1.state)
+
+        self.timeout(5)
         
         s = self.genRandomStrokes(12)
 

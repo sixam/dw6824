@@ -2,6 +2,7 @@ import copy
 from ui.stroke import Stroke
 from rpc.priority import Priority
 from rpc.vt import VT
+from dp.src.rpc.cot import COT
 from threading import Lock
 from PyQt4 import QtCore, QtGui
 import copy
@@ -30,6 +31,7 @@ class PeerState(QtCore.QObject):
         self.vt      = [0 for x in range(3)]
         self.strokes = []
         self.prqs    = []
+        self.context = {}
 
         self.window = None
 
@@ -53,32 +55,24 @@ class PeerState(QtCore.QObject):
         for i, rq in enumerate(self.queue):
             if i in to_del:
                 continue
-
-            print '\tunqueue vt:', rq.vt
-            cmp = VT.cmp(rq.vt, self.vt)
-
-            if  cmp == 0 or cmp == -1:
+            if COT.issublist(rq.context, self.context.keys()):
                 to_del.append(i)
-                if cmp==-1:
-                    for l in self.log:
-                        if (VT.cmp(rq.vt, l.vt) == 2 or VT.cmp(rq.vt, l.vt) == 0) and rq.vt[l.sender] <= l.vt[l.sender]:
-                            self.transform(rq, l)
-                self.performOperation(rq.op)
-                self.log.append(rq)
-                self.vt[rq.sender] += 1
-
+                cd = COT.contextsdiff(self.context.keys(), rq.context)
+                COT.transform(rq, cd, self.context)
+                self.performOperation(rq)
+                self.context[rq.request_id] = rq.context
+            
         to_del.sort()
         to_del.reverse()
 
         for i in to_del:
             print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
             del self.queue[i] 
-           
+
         print '\033[31m--done\033[0m\n'
 
 
         self.printQueue()
-        self.printLog()
         self.printStrokes()
         self.lock.release()
         print 'execute (unlock)'
@@ -224,145 +218,6 @@ class PeerState(QtCore.QObject):
         print 'get strokes (unlock)'
         return cp
 
-    def transform(self,ri,rj):
-        oi = ri.op
-        oj = rj.op
-
-        print 'starting transform'
-
-        if oi.type == OpType.ADD:
-            self.transADD(ri,rj)
-        if oi.type == OpType.DEL:
-            self.transDEL(ri,rj)
-        if oi.type == OpType.MOVE:
-            self.transMOVE(ri,rj)
-
-        print '\033[32m--transformed\033[0m',ri,rj,'\n'
-
-    def transADD(self,ri,rj):
-
-        print 'in trans ADD'
-        oi = ri.op
-        oj = rj.op
-
-        PosI = oi.pos
-        PosJ = oj.pos
-
-        pi = ri.priority
-        pj = rj.priority
-
-        if oj.type == OpType.ADD:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                oi.pos += 1
-            else:
-                if oi.stroke.id== oj.stroke.id:
-                    oi.type = OpType.NoOp
-                else:
-                    if pi > pj:
-                        oi.pos += 1
-                    else:
-                        pass
-
-        if oj.type == OpType.DEL:
-            if PosI < PosJ:
-                pass
-            else:
-                oi.pos -= 1
-        if oj.type == OpType.MOVE:
-            # This will have to change if we want to insert. 
-            # Either move at p+1 or don't move if prioritu blah blah
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                pass
-            else: # PosI == PosJ
-                if pi > pj:
-                    oi.pos += 1 # This is a bit weird, just like the one in add/add
-                else:
-                    pass
-
-        
-    def transDEL(self, ri, rj):
-        print 'in trans DEL'
-        oi = ri.op
-        oj = rj.op
-
-        PosI = oi.pos
-        PosJ = oj.pos
-
-        pi = ri.priority
-        pj = rj.priority
-
-        if oj.type == OpType.ADD:
-            if PosI < PosJ:
-                pass
-            else:
-                oi.pos += 1
-
-        if oj.type == OpType.DEL:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                oi.pos -= 1
-            else:
-                oi.type = OpType.NoOp
-
-        if oj.type == OpType.MOVE:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                pass
-            else: # PosI == PosJ
-                if pi < pj:
-                    oi.type = OpType.NoOp
-                else:
-                    pass
-
-    def transMOVE(self,ri,rj):
-        print 'in trans MOVE'
-        oi = ri.op
-        oj = rj.op
-
-        PosI = oi.pos
-        PosJ = oj.pos
-
-        pi = ri.priority
-        pj = rj.priority
-
-        if oj.type == OpType.ADD:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                oi.pos += 1
-            else:
-                if pi > pj:
-                    oi.pos += 1 # This is strange
-                else:
-                    pass
-
-        if oj.type == OpType.DEL:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                oi.pos -= 1
-            else: # PosI == PosJ
-                if pi < pj:
-                    oi.type = OpType.NoOp
-                else:
-                    pass
-
-        if oj.type == OpType.MOVE:
-            if PosI < PosJ:
-                pass
-            elif PosI > PosJ:
-                pass
-            else: # PosI == PosJ
-                if pi < pj:
-                    oi.type = OpType.NoOp
-                else:
-                    pass
 
         
 class Request:

@@ -46,7 +46,7 @@ class RPCresponder:
 
         rq = Request(**rqData)
 
-        print 'Responder, rq:', rq
+        #print 'Responder, rq:', rq
         appended = self.state.appendToQueue(rq)
         if not appended:
             return True

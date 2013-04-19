@@ -60,19 +60,17 @@ class PeerState(QtCore.QObject):
                 cd = COT.contextsdiff(self.context.keys(), rq.context)
                 COT.transform(rq, cd, self.context)
                 self.performOperation(rq.op)
-                self.context[rq.request_id] = rq.context
+                self.context[rq.request_id] = rq
             
         to_del.sort()
         to_del.reverse()
 
         for i in to_del:
-            print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
+            #print '\033[31m\t del:', self.queue[i].request_id, '\033[0m'
             del self.queue[i] 
 
-        print '\033[31m--done\033[0m\n'
-
-
         self.printQueue()
+        self.printContext()
         self.printStrokes()
         self.lock.release()
         print 'execute (unlock)'
@@ -80,7 +78,6 @@ class PeerState(QtCore.QObject):
         # Send signal to UI
         self.newStrokesSignal.emit()
 
-        print 'CONTEXT is :',self.context
 
         print '========================= END EXECUTE\n'
 
@@ -98,16 +95,11 @@ class PeerState(QtCore.QObject):
                 print '\033[33m',i,'-',rq,'\033[0m'
         print '----------------------------------------------------------------------\n'
 
-    def printLog(self):
-        print '\n-------------------- LOG ---------------------------------------------'
-        print len(self.log), 'requests'
-        for i,rq in enumerate(self.log):
-            if rq.op.type == OpType.ADD:
+    def printContext(self):
+        print '\n-------------------- CONTEXT  ---------------------------------------------'
+        print len(self.context), 'ops in context'
+        for i,rq in enumerate(self.context):
                 print '\033[32m',i,'-',rq,'\033[0m'
-            elif rq.op.type == OpType.DEL:
-                print '\033[31m',i,'-',rq,'\033[0m'
-            else:
-                print '\033[33m',i,'-',rq,'\033[0m'
         print '----------------------------------------------------------------------\n'
 
     def printStrokes(self):
@@ -118,40 +110,15 @@ class PeerState(QtCore.QObject):
         print '--------------------------------------------------------------------------'
 
 
-    def nextLog(self, logcopy):
-        print 'NEXTLOG'
-        if not logcopy:
-            return None
-        tofind = logcopy.pop()
-        for rq in self.log:
-            if rq.request_id == tofind.request_id:
-                return rq
-        return None
-
-    def mostRecent(self,vt):
-        print '-----most-recent----'
-        for i in range(len(self.log)-1,-1,-1):
-            if VT.cmp(self.log[i].vt,vt) <= 0:
-                print '\033[33mgood',self.log[i],'\033[0m'
-                return i
-        return -1
-        print '---------------------'
-
     def performOperation(self,op):
-        print 'start performing'
         if op.type == OpType.ADD:
-            print 'add stroke at',op.pos, 'strokes length', len(self.strokes)
             m = len(self.strokes)
             for i in range(m, op.pos+1):
-                print '\t adding None'
                 self.strokes.insert(i,None)
             if self.strokes[op.pos]:
-                print '\t inserting'
                 self.strokes.insert(op.pos,op.stroke)
             else: # none: replace
-                print '\t replacing a none'
                 self.strokes[op.pos]=op.stroke
-            print 'strokes after perf:'
             for s in self.strokes:
                 if s:
                     print '\t',s
@@ -164,13 +131,11 @@ class PeerState(QtCore.QObject):
             del self.strokes[op.pos]
             print self.strokes
         if op.type == OpType.MOVE:
-            print 'I am moving', op
             self.strokes[op.pos].moveTo(op.offset)
             print self.strokes
             
         if self.window: #Dont call UI (for the tester)
             self.window.scribbleArea.draw()
-        print 'done performing'
 
     def getPastRequests(self):
         self.lock.acquire()

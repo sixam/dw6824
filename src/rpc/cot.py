@@ -8,19 +8,15 @@ class COT:
         """ In place for o
             Everything else should be a copy!"""
 
-        print 'bbys with',o,cd,contexts
         while cd:
-            ox = cd.pop(0)
-            print "CD:",cd
-            cx = contexts[ox.request_id]
+            print cd
+            ox_id = cd.pop(0)
+            ox = contexts[ox.request_id]
+            cx = ox.context
             cd2 =COT.contextsdiff(co, cx)
-            print 'recurse on', cd2
             COT.transform(ox, cd2)
-            print 'pretransform'
             IT.transform(o, ox)
-            print 'posttrans'
             o.context.append(ox.request_id)
-        print 'bbys done'
 
 
 
@@ -33,10 +29,7 @@ class COT:
 
     @staticmethod
     def contextsdiff(ds, co):
-        print 'cdiff'
         dds = copy.copy(ds)
         for c in co:
-            print 'try remove'
             dds.remove(c)
-            print 'removed'
         return dds

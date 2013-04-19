@@ -1,7 +1,7 @@
 class IT:
     @staticmethod
     def transform(o, ox):
-        IT._transform(o, ox)
+        IT._transform(o.op, ox.op)
 
 
     @staticmethod

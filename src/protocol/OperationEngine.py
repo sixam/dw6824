@@ -156,21 +156,27 @@ class OperationEngine:
     def pushRemoteOp(self, op):
         top = None
         if (self.hasProcessedOp(op)):
+            self.log.red('pushremote:already processed')
             """ let the history buffer track the total order for the op """
             self.hb.addRemote(op)
             """ engine has already processed this op so ignore it """
             return None
         elif (self.cv.equals(op.contextVector)):
+            self.log.red('pushremote:already equal no trans')
             """ no transform needed """
             """ make a copy so return value is independent of input """
             top = op.copy()
         else:
+            self.log.red('pushremote:trans')
             """ transform needed to upgrade context """
             cd = self.cv.subtract(op.contextVector)
+            self.log.red('pushremote:trans.')
             """ make the original op immutable """
             op.immutable = True
             """ top is a transformed copy of the original """
+            self.log.red('pushremote:trans..')
             top = self._transform(op, cd)
+            self.log.red('pushremote:trans...')
 
 
         """ update local context vector with the original op """
@@ -332,35 +338,46 @@ class OperationEngine:
     """
     def _transform(self, op, cd):
         """ get all ops for context different from history buffer sorted by context dependencies """
+        self.log.green('get ops for diff')
         ops = self.hb.getOpsForDifference(cd)
+        self.log.green('get ops for diff - returned')
         """ copy the incoming operation to avoid disturbing the history buffer """
         """   when the op comes from our history buffer during a recursive step """
         op = op.copy()
         """ iterate over all operations in the difference """
         l = len(ops)
+        self.log.green('lengh of ops to trans:',l)
         for i in range(l):
             """ xop is the previously applied op """
             xop = ops[i]
             if (not op.contextVector.equals(xop.contextVector)):
+                self.log.green('context not equal need xform',l)
                 """ see if we've cached a transform of this op in the desired """
                 """ context to avoid recursion """
                 cxop = xop.getFromCache(op.contextVector)
                 """ cxop = null; """
                 if (cxop):
+                    self.log.green('retrieved from cache',l)
                     xop = cxop
                 else:
                     """ transform needed to upgrade context of xop to op """
                     xcd = op.contextVector.subtract(xop.contextVector)
                     if (len(xcd.sites) <= 0):
+                        self.log.red('transform produced empty context diff',l)
                         raise OperationEngineException("transform produced empty context diff")
                     """ we'll get a copy back from the recursion """
+                    self.log.orange('recurse xform',l)
                     cxop = self._transform(xop, xcd)
+                    self.log.orange('back from recursion',l)
                     if cxop is None:
+                        self.log.orange('invalided op',l)
                         """ xop was invalidated by a previous op during the
                         transform so it has no effect on the current op;
                         upgrade context immediately and continue with
                         the next one """
+                        self.log.green('upgrade context xop',l)
                         op.upgradeContextTo(xop)
+                        self.log.green('upgraded context xop',l)
                         """ @todo: see null below """
                         continue
                     """ now only deal with the copy """
@@ -371,7 +388,9 @@ class OperationEngine:
             """ make a copy of the op as is before transform """
             cop = op.copy()
             """ transform op to include xop now that contexts match IT(op, xop) """
+            self.log.red('TRANSFORM WITH XOP')
             op = op.transformWith(xop)
+            self.log.red('TRANSFORMED WITH XOP')
             if op is None:
                 """ op target was deleted by another earlier op so return now
                 do not continue because no further transforms have any

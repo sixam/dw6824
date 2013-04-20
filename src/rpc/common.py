@@ -38,9 +38,6 @@ class PeerState(QtCore.QObject):
         self.log = log
 
         self.engine = OperationEngine(self.id,log)
-        self.engine.thawSite(0)
-        self.engine.thawSite(1)
-        self.engine.thawSite(2)
 
 
     def performOperation(self,op):
@@ -83,6 +80,7 @@ class PeerState(QtCore.QObject):
 
         self.lock.release()
         self.log.Print( 'new op (unlock)\n')
+        self.log.red('CREATE: Perfom op')
         self.performOperation(op)
         return op
 
@@ -93,10 +91,14 @@ class PeerState(QtCore.QObject):
         self.log.Print( 'receive op (locked)')
 
         # check duplicates
+        self.log.orange('has processed?')
         seen = self.engine.hasProcessedOp(op)
+        self.log.orange('has processed?returned')
         if not seen:
+            self.log.green('not seen:push')
             new_op = self.engine.pushRemoteOp(op)
-            self.performOperation(new_op)
+            self.processed_ops.append(new_op)
+            self.log.green('not seen:pushed')
             self.log.Print('buffer size:',self.engine.getBufferSize())
         else:
             self.log.Print( 'already seen')
@@ -105,7 +107,8 @@ class PeerState(QtCore.QObject):
             return False
 
         self.lock.release()
-        self.processed_ops.append(new_op)
+        self.log.red('RECEIVE: Perfom op')
+        self.performOperation(new_op)
         self.log.Print( 'receive op (unlock)\n')
         return True
 

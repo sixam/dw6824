@@ -181,7 +181,6 @@ class OperationEngine:
         self.cvt.updateWithOperation(op)
 
         """ return the transformed op """
-        self.log.red('done pushing remote')
         return top
 
     """

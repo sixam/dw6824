@@ -15,9 +15,8 @@ class Clerk:
 
         
     def addStroke(self,s):
-        op = self.state.createOp()
-        c_op = copy.deepcopy(op)
-        self._send(c_op)
+        op = self.state.createOp('insert')
+        self._send(op.copy())
 
     def deleteStroke(self,s_pos):
         rq = self._genDel(s_pos)

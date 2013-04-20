@@ -38,8 +38,8 @@ class PeerState(QtCore.QObject):
         self.log = log
 
         self.engine = OperationEngine(self.id,log)
-        self.engine.thawSite(0)
-        self.engine.thawSite(1)
+        #self.engine.thawSite(0)
+        #self.engine.thawSite(1)
 
 
     def executeOperations(self):
@@ -143,7 +143,7 @@ class PeerState(QtCore.QObject):
         self.lock.release()
         return cp
 
-    def createOp(self):
+    def createOp(self,otype):
         self.log.Print( 'new op (lock)')
         self.lock.acquire()
         self.log.Print( 'new op (locked)')
@@ -151,7 +151,7 @@ class PeerState(QtCore.QObject):
         key = 'a'
         val = self.id.__str__()
 
-        op = self.engine.createOp(True,key,val,'insert',self.id)
+        op = self.engine.createOp(True,key,val,otype,self.id)
 
         self.engine.pushLocalOp(op)
         self.processed_ops.append(op)
@@ -170,10 +170,8 @@ class PeerState(QtCore.QObject):
         # check duplicates
         seen = self.engine.hasProcessedOp(op)
         if not seen:
-            self.log.red('push remote')
             new_op = self.engine.pushRemoteOp(op)
             self.processed_ops.append(new_op)
-            self.log.Print( 'pushed remote op')
             self.log.Print('buffer size:',self.engine.getBufferSize())
         else:
             self.log.Print( 'already seen')
@@ -196,6 +194,9 @@ class PeerState(QtCore.QObject):
         self.log.purple(self.engine.getBufferSize())
 
         self.printProcessedOps()
+        self.printHistoryBuffer()
+
+        self.log.purple('current context:',self.engine.copyContextVector())
 
         return cp
 
@@ -203,6 +204,13 @@ class PeerState(QtCore.QObject):
         self.log.blue( '\n-------------------- PROCESSED  -------------------------------------------')
         self.log.Print( len(self.processed_ops), 'operations')
         for i,op in enumerate(self.processed_ops):
+            self.log.Print(op)
+        self.log.blue( '----------------------------------------------------------------------\n')
+
+    def printHistoryBuffer(self):
+        self.log.blue( '\n-------------------- HISTORY BUFFER  -------------------------------------------')
+        self.log.Print( len(self.engine.hb.ops), 'operations')
+        for i,op in enumerate(self.engine.hb.ops):
             self.log.Print(op)
         self.log.blue( '----------------------------------------------------------------------\n')
 

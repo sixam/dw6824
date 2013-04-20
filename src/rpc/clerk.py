@@ -15,7 +15,7 @@ class Clerk:
 
         
     def addStroke(self,s):
-        op = self.state.createOp('insert')
+        op = self.state.createOp('insert',stroke=s)
         self._send(op.copy())
 
     def deleteStroke(self,s_pos):

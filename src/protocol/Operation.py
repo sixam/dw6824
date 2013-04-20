@@ -87,7 +87,7 @@ class Operation:
 
     def __str__(self):
         return "{0} - id({1},{2}) - k:{3}, v:{4} p:{5} cv:{6}".format(
-                self.type,self.siteId,self.seqId,self.key,self.value,self.position,self.contextVector.__str__())
+                self.type,self.siteId,self.seqId,self.key,self.value['id'],self.position,self.contextVector.__str__())
 
     """
     Serializes the operation as an array of values for transmission.

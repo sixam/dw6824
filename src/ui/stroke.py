@@ -40,6 +40,17 @@ class Stroke:
             return 0
         return -1
 
+    def marshall(self):
+        packet          = {}
+        packet['path']  = self.path
+        packet['width'] = self.width
+        packet['color'] = self.color
+        packet['id']    = self.id
+        return packet
+
+    #def unmarshall():
+
+
     def toPainterPath(self):
         points = self.path
         path   = QtGui.QPainterPath(QtCore.QPointF(*points[0]));

@@ -76,7 +76,6 @@ class PeerState(QtCore.QObject):
         self.log.red('STROKE',val)
 
         op = self.engine.createOp(True,key,val,otype,self.id)
-        self.performOperation(op)
 
         self.engine.pushLocalOp(op)
         self.processed_ops.append(op)
@@ -84,6 +83,7 @@ class PeerState(QtCore.QObject):
 
         self.lock.release()
         self.log.Print( 'new op (unlock)\n')
+        self.performOperation(op)
         return op
 
 
@@ -97,7 +97,6 @@ class PeerState(QtCore.QObject):
         if not seen:
             new_op = self.engine.pushRemoteOp(op)
             self.performOperation(new_op)
-            self.processed_ops.append(new_op)
             self.log.Print('buffer size:',self.engine.getBufferSize())
         else:
             self.log.Print( 'already seen')
@@ -106,6 +105,7 @@ class PeerState(QtCore.QObject):
             return False
 
         self.lock.release()
+        self.processed_ops.append(new_op)
         self.log.Print( 'receive op (unlock)\n')
         return True
 

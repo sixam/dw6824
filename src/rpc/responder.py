@@ -38,14 +38,16 @@ class RPCresponder:
     def enq(self,packet):
         """ Unmarshalls the request and add it to the queue"""
 
-        op = InsertOperation.unmarshall(packet)
-        done = self.state.receiveOp(op)
-
         if self.dead:
             return 
 
+        op = InsertOperation.unmarshall(packet)
+        accepted = self.state.receiveOp(op)
+
+        if accepted:
+            return True
+        else:
+            return
+
         #if self.unreliable:
             #pass
-
-        return done
-

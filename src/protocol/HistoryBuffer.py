@@ -43,6 +43,12 @@ class HistoryBuffer:
         self.ops = {}
         self.size = 0
 
+    def __str__(self):
+        s = "HB|{0}|\n".format(self.size)
+        for o in self.ops:
+            s += "\t{0}\n".format(self.ops[o])
+        return s
+
     """
     Serializes the history buffer contents to seed a remote instance.
 

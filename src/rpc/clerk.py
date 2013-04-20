@@ -85,5 +85,5 @@ class Clerk:
             except:
                 self.log.Print( 'looping')
                 pass
-            time.sleep(.1)
+            time.sleep(1)
 

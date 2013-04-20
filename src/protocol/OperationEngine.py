@@ -155,6 +155,7 @@ class OperationEngine:
     """
     def pushRemoteOp(self, op):
         top = None
+        self.log.orange('contexts|op:',op.contextVector,"|loc:",self.cv)
         if (self.hasProcessedOp(op)):
             self.log.red('pushremote:already processed')
             """ let the history buffer track the total order for the op """
@@ -338,7 +339,8 @@ class OperationEngine:
     """
     def _transform(self, op, cd):
         """ get all ops for context different from history buffer sorted by context dependencies """
-        self.log.green('get ops for diff')
+        self.log.green('get ops for diff',cd.getHistoryBufferKeys())
+        self.log.green(self.hb)
         ops = self.hb.getOpsForDifference(cd)
         self.log.green('get ops for diff - returned')
         """ copy the incoming operation to avoid disturbing the history buffer """

@@ -17,6 +17,9 @@ class ContextDifference:
         self.sites = []
         self.seqs = []
 
+    def __str__(self):
+        return "CD|sites:{0}|seq:{1}".format(self.sites,self.seqs)
+
     """
     Adds a range of operations to the difference.
 

@@ -39,7 +39,6 @@ class PeerState(QtCore.QObject):
 
         self.engine = OperationEngine(self.id,log)
 
-
     def performOperation(self,op):
         if op.type == 'insert':
             m = len(self.strokes)
@@ -90,6 +89,25 @@ class PeerState(QtCore.QObject):
         self.lock.acquire()
         self.log.Print( 'receive op (locked)')
 
+
+        self.log.Print('received:',op)
+
+        # check contexts differs only by 1 at siteID
+        local_cv = self.engine.cv
+        op_cv = op.contextVector
+        sid = op.siteId
+        siteDiff = op_cv.getSeqForSite(sid) - local_cv.getSeqForSite(sid)
+        self.log.Print('cvs:',local_cv,op_cv,sid,siteDiff)
+        if siteDiff >= 1:
+            self.log.red('too far')
+            self.lock.release()
+            self.log.Print( 'receive op (unlock)\n')
+            # NOTE: really it should buffer it instead of refusing
+            return False
+        else:
+            self.log.green('ok good diff')
+
+
         # check duplicates
         self.log.orange('has processed?')
         seen = self.engine.hasProcessedOp(op)
@@ -103,8 +121,8 @@ class PeerState(QtCore.QObject):
         else:
             self.log.Print( 'already seen')
             self.lock.release()
-            self.log.Print( 'receiv op (unlock)\n')
-            return False
+            self.log.Print( 'receive op (unlock)\n')
+            return True
 
         self.lock.release()
         self.log.red('RECEIVE: Perfom op')
@@ -140,8 +158,8 @@ class PeerState(QtCore.QObject):
     def printHistoryBuffer(self):
         self.log.blue( '\n-------------------- HISTORY BUFFER  -------------------------------------------')
         self.log.Print( len(self.engine.hb.ops), 'operations')
-        for i,op in enumerate(self.engine.hb.ops):
-            self.log.Print(op)
+        for op in self.engine.hb.ops:
+            self.log.Print(self.engine.hb.ops[op])
         self.log.blue( '----------------------------------------------------------------------\n')
 
     def printStrokes(self):

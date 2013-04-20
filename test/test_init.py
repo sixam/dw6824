@@ -178,7 +178,7 @@ class TestSimple(unittest.TestCase):
         cks = []
         for i in range(len(self.peers)):
             cks.append(Clerk(self.peers[i].state));
-        s = self.genRandomStrokes(5)
+        s = self.genRandomStrokes(30)
         for stroke in s:
             i = random.randint(0,1024) % len(self.peers)
             cks[i].addStroke(stroke)

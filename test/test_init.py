@@ -63,13 +63,14 @@ class TestSimple(unittest.TestCase):
         local_id = len(self.servers)
         self.ids.append(local_id)
         self.servers.append(server)
+        log = Log(local_id)
         ip = 'localhost'
         while True:
             try:
                 port = random.randint(1,8000)
                 noUI = False
                 build_ui = False
-                peer = Peer(ip,port, local_id,build_ui)
+                peer = Peer(ip,port, local_id,build_ui,log)
                 self.peers.append(peer)
                 self.ports.append(port)
                 self.ips.append(ip)

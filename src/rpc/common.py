@@ -78,10 +78,10 @@ class PeerState(QtCore.QObject):
         self.processed_ops.append(op)
         self.log.Print('buffer size:',self.engine.getBufferSize())
 
-        self.lock.release()
-        self.log.Print( 'new op (unlock)\n')
         self.log.red('CREATE: Perfom op')
         self.performOperation(op)
+        self.lock.release()
+        self.log.Print( 'new op (unlock)\n')
         return op
 
 

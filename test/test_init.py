@@ -169,7 +169,7 @@ class TestSimple(unittest.TestCase):
         ck0.addStroke(s[5])
         ck1.addStroke(s[6])
 
-        time.sleep(1)
+        time.sleep(2)
         print 'timed out'
 
         self.assertStrokesEqual()

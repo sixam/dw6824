@@ -27,6 +27,7 @@ class PeerState(QtCore.QObject):
         self.peers   = [] # known peers
         self.strokes = [] # currently drawn strokes
         self.prqs    = [] # past requests
+        self.processed_ops = []
 
         # attached ui
         self.window = None
@@ -36,7 +37,7 @@ class PeerState(QtCore.QObject):
         # site log file
         self.log = log
 
-        self.engine = OperationEngine(self.id)
+        self.engine = OperationEngine(self.id,log)
         self.engine.thawSite(0)
         self.engine.thawSite(1)
 
@@ -79,7 +80,6 @@ class PeerState(QtCore.QObject):
 
         # Send signal to UI
         self.newStrokesSignal.emit()
-
 
         self.log.Print( '========================= END EXECUTE\n')
 
@@ -148,15 +148,17 @@ class PeerState(QtCore.QObject):
         self.lock.acquire()
         self.log.Print( 'new op (locked)')
 
-        op = self.engine.createOp(True,'key','val','insert',self.id)
-        self.log.Print('create op',op.siteId,op.seqId,op.contextVector)
+        key = 'a'
+        val = self.id.__str__()
+
+        op = self.engine.createOp(True,key,val,'insert',self.id)
 
         self.engine.pushLocalOp(op)
-        self.log.Print('pushed locally')
+        self.processed_ops.append(op)
         self.log.Print('buffer size:',self.engine.getBufferSize())
 
         self.lock.release()
-        self.log.Print( 'new op (unlock)')
+        self.log.Print( 'new op (unlock)\n')
         return op
 
 
@@ -168,16 +170,19 @@ class PeerState(QtCore.QObject):
         # check duplicates
         seen = self.engine.hasProcessedOp(op)
         if not seen:
-            self.engine.pushRemoteOp(op)
+            self.log.red('push remote')
+            new_op = self.engine.pushRemoteOp(op)
+            self.processed_ops.append(new_op)
             self.log.Print( 'pushed remote op')
             self.log.Print('buffer size:',self.engine.getBufferSize())
         else:
             self.log.Print( 'already seen')
-            self.log.Print( 'receiv op (unlock)')
+            self.lock.release()
+            self.log.Print( 'receiv op (unlock)\n')
             return False
 
         self.lock.release()
-        self.log.Print( 'receive op (unlock)')
+        self.log.Print( 'receive op (unlock)\n')
         return True
 
     def getStrokes(self):
@@ -186,5 +191,19 @@ class PeerState(QtCore.QObject):
         self.log.Print( 'get strokes (locked)')
         cp = copy.deepcopy(self.strokes)
         self.lock.release()
-        self.log.Print( 'get strokes (unlock)')
+        self.log.Print( 'get strokes (unlock)\n')
+
+        self.log.purple(self.engine.getBufferSize())
+
+        self.printProcessedOps()
+
         return cp
+
+    def printProcessedOps(self):
+        self.log.blue( '\n-------------------- PROCESSED  -------------------------------------------')
+        self.log.Print( len(self.processed_ops), 'operations')
+        for i,op in enumerate(self.processed_ops):
+            self.log.Print(op)
+        self.log.blue( '----------------------------------------------------------------------\n')
+
+

@@ -43,6 +43,9 @@ class ContextVector:
         else:
             raise OperationEngineException("uninitialized context vector")
 
+    def __str__(self):
+        return self.sites.__str__()
+
     """
     Converts the contents of this context vector sites array to a string.
 

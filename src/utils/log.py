@@ -17,6 +17,41 @@ class Log:
             self.log.addHandler(fhandle)
 
 
+    def red(self,*args):
+        args = list(args)
+        args.insert(0,'\033[31m')
+        args.append('\033[0m')
+        args = tuple(args)
+        self.Print(*args)
+
+    def orange(self,*args):
+        args = list(args)
+        args.insert(0,'\033[33m')
+        args.append('\033[0m')
+        args = tuple(args)
+        self.Print(*args)
+
+    def blue(self,*args):
+        args = list(args)
+        args.insert(0,'\033[34m')
+        args.append('\033[0m')
+        args = tuple(args)
+        self.Print(*args)
+
+    def green(self,*args):
+        args = list(args)
+        args.insert(0,'\033[32m')
+        args.append('\033[0m')
+        args = tuple(args)
+        self.Print(*args)
+
+    def purple(self,*args):
+        args = list(args)
+        args.insert(0,'\033[35m')
+        args.append('\033[0m')
+        args = tuple(args)
+        self.Print(*args)
+
     def Print(self, *args):
         s = str()
         for arg in args:

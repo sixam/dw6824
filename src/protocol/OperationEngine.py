@@ -26,12 +26,13 @@ class OperationEngine:
     @constructor
     @param {Number} siteId Unique integer site ID for this engine instance
     """
-    def __init__(self, siteId):
+    def __init__(self, siteId,log):
         self.siteId = siteId
         self.cv = ContextVector({"count" : siteId+1})
         self.cvt = ContextVectorTable(self.cv, siteId)
         self.hb = HistoryBuffer()
         self.siteCount = 1
+        self.log = log
 
     VERSION = "1.0.1-SNAPSHOT"
 
@@ -154,12 +155,10 @@ class OperationEngine:
     """
     def pushRemoteOp(self, op):
         top = None
-        print 'push remote'
         if (self.hasProcessedOp(op)):
             """ let the history buffer track the total order for the op """
             self.hb.addRemote(op)
             """ engine has already processed this op so ignore it """
-            print 'already process'
             return None
         elif (self.cv.equals(op.contextVector)):
             """ no transform needed """
@@ -173,6 +172,7 @@ class OperationEngine:
             """ top is a transformed copy of the original """
             top = self._transform(op, cd)
 
+
         """ update local context vector with the original op """
         self.cv.setSeqForSite(op.siteId, op.seqId)
         """ store original op """
@@ -181,6 +181,7 @@ class OperationEngine:
         self.cvt.updateWithOperation(op)
 
         """ return the transformed op """
+        self.log.red('done pushing remote')
         return top
 
     """
@@ -366,6 +367,7 @@ class OperationEngine:
                     """ now only deal with the copy """
                     xop = cxop
             if (not op.contextVector.equals(xop.contextVector)):
+                self.log.red('CONTEXT VECTOR UNEQUAL AFTER UPGRADE')
                 raise OperationEngineException("context vectors unequal after upgrade")
             """ make a copy of the op as is before transform """
             cop = op.copy()

@@ -18,7 +18,10 @@ class Peer:
         self.state = PeerState(peer_id, self.log)
         self.name = '{0}:{1}'.format(ip,port)
         
-        self.log.Print( ip,port)
+        log.blue('\n\nINIT', peer_id)
+        log.blue('----------------')
+        self.log.blue( ip,port)
+        log.blue('----------------')
 
         # Init main UI
         if build_ui:
@@ -49,19 +52,19 @@ class Peer:
         self.server.serve_forever()
 
     def kill(self):
-        self.log.Print( self,'=> killed')
+        self.log.red( self,'=> killed')
         self.RPCresponder.kill()
 
     def revive(self):
-        self.log.Print( self,'=> revived')
+        self.log.green( self,'=> revived')
         self.RPCresponder.revive()
 
     def setUnreliable(self):
-        self.log.Print( self,'=> unreliable')
+        self.log.red( self,'=> unreliable')
         self.RPCresponder.setUnreliable()
 
     def setReliable(self):
-        self.log.Print( self,'=> reliable')
+        self.log.green( self,'=> reliable')
         self.RPCresponder.setReliable()
 
     def addPeer(self,ip,port):
@@ -69,7 +72,7 @@ class Peer:
         srv_name = 'http://%s:%s' % (ip, port)
         srv = xmlrpclib.Server(srv_name)
         self.state.peers.append(srv)
-        self.log.Print( self,'=> added peer:',srv_name)
+        self.log.Print(' added peer:',srv_name,'\n')
 
     def getStrokes(self):
         return self.state.getStrokes()

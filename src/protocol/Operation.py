@@ -76,12 +76,18 @@ class Operation:
                 raise OperationEngineException("missing sequence id for new operation")
             self.xCache = args["xCache"] if "xCache" in args else None
             self.local = args["local"] if "local" in args else False
+            if "type" in args:
+                self.type = args["type"]
 
         """ always mutable to start """
         self.immutable = False
         """ define the xcache if not set elsewhere """
         if (not self.xCache):
             self.xCache = []
+
+    def __str__(self):
+        return "{0} - id({1},{2}) - k:{3}, v:{4} p:{5} cv:{6}".format(
+                self.type,self.siteId,self.seqId,self.key,self.value,self.position,self.contextVector.__str__())
 
     """
     Serializes the operation as an array of values for transmission.
@@ -107,7 +113,7 @@ class Operation:
         packet['order']         = self.order
         return packet
 
-    @staticmethod
+    @ staticmethod
     def unmarshall(packet):
         op = Operation(packet)
         op.contextVector = ContextVector({"state": packet['contextVector']})
@@ -144,6 +150,7 @@ class Operation:
     """
     def copy(self):
         args = {
+            "type" : self.type,
             "siteId" : self.siteId,
             "seqId" : self.seqId,
             "contextVector" : self.contextVector.copy(),
@@ -282,8 +289,8 @@ class Operation:
     @throws {Error} If this op to be upgraded is immutable
     """
     def upgradeContextTo(self, op):
-        if (self.immutable):
-            raise OperationEngineException("attempt to upgrade context of immutable op")
+        #if (self.immutable):
+            #raise OperationEngineException("attempt to upgrade context of immutable op")
         self.contextVector.setSeqForSite(op.siteId, op.seqId)
 
     """

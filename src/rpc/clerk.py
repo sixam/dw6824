@@ -15,8 +15,6 @@ class Clerk:
 
         
     def addStroke(self,s):
-        self.log.Print( 'sent', s)
-
         op = self.state.createOp()
         c_op = copy.deepcopy(op)
         self._send(c_op)
@@ -81,7 +79,6 @@ class Clerk:
     def _send_worker(self,op,srv):
         keep_running = True
         packet = op.marshall()
-        self.log.Print('packet',packet)
         while keep_running :
             try:
                 srv.enq(packet)

@@ -70,8 +70,9 @@ class PeerState(QtCore.QObject):
         key = 'a'
         val = stroke.marshall()
         self.log.red('STROKE',val)
+        position = len(self.strokes)
 
-        op = self.engine.createOp(True,key,val,otype,self.id)
+        op = self.engine.createOp(True,key,val,otype,position)
 
         self.engine.pushLocalOp(op)
         self.processed_ops.append(op)

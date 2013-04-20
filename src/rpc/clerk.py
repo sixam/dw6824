@@ -78,10 +78,12 @@ class Clerk:
     def _send_worker(self,op,srv):
         keep_running = True
         packet = op.marshall()
-        while keep_running :
+        while True :
             try:
-                srv.enq(packet)
-                keep_running = False
+                self.log.purple('send op:', op, 'to srv:', srv)
+                done = srv.enq(packet)
+                if done:
+                    break
             except:
                 self.log.Print( 'looping')
                 pass

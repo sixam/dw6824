@@ -47,7 +47,7 @@ class RPCresponder:
         if accepted:
             return True
         else:
-            return
+            return False
 
         #if self.unreliable:
             #pass

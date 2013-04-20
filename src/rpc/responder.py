@@ -1,6 +1,8 @@
 from PyQt4 import QtCore, QtGui
 from utils.utils import Utils
 
+from dp.src.protocol.Operation import Operation
+
 class RPCresponder:
     """ Handles the processing of RPC requests"""
     def __init__(self, state):
@@ -32,23 +34,24 @@ class RPCresponder:
         self.dead = False
 
     # RPC methods
-    def enq(self,rqData):
+    def enq(self,packet):
         """ Unmarshalls the request and add it to the queue"""
 
-        if self.dead:
-            self.log.Print( 'I am dead dude, fuck off')
-            return 
-            pass
+        self.log.Print("received",packet)
 
-        if self.unreliable:
-            self.log.Print( 'I am unreliable dude, ahah')
-            pass
+        op = Operation.unmarshall(packet)
+        self.log.Print('unmarshalled op',op.siteId,op.seqId,op.contextVector)
 
-        rq = Request(**rqData)
+        self.state.receiveOp(op)
 
-        #self.log.Print( 'Responder, rq:', rq)
-        appended = self.state.appendToQueue(rq)
-        if not appended:
-            return True
-        self.state.executeOperations()
         return True
+
+        #if self.dead:
+            #self.log.Print( 'I am dead dude, fuck off')
+            #return 
+            #pass
+
+        #if self.unreliable:
+            #self.log.Print( 'I am unreliable dude, ahah')
+            #pass
+

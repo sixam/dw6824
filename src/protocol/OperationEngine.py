@@ -154,10 +154,12 @@ class OperationEngine:
     """
     def pushRemoteOp(self, op):
         top = None
+        print 'push remote'
         if (self.hasProcessedOp(op)):
             """ let the history buffer track the total order for the op """
             self.hb.addRemote(op)
             """ engine has already processed this op so ignore it """
+            print 'already process'
             return None
         elif (self.cv.equals(op.contextVector)):
             """ no transform needed """

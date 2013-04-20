@@ -37,7 +37,8 @@ class PeerState(QtCore.QObject):
         self.log = log
 
         self.engine = OperationEngine(self.id)
-        self.engine.freezeSite(self.id)
+        self.engine.thawSite(0)
+        self.engine.thawSite(1)
 
 
     def executeOperations(self):
@@ -142,38 +143,41 @@ class PeerState(QtCore.QObject):
         self.lock.release()
         return cp
 
-    def getSnapshot(self):
-        self.log.Print( 'snapshot (lock)')
+    def createOp(self):
+        self.log.Print( 'new op (lock)')
         self.lock.acquire()
-        self.log.Print( 'snapshot (locked)')
-        cp = PeerState(0);
-        cp.id = self.id
-        cp.queue = copy.deepcopy(self.queue)
-        cp.log = []
-        cp.vt = self.vt[:]
-        cp.strokes = copy.deepcopy(self.strokes)
-        cp.context = copy.deepcopy(self.context)
+        self.log.Print( 'new op (locked)')
+
+        op = self.engine.createOp(True,'key','val','insert',self.id)
+        self.log.Print('create op',op.siteId,op.seqId,op.contextVector)
+
+        self.engine.pushLocalOp(op)
+        self.log.Print('pushed locally')
+        self.log.Print('buffer size:',self.engine.getBufferSize())
+
         self.lock.release()
-        self.log.Print( 'snapshot (unlock)')
-        return cp
+        self.log.Print( 'new op (unlock)')
+        return op
 
 
-    def appendToQueue(self, rq):
-        self.log.Print( 'append (lock)')
+    def receiveOp(self, op):
+        self.log.Print( 'receive op (lock)')
         self.lock.acquire()
-        self.log.Print( 'append (locked)')
-        rid = rq.request_id
+        self.log.Print( 'receive op (locked)')
 
-        if rid in self.prqs:
+        # check duplicates
+        seen = self.engine.hasProcessedOp(op)
+        if not seen:
+            self.engine.pushRemoteOp(op)
+            self.log.Print( 'pushed remote op')
+            self.log.Print('buffer size:',self.engine.getBufferSize())
+        else:
             self.log.Print( 'already seen')
-            self.lock.release()
-            self.log.Print( 'append (unlock)')
+            self.log.Print( 'receiv op (unlock)')
             return False
 
-        self.prqs.append(rq.request_id);
-        self.queue.append(rq)
         self.lock.release()
-        self.log.Print( 'append (unlock)')
+        self.log.Print( 'receive op (unlock)')
         return True
 
     def getStrokes(self):

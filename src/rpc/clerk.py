@@ -16,12 +16,10 @@ class Clerk:
         
     def addStroke(self,s):
         self.log.Print( 'sent', s)
-        rq = self._genAdd(s)
-        rq_send = copy.copy(rq)
-        self.log.Print( 'REQUESTS',rq, rq_send )
-        self.state.appendToQueue(rq)
-        self.state.executeOperations()
-        self._send(rq_send)
+
+        op = self.state.createOp()
+        c_op = copy.deepcopy(op)
+        self._send(c_op)
 
     def deleteStroke(self,s_pos):
         rq = self._genDel(s_pos)
@@ -74,17 +72,19 @@ class Clerk:
 
         return rq
 
-    def _send(self,rq):
+    def _send(self,op):
         for srv in self.state.peers:
-            t = Thread(target=self._send_worker,args=(rq,srv))
+            t = Thread(target=self._send_worker,args=(op,srv))
             t.daemon = True
             t.start()
 
-    def _send_worker(self,rq,srv):
+    def _send_worker(self,op,srv):
         keep_running = True
+        packet = op.marshall()
+        self.log.Print('packet',packet)
         while keep_running :
             try:
-                srv.enq(rq)
+                srv.enq(packet)
                 keep_running = False
             except:
                 self.log.Print( 'looping')

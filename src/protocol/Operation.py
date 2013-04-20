@@ -67,7 +67,7 @@ class Operation:
             self.key = args["key"]
             self.value = args["value"]
             self.position = args["position"]
-            self.order = args["order"] if "order" in args else None
+            self.order = args["order"] if "order" in args else -1
             if ("seqId" in args):
                 self.seqId = args["seqId"]
             elif (self.contextVector):
@@ -94,6 +94,27 @@ class Operation:
         return [self.type, self.key, self.value, self.position, 
             self.contextVector.sites, self.seqId, self.siteId,
             self.order]
+
+    def marshall(self):
+        packet                  = {}
+        packet['type']          = self.type
+        packet['key']           = self.key
+        packet['value']         = self.value
+        packet['position']      = self.position
+        packet['contextVector'] = self.contextVector.sites
+        packet['seqId']         = self.seqId
+        packet['siteId']        = self.siteId
+        packet['order']         = self.order
+        return packet
+
+    @staticmethod
+    def unmarshall(packet):
+        op = Operation(packet)
+        op.contextVector = ContextVector({"state": packet['contextVector']})
+        """ never local when building from serialized state """
+        op.local = False
+        return op
+
 
     """
     Unserializes operation data and sets it as the instance data. Throws an

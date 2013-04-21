@@ -15,6 +15,8 @@ class Log:
         fhandle.setFormatter(formatter)
         if not self.log.handlers:
             self.log.addHandler(fhandle)
+    def exception(self, *args):
+        self.log.exception('Something terrible happened')
 
 
     def red(self,*args):

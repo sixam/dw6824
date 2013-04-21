@@ -20,7 +20,7 @@ class RPCresponder:
         try:
             return getattr(self, method)(*args)
         except:
-            self.log.red('FFFFFFFFUUUUUUUCCCKKKK')
+            self.log.exception('FFFFFFFFUUUUUUUCCCKKKK')
 
 
     def _listMethods(self):

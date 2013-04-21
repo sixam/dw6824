@@ -196,7 +196,7 @@ class TestSimple(unittest.TestCase):
         for stroke in s:
             i = random.randint(0,1024) % len(self.peers)
             cks[i].addStroke(stroke)
-#time.sleep(0.1)
+#            time.sleep(0.1)
         time.sleep(15)
         self.assertStrokesEqual()
 

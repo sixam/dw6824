@@ -125,9 +125,9 @@ class PeerState(QtCore.QObject):
             self.log.Print( 'receive op (unlock)\n')
             return True
 
-        self.lock.release()
         self.log.red('RECEIVE: Perfom op')
         self.performOperation(new_op)
+        self.lock.release()
         self.log.Print( 'receive op (unlock)\n')
         return True
 

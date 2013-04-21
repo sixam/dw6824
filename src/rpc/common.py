@@ -38,6 +38,17 @@ class PeerState(QtCore.QObject):
         self.log = log
 
         self.engine = OperationEngine(self.id,log)
+    
+    def thaw(self, sid):
+        self.lock.acquire()
+        self.engine.thawSite(sid)
+        self.lock.release()
+
+
+    def freeze(self, sid):
+        self.lock.acquire()
+        self.engine.freezeSite(sid)
+        self.lock.release()
 
     def performOperation(self,op):
         if op.type == 'insert':

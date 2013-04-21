@@ -13,6 +13,13 @@ class Clerk:
         self.state = state
         self.log = state.log
 
+
+    def thaw(self, sid):
+        self.state.thaw(sid)
+
+    def freeze(self, sid):
+        self.state.freeze(sid)
+
         
     def addStroke(self,s):
         op = self.state.createOp('insert',stroke=s)

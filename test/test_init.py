@@ -112,7 +112,7 @@ class TestSimple(unittest.TestCase):
 #        time.sleep(1)
 #
 #        self.assertStrokesEqual()
-#
+
 #    def test_delay_01(self):
 #        p0 = self.peers[0]
 #        p1 = self.peers[1]
@@ -141,7 +141,7 @@ class TestSimple(unittest.TestCase):
 #        time.sleep(1)
 #
 #        self.assertStrokesEqual()
-#
+
 #    def test_delay_02(self):
 #        p0 = self.peers[0]
 #        p1 = self.peers[1]
@@ -188,16 +188,20 @@ class TestSimple(unittest.TestCase):
 #        self.assertStrokesEqual()
 
     def test_manypeers(self):
-        self.addMultipleServers(1)
+        self.addMultipleServers(5)
         cks = []
         for i in range(len(self.peers)):
             cks.append(Clerk(self.peers[i].state));
-        s = self.genRandomStrokes(10)
+        for ck in cks:
+            for sid in self.ids:
+                ck.thaw(sid)
+
+        s = self.genRandomStrokes(100)
         for stroke in s:
             i = random.randint(0,1024) % len(self.peers)
             cks[i].addStroke(stroke)
-#            time.sleep(0.1)
-        time.sleep(15)
+            time.sleep(0.1)
+        time.sleep(60)
         self.assertStrokesEqual()
 
     #def test_manypeers(self):

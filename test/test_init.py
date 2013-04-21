@@ -174,17 +174,30 @@ class TestSimple(unittest.TestCase):
 #
 #        self.assertStrokesEqual()
 
+#    def test_manystrokes(self):
+#        #self.addMultipleServers(1)
+#        cks = []
+#        for i in range(len(self.peers)):
+#            cks.append(Clerk(self.peers[i].state));
+#        s = self.genRandomStrokes(18)
+#        for stroke in s:
+#            i = random.randint(0,1024) % len(self.peers)
+#            cks[i].addStroke(stroke)
+#            #time.sleep(0.1)
+#        time.sleep(30)
+#        self.assertStrokesEqual()
+
     def test_manypeers(self):
-        #self.addMultipleServers(1)
+        self.addMultipleServers(1)
         cks = []
         for i in range(len(self.peers)):
             cks.append(Clerk(self.peers[i].state));
-        s = self.genRandomStrokes(18)
+        s = self.genRandomStrokes(10)
         for stroke in s:
             i = random.randint(0,1024) % len(self.peers)
             cks[i].addStroke(stroke)
-            #time.sleep(0.1)
-        time.sleep(30)
+#time.sleep(0.1)
+        time.sleep(15)
         self.assertStrokesEqual()
 
     #def test_manypeers(self):

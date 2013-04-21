@@ -16,6 +16,13 @@ class RPCresponder:
         self.dead = False
         self.log = state.log
 
+    def _dispatch(self, method, args):
+        try:
+            return getattr(self, method)(*args)
+        except:
+            self.log.red('FFFFFFFFUUUUUUUCCCKKKK')
+
+
     def _listMethods(self):
         # implement this method so that system.listMethods
         # knows to advertise the strings methods

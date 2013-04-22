@@ -366,6 +366,8 @@ class OperationEngine:
                     xcd = op.contextVector.subtract(xop.contextVector)
                     if (len(xcd.sites) <= 0):
                         self.log.red('transform produced empty context diff',l)
+                        self.log.red('OP CV:', op.contextVector)
+                        self.log.orange('XOP CV:', xop.contextVector)
                         raise OperationEngineException("transform produced empty context diff")
                     """ we'll get a copy back from the recursion """
                     self.log.orange('recurse xform',l)

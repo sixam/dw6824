@@ -69,9 +69,8 @@ class PeerState(QtCore.QObject):
             #self.log.Print( self.strokes)
             
         if self.window: #Dont call UI (for the tester)
+            pass
             # Send signal to UI
-            self.newStrokesSignal.emit()
-            self.window.scribbleArea.draw()
 
     def createOp(self,otype,stroke=None):
         self.log.Print( 'new op (lock)')
@@ -92,6 +91,8 @@ class PeerState(QtCore.QObject):
         self.log.red('CREATE: Perfom op')
         self.performOperation(op)
         self.lock.release()
+        if self.window: #Dont call UI (for the tester)
+            self.newStrokesSignal.emit()
         self.log.Print( 'new op (unlock)\n')
         return op
 
@@ -100,7 +101,6 @@ class PeerState(QtCore.QObject):
         self.log.Print( 'receive op (lock)')
         self.lock.acquire()
         self.log.Print( 'receive op (locked)')
-
 
         self.log.Print('received:',op)
 
@@ -139,6 +139,8 @@ class PeerState(QtCore.QObject):
         self.log.red('RECEIVE: Perfom op')
         self.performOperation(new_op)
         self.lock.release()
+        if self.window: #Dont call UI (for the tester)
+            self.newStrokesSignal.emit()
         self.log.Print( 'receive op (unlock)\n')
         return True
 

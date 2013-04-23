@@ -100,7 +100,14 @@ class HistoryBuffer:
                         " key=" + key + " keys=" + str(keys))
             ops.append(self.ops[key])
         """ sort by total order """
-        return sorted(ops, key=cmp_to_key(lambda x,y: x.compareByOrder(y)))
+        #return sorted(ops, key=cmp_to_key(lambda x,y: x.compareByOrder(y)))
+        return sorted(ops, key=cmp_to_key(lambda x, y: x.compareByMorris(y)))
+
+    def getMorrisSortedOperations(self):
+        ops = []
+        for v in self.ops:
+            ops.append(self.ops[v])
+        return sorted(ops, key=cmp_to_key(lambda x, y: -x.compareByMorris(y)))
 
     """
     Adds a local operation to the history.

@@ -39,7 +39,8 @@ class PeerState(QtCore.QObject):
         self.log = log
 
         self.engine = OperationEngine(self.id,log)
-        self.queue  = Queue()
+        self.queue  = Queue(log)
+        self.log.Print("yo",self.queue)
     
     def thaw(self, sid):
         self.lock.acquire()
@@ -105,21 +106,26 @@ class PeerState(QtCore.QObject):
             return True
         self.queue.enqueue(op)
 
+        self.log.blue('after enqueue')
+        self.printQueue()
         added = 0
+        cv = self.engine.copyContextVector()
         while True:
-            processable = self.queue.getNextProcessable()
+            cv = self.engine.copyContextVector()
+            processable = self.queue.getProcessable(cv)
             if not processable:
                 break
             new_op = self.engine.pushRemoteOp(processable)
             self.processed_ops.append(new_op)
+            self.performOperation(new_op)
             added += 1
+
+        self.log.blue('after dequeue')
+        self.printQueue()
 
         self.log.green('receive: added',added,'operations')
         self.lock.release()
         self.log.Print( 'receive op (unlock)\n')
-
-        self.performOperation(new_op)
-        self.lock.release()
 
         #Dont call UI (for the tester)
         if self.window: 
@@ -141,6 +147,7 @@ class PeerState(QtCore.QObject):
         self.printProcessedOps()
         self.printHistoryBuffer()
         self.printStrokes()
+        self.printQueue()
 
         self.log.purple('current context:',self.engine.copyContextVector())
 
@@ -160,11 +167,19 @@ class PeerState(QtCore.QObject):
             self.log.Print(self.engine.hb.ops[op])
         self.log.blue( '----------------------------------------------------------------------\n')
 
+    def printQueue(self):
+        self.log.blue( '\n-------------------- QUEUE  -------------------------------------------')
+        self.log.Print( len(self.queue.ops), 'operations | ds:',self.engine.copyContextVector())
+        for op in self.queue.ops:
+            self.log.Print(self.queue.ops[op])
+        self.log.blue( '----------------------------------------------------------------------\n')
+
     def printStrokes(self):
         self.log.blue( '\n-------------------- STROKES ---------------------------------------------')
         self.log.Print( len(self.strokes), 'strokes')
         for i,s in enumerate(self.strokes):
             self.log.Print( i,'-',s)
         self.log.blue( '--------------------------------------------------------------------------')
+
 
 

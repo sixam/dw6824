@@ -388,6 +388,7 @@ class OperationEngine:
                     xop = cxop
             if (not op.contextVector.equals(xop.contextVector)):
                 self.log.red('CONTEXT VECTOR UNEQUAL AFTER UPGRADE')
+                self.log.red('OP CV:', op.contextVector, 'XOP CV:', xop.contextVector)
                 raise OperationEngineException("context vectors unequal after upgrade")
             """ make a copy of the op as is before transform """
             cop = op.copy()

@@ -5,6 +5,7 @@ from dp.src.utils.log import Log
 import copy
 
 from dp.src.protocol.OperationEngine import OperationEngine
+from dp.src.protocol.Queue import Queue
 
 class PeerState(QtCore.QObject):
     """Stores all data concerning a peer's state
@@ -38,6 +39,7 @@ class PeerState(QtCore.QObject):
         self.log = log
 
         self.engine = OperationEngine(self.id,log)
+        self.queue  = Queue()
     
     def thaw(self, sid):
         self.lock.acquire()
@@ -60,14 +62,6 @@ class PeerState(QtCore.QObject):
             else: # none: replace
                 self.strokes[op.position]=Stroke(**op.value)
 
-        #if op.type == OpType.DEL:
-            #self.log.Print( self.strokes)
-            #del self.strokes[op.pos]
-            #self.log.Print( self.strokes)
-        #if op.type == OpType.MOVE:
-            #self.strokes[op.pos].moveTo(op.offset)
-            #self.log.Print( self.strokes)
-            
         if self.window: #Dont call UI (for the tester)
             pass
             # Send signal to UI
@@ -102,45 +96,35 @@ class PeerState(QtCore.QObject):
         self.lock.acquire()
         self.log.Print( 'receive op (locked)')
 
-        self.log.Print('received:',op)
-
-        # check contexts differs only by 1 at siteID
-        local_cv = self.engine.cv
-        op_cv = op.contextVector
-        sid = op.siteId
-        siteDiff = op_cv.getSeqForSite(sid) - local_cv.getSeqForSite(sid)
-        self.log.Print('cvs:',local_cv,op_cv,sid,siteDiff)
-        if siteDiff >= 1:
-            self.log.red('too far')
-            self.lock.release()
-            self.log.Print( 'receive op (unlock)\n')
-            # NOTE: really it should buffer it instead of refusing
-            return False
-        else:
-            self.log.green('ok good diff')
-
-
         # check duplicates
-        self.log.orange('has processed?')
         seen = self.engine.hasProcessedOp(op)
-        self.log.orange('has processed?returned')
-        if not seen:
-            self.log.green('not seen:push')
-            new_op = self.engine.pushRemoteOp(op)
-            self.processed_ops.append(new_op)
-            self.log.green('not seen:pushed')
-            self.log.Print('buffer size:',self.engine.getBufferSize())
-        else:
-            self.log.Print( 'already seen')
+        if seen:
+            self.log.orange('already seen')
             self.lock.release()
-            self.log.Print( 'receive op (unlock)\n')
+            self.log.Print('receive op (unlock)\n')
             return True
+        self.queue.enqueue(op)
 
-        self.log.red('RECEIVE: Perfom op')
+        added = 0
+        while True:
+            processable = self.queue.getNextProcessable()
+            if not processable:
+                break
+            new_op = self.engine.pushRemoteOp(processable)
+            self.processed_ops.append(new_op)
+            added += 1
+
+        self.log.green('receive: added',added,'operations')
+        self.lock.release()
+        self.log.Print( 'receive op (unlock)\n')
+
         self.performOperation(new_op)
         self.lock.release()
-        if self.window: #Dont call UI (for the tester)
+
+        #Dont call UI (for the tester)
+        if self.window: 
             self.newStrokesSignal.emit()
+
         self.log.Print( 'receive op (unlock)\n')
         return True
 

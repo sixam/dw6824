@@ -8,7 +8,7 @@ class Queue(HistoryBuffer)
         def enqueue(self,op):
             pass
 
-        def getProcessable(self):
+        def getNextProcessable(self):
             """ Pop and returns the operations whose context vectors now allows
             processing """
             pass

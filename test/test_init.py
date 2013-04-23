@@ -16,8 +16,6 @@ from dp.src.rpc.clerk import Clerk
 from nose.tools import *
 
 
-
-
 class TestSimple(unittest.TestCase):
     """simple test"""
 
@@ -188,7 +186,7 @@ class TestSimple(unittest.TestCase):
 #        self.assertStrokesEqual()
 
     def test_manypeers(self):
-        self.addMultipleServers(5)
+        self.addMultipleServers(2)
         cks = []
         for i in range(len(self.peers)):
             cks.append(Clerk(self.peers[i].state));
@@ -196,12 +194,12 @@ class TestSimple(unittest.TestCase):
             for sid in self.ids:
                 ck.thaw(sid)
 
-        s = self.genRandomStrokes(100)
+        s = self.genRandomStrokes(60)
         for stroke in s:
             i = random.randint(0,1024) % len(self.peers)
             cks[i].addStroke(stroke)
             time.sleep(0.1)
-        time.sleep(60)
+        time.sleep(10)
         self.assertStrokesEqual()
 
     #def test_manypeers(self):

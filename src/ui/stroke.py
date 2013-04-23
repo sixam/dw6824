@@ -36,6 +36,10 @@ class Stroke:
             eq = False
         if self.id != other.id:
             eq = False
+        b1 = self.getBarycenter()
+        b2 = other.getBarycenter()
+        if b1[0]!=b2[0] or b1[1]!=b2[1]:
+            eq = False
         if eq:
             return 0
         return -1
@@ -49,7 +53,6 @@ class Stroke:
         return packet
 
     #def unmarshall():
-
 
     def toPainterPath(self):
         points = self.path

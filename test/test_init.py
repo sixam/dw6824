@@ -95,7 +95,6 @@ class TestSimple(unittest.TestCase):
                         Pass = False
                         self.assertTrue(Pass,msg="Peer {0} has a different stroke at {1}".format(p.__str__(),i))
 
- #Test basic add/move/delete strokes
     def test_basic(self):
         """ Basic - add strokes """
         p0 = self.peers[0]
@@ -103,12 +102,11 @@ class TestSimple(unittest.TestCase):
         ck0 = Clerk(p0.state)
         ck1 = Clerk(p1.state)
 
-        s1 = Stroke(path=[[10,10],[10,20]])
-        s2 = Stroke(path=[[10,10],[10,20]])
+        s = self.genRandomStrokes(2)
 
-        ck0.addStroke(s1)
+        ck0.addStroke(s[0])
         time.sleep(1)
-        ck1.addStroke(s2)
+        ck1.addStroke(s[1])
         time.sleep(1)
 
         self.assertStrokesEqual()
@@ -120,15 +118,38 @@ class TestSimple(unittest.TestCase):
         ck0 = Clerk(p0.state)
         ck1 = Clerk(p1.state)
 
-        s1 = Stroke(path=[[10,10],[10,20]])
-        s2 = Stroke(path=[[10,10],[10,20]])
+        s = self.genRandomStrokes(2)
 
-        ck0.addStroke(s1)
+        ck0.addStroke(s[0])
         time.sleep(1)
-        ck1.addStroke(s2)
+        ck1.addStroke(s[1])
         time.sleep(1)
         ck0.deleteStroke(0)
         time.sleep(1)
+
+        self.assertStrokesEqual()
+
+    def test_basic_move(self):
+        """ Basic - move strokes """
+        p0 = self.peers[0]
+        p1 = self.peers[1]
+        ck0 = Clerk(p0.state)
+        ck1 = Clerk(p1.state)
+
+        s = self.genRandomStrokes(4)
+
+        ck0.addStroke(s[0])
+        ck0.addStroke(s[1])
+        time.sleep(1)
+        ck1.addStroke(s[2])
+        ck1.addStroke(s[3])
+        time.sleep(1)
+
+        strokes = ck0.getStrokes()
+        print strokes
+        index = 0
+        offset = [10,10]
+        ck0.moveStroke(strokes[index],index,offset)
 
         self.assertStrokesEqual()
 

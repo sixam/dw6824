@@ -7,6 +7,7 @@ Copyright (c) IBM Corporation 2008, 2011. All Rights Reserved.
 """
 
 from .Operation import Operation
+from .ContextVector import ContextVector
 from .factory import factory
 
 class UpdateOperation(Operation):
@@ -20,6 +21,14 @@ class UpdateOperation(Operation):
 
     def getConstructor(self):
         return UpdateOperation
+
+    @ staticmethod
+    def unmarshall(packet):
+        op = UpdateOperation(packet)
+        op.contextVector = ContextVector({"state": packet['contextVector']})
+        """ never local when building from serialized state """
+        op.local = False
+        return op
 
     """
     Gets the method name to use to transform another operation against this

@@ -64,8 +64,10 @@ class PeerState(QtCore.QObject):
                 self.strokes[op.position]=Stroke(**op.value)
 
         if op.type == 'delete':
-            self.log.red('position to delete',op.position)
-            #del self.strokes[op.position]
+            del self.strokes[op.position]
+
+        if op.type == 'update':
+            self.strokes[op.position] = Stroke(**op.value)
 
         if self.window: #Dont call UI (for the tester)
             pass
@@ -82,6 +84,9 @@ class PeerState(QtCore.QObject):
             position = len(self.strokes)
         elif otype == 'delete':
             val = Stroke().marshall()
+            position = pos
+        elif otype == 'update':
+            val = stroke.marshall()
             position = pos
 
         op = self.engine.createOp(True,key,val,otype,position)
@@ -149,16 +154,14 @@ class PeerState(QtCore.QObject):
         self.lock.release()
         self.log.Print( 'get strokes (unlock)\n')
 
-        self.log.purple(self.engine.getBufferSize())
+        self.printFinalState()
+        return cp
 
+    def printFinalState(self):
         self.printProcessedOps()
         self.printHistoryBuffer()
         self.printStrokes()
         self.printQueue()
-
-        self.log.purple('current context:',self.engine.copyContextVector())
-
-        return cp
 
     def printProcessedOps(self):
         self.log.blue( '\n-------------------- PROCESSED  -------------------------------------------')

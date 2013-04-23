@@ -27,8 +27,17 @@ class Clerk:
         op = self.state.createOp('delete',pos=s_pos)
         self._send(op.copy())
 
-    def moveStroke(self,s_pos,offset):
-        pass
+    def updateStroke(self,s,s_pos):
+        op = self.state.createOp('update',stroke=s, pos=s_pos)
+        self._send(op.copy())
+
+    def moveStroke(self,s,s_pos,offset):
+        new_s = copy.copy(s)
+        new_s.offsetPosBy(offset)
+        self.updateStroke(new_s,s_pos)
+
+    def getStrokes(self):
+        return self.state.getStrokes()
 
     def _send(self,op):
         for srv in self.state.peers:

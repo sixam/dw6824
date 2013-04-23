@@ -78,8 +78,8 @@ class ScribbleArea(QtGui.QWidget):
 
     def _moveEnd(self,pos):
         if self.moving and self.selected >= 0: 
-            offset = pos# - self.original_move_pos 
-            self.clerk.moveStroke(self.selected,[offset.x(),offset.y()])
+            offset = pos - self.move_pos 
+            self.clerk.moveStroke(self.strokes[self.selected],self.selected,[offset.x(),offset.y()])
             self.moving = False
         else:
             pass

@@ -227,6 +227,7 @@ class TestSimple(unittest.TestCase):
 
 
     def test_manydead(self):
+        """ Many Peers. Many Die"""
         self.addMultipleServers(3)
         cks = []
         for i in range(len(self.peers)):

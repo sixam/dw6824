@@ -8,10 +8,30 @@ class Queue(HistoryBuffer)
         def enqueue(self,op):
             pass
 
-        def getNextProcessable(self):
+        def getProcessable(self, cv):
             """ Pop and returns the operations whose context vectors now allows
             processing """
-            pass
+            ops = self.getMorrisSortedOperations()
+            for op in ops:
+                if op.contextVector.morrisCompare(cv) < 0:
+                    return op.copy()
+             return None
+                    
+
+
+
+
+#        def peek(self):
+#            ops = self.getContextSortedOperations()
+#            return ops.pop().copy()
+#
+#        def pop(self):
+#            ops = self.getContextSortedOperations()
+#            op = ops.pop()
+#            self.remove(op)
+#            return op
+
+
 
 
 

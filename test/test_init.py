@@ -227,9 +227,10 @@ class TestSimple(unittest.TestCase):
         #time.sleep(30)
         #self.assertStrokesEqual()
 
+
     def test_manypeers(self):
         """ Many peers """
-        self.addMultipleServers(2)
+        self.addMultipleServers(3)
         cks = []
         for i in range(len(self.peers)):
             cks.append(Clerk(self.peers[i].state));
@@ -237,13 +238,50 @@ class TestSimple(unittest.TestCase):
             for sid in self.ids:
                 ck.thaw(sid)
 
-        s = self.genRandomStrokes(10)
+        s = self.genRandomStrokes(15)
         for stroke in s:
             i = random.randint(0,1024) % len(self.peers)
             cks[i].addStroke(stroke)
             #time.sleep(0.1)
         time.sleep(10)
         self.assertStrokesEqual()
+
+
+    def test_manydead(self):
+        """ Many Peers. Many Die"""
+        self.addMultipleServers(3)
+        cks = []
+        for i in range(len(self.peers)):
+            cks.append(Clerk(self.peers[i].state));
+        for ck in cks:
+            for sid in self.ids:
+                ck.thaw(sid)
+
+        s = self.genRandomStrokes(9)
+        for stroke in s:
+            i = random.randint(0,1024) % len(self.peers)
+            cks[i].addStroke(stroke)
+            #time.sleep(0.1)
+        time.sleep(5)
+        
+        dead = []
+        s = self.genRandomStrokes(15)
+        for stroke in s:
+            i = random.randint(0,1024) % len(self.peers)
+            cks[i].addStroke(stroke)
+            if random.randint(0,1) > 0 and i not in dead:
+                self.peers[i].kill()
+                dead.append(i)
+        time.sleep(5)
+
+        for p in dead:
+            self.peers[p].revive()
+        time.sleep(45)
+
+        self.assertStrokesEqual()
+
+
+
 
     def genRandomStrokes(self, n):
         s = []

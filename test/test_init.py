@@ -97,6 +97,7 @@ class TestSimple(unittest.TestCase):
 
  #Test basic add/move/delete strokes
     def test_basic(self):
+        """ Basic strokes """
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = Clerk(p0.state)
@@ -113,6 +114,7 @@ class TestSimple(unittest.TestCase):
         self.assertStrokesEqual()
 
     def test_delay_01(self):
+        """ Simple delay """
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = Clerk(p0.state)
@@ -142,6 +144,7 @@ class TestSimple(unittest.TestCase):
         self.assertStrokesEqual()
 
     def test_delay_02(self):
+        """ Harder delay """
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = Clerk(p0.state)
@@ -173,20 +176,21 @@ class TestSimple(unittest.TestCase):
 
         self.assertStrokesEqual()
 
-#    def test_manystrokes(self):
-#        #self.addMultipleServers(1)
-#        cks = []
-#        for i in range(len(self.peers)):
-#            cks.append(Clerk(self.peers[i].state));
-#        s = self.genRandomStrokes(18)
-#        for stroke in s:
-#            i = random.randint(0,1024) % len(self.peers)
-#            cks[i].addStroke(stroke)
-#            #time.sleep(0.1)
-#        time.sleep(30)
+    #def test_manystrokes(self):
+        #""" Many strokes """
+        #cks = []
+        #for i in range(len(self.peers)):
+            #cks.append(Clerk(self.peers[i].state));
+        #s = self.genRandomStrokes(18)
+        #for stroke in s:
+            #i = random.randint(0,1024) % len(self.peers)
+            #cks[i].addStroke(stroke)
+            ##time.sleep(0.1)
+        #time.sleep(30)
         #self.assertStrokesEqual()
 
     def test_manypeers(self):
+        """ Many peers """
         self.addMultipleServers(3)
         cks = []
         for i in range(len(self.peers)):
@@ -202,18 +206,6 @@ class TestSimple(unittest.TestCase):
             #time.sleep(0.1)
         time.sleep(10)
         self.assertStrokesEqual()
-
-    #def test_manypeers(self):
-        #self.addMultipleServers(20)
-        #cks = []
-        #for i in range(len(self.peers)):
-            #cks.append(Clerk(self.peers[i].state));
-        #s = self.genRandomStrokes(30)
-        #for stroke in s:
-            #i = random.randint(0,1024) % len(self.peers)
-            #cks[i].addStroke(stroke)
-        #time.sleep(10)
-        #self.assertStrokesEqual()
 
 #    def test_manydeath(self):
 #        self.addMultipleServers(20)

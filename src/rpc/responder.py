@@ -3,6 +3,7 @@ from utils.utils import Utils
 
 from dp.src.protocol.Operation import Operation
 from dp.src.protocol.InsertOperation import InsertOperation
+from dp.src.protocol.DeleteOperation import DeleteOperation
 
 class RPCresponder:
     """ Handles the processing of RPC requests"""
@@ -48,7 +49,14 @@ class RPCresponder:
         if self.dead:
             return 
 
-        op = InsertOperation.unmarshall(packet)
+        self.log.red('received packet type:', packet['type'])
+        otype = packet['type'] if 'type' in packet else None
+
+        if otype == 'insert':
+            op = InsertOperation.unmarshall(packet)
+        elif otype == 'delete':
+            op = DeleteOperation.unmarshall(packet)
+
         accepted = self.state.receiveOp(op)
 
         if accepted:

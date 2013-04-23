@@ -13,68 +13,22 @@ class Clerk:
         self.state = state
         self.log = state.log
 
-
     def thaw(self, sid):
         self.state.thaw(sid)
 
     def freeze(self, sid):
         self.state.freeze(sid)
-
         
     def addStroke(self,s):
         op = self.state.createOp('insert',stroke=s)
         self._send(op.copy())
 
     def deleteStroke(self,s_pos):
-        rq = self._genDel(s_pos)
-        rq_send = copy.copy(rq)
-        self.state.appendToQueue(rq)
-        self.state.executeOperations()
-        self._send(rq_send)
+        op = self.state.createOp('delete',pos=s_pos)
+        self._send(op.copy())
 
     def moveStroke(self,s_pos,offset):
-        rq = self._genMove(s_pos, offset)
-        rq_send = copy.copy(rq)
-        self.state.appendToQueue(rq)
-        self.state.executeOperations()
-        self._send(rq_send)
-
-    def _genAdd(self, s):
-        sp = self.state.getSnapshot()
-        pos = len(sp.strokes)
-        op = Operation(type=OpType.ADD,stroke_id = s.id, stroke = s,pos =
-                pos)
-        p = Priority(op=op,state=sp)
-        rq = Request(sender = sp.id, vt = sp.vt[:], op = op,
-                priority = p, 
-                request_id = Utils.generateID(),context=sp.context.keys())
-
-        return rq
-
-
-    def _genDel(self, s_pos):
-        sp = self.state.getSnapshot()
-        s_id = sp.strokes[s_pos].id
-        op = Operation(type=OpType.DEL, stroke_id=s_id, pos=s_pos, stroke=sp.strokes[s_pos])
-        p = Priority(op=op,state=sp)
-
-        rq = Request(sender = sp.id, vt = sp.vt[:], op = op,
-                priority = p, 
-                request_id = Utils.generateID())
-        return rq
-
-
-    def _genMove(self, s_pos, offset):
-        sp = self.state.getSnapshot()
-        s_id = sp.strokes[s_pos].id
-        op = Operation(type=OpType.MOVE, stroke_id=s_id, pos=s_pos,
-                stroke=sp.strokes[s_pos], offset=offset)
-        p = Priority(op=op,state=sp)
-        rq = Request(sender = sp.id, vt = sp.vt[:], op = op,
-                priority = p,
-                request_id = Utils.generateID())
-
-        return rq
+        pass
 
     def _send(self,op):
         for srv in self.state.peers:
@@ -95,4 +49,3 @@ class Clerk:
                 self.log.Print( 'looping')
                 pass
             time.sleep(1)
-

@@ -93,11 +93,11 @@ class TestSimple(unittest.TestCase):
                 for i, stroke in enumerate(s):
                     if strokes[i] != stroke:
                         Pass = False
-        self.assertTrue(Pass)
+                        self.assertTrue(Pass,msg="Peer {0} has a different stroke at {1}".format(p.__str__(),i))
 
  #Test basic add/move/delete strokes
     def test_basic(self):
-        """ Basic strokes """
+        """ Basic - add strokes """
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = Clerk(p0.state)
@@ -113,8 +113,27 @@ class TestSimple(unittest.TestCase):
 
         self.assertStrokesEqual()
 
+    def test_basic_delete(self):
+        """ Basic - delete strokes """
+        p0 = self.peers[0]
+        p1 = self.peers[1]
+        ck0 = Clerk(p0.state)
+        ck1 = Clerk(p1.state)
+
+        s1 = Stroke(path=[[10,10],[10,20]])
+        s2 = Stroke(path=[[10,10],[10,20]])
+
+        ck0.addStroke(s1)
+        time.sleep(1)
+        ck1.addStroke(s2)
+        time.sleep(1)
+        ck0.deleteStroke(0)
+        time.sleep(1)
+
+        self.assertStrokesEqual()
+
     def test_delay_01(self):
-        """ Simple delay """
+        """ Delay - simple """
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = Clerk(p0.state)
@@ -144,7 +163,7 @@ class TestSimple(unittest.TestCase):
         self.assertStrokesEqual()
 
     def test_delay_02(self):
-        """ Harder delay """
+        """ Delay - dOPT puzzle """
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = Clerk(p0.state)
@@ -172,8 +191,6 @@ class TestSimple(unittest.TestCase):
         ck1.addStroke(s[6])
 
         time.sleep(2)
-        print 'timed out'
-
         self.assertStrokesEqual()
 
     #def test_manystrokes(self):
@@ -191,7 +208,7 @@ class TestSimple(unittest.TestCase):
 
     def test_manypeers(self):
         """ Many peers """
-        self.addMultipleServers(3)
+        self.addMultipleServers(2)
         cks = []
         for i in range(len(self.peers)):
             cks.append(Clerk(self.peers[i].state));
@@ -199,21 +216,13 @@ class TestSimple(unittest.TestCase):
             for sid in self.ids:
                 ck.thaw(sid)
 
-        s = self.genRandomStrokes(15)
+        s = self.genRandomStrokes(10)
         for stroke in s:
             i = random.randint(0,1024) % len(self.peers)
             cks[i].addStroke(stroke)
             #time.sleep(0.1)
         time.sleep(10)
         self.assertStrokesEqual()
-
-#    def test_manydeath(self):
-#        self.addMultipleServers(20)
-#        for i in range(len(self.peers)):
-#            cks.append(Clerk(self.peers[i].state));
-#        s = self.genRandomStrokes(30)
-
-
 
     def genRandomStrokes(self, n):
         s = []

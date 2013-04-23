@@ -63,27 +63,34 @@ class PeerState(QtCore.QObject):
             else: # none: replace
                 self.strokes[op.position]=Stroke(**op.value)
 
+        if op.type == 'delete':
+            self.log.red('position to delete',op.position)
+            #del self.strokes[op.position]
+
         if self.window: #Dont call UI (for the tester)
             pass
             # Send signal to UI
 
-    def createOp(self,otype,stroke=None):
+    def createOp(self,otype,stroke=None,pos=-1):
         self.log.Print( 'new op (lock)')
         self.lock.acquire()
         self.log.Print( 'new op (locked)')
 
-        key = 'a'
-        val = stroke.marshall()
-        self.log.red('STROKE',val)
-        position = len(self.strokes)
+        key = 'strokes'
+        if otype == 'insert':
+            val = stroke.marshall()
+            position = len(self.strokes)
+        elif otype == 'delete':
+            val = Stroke().marshall()
+            position = pos
 
         op = self.engine.createOp(True,key,val,otype,position)
 
+        self.log.blue('created op :',op)
+
         self.engine.pushLocalOp(op)
         self.processed_ops.append(op)
-        self.log.Print('buffer size:',self.engine.getBufferSize())
 
-        self.log.red('CREATE: Perfom op')
         self.performOperation(op)
         self.lock.release()
         if self.window: #Dont call UI (for the tester)

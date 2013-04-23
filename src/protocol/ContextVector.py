@@ -191,14 +191,28 @@ class ContextVector:
         return 0
 
     def morrisCompare(self, cv):
-        """ Because its so much better"""
+        """ Because its so much better
+
+            Return 0 (equals) if two dudes are not comparable
+        
+        """
+        
+        [npos,nneg,nnil] = self.getDiffStat(cv)
+
+        if nneg > 0 and npos == 0:
+            return -1
+        if npos > 0 and nneg == 0:
+            return 1
+        return 0
+
+
+    def getDiffStat(self,cv):
         a = self.sites
         b = cv.sites
         la = len(a)
         lb = len(b)
         m = max(la, lb)
 
-        #diff = []
         npos = 0
         nneg = 0
         nnil = 0
@@ -206,19 +220,20 @@ class ContextVector:
             va = a[i] if (i < la) else 0
             vb = b[i] if (i < lb) else 0
             if (va < vb):
-                #diff[i] = -1
                 nneg += 1
             elif (va > vb):
-                #diff[i] = 1
                 npos += 1
             else:
-                #diff[i] = 0
                 nnil += 1
-        if nneg > 0 and npos == 0:
-            return -1
-        if npos > 0 and nneg == 0:
-            return 1
-        return 0
+
+        return [npos,nneg,nnil]
+
+    def isComparableTo(self,cv):
+        [npos,nneg,nnil] = self.getDiffStat(cv)
+        if npos > 0 and nneg > 0:
+            return False
+        else:
+            return True
         
         
 

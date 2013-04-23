@@ -125,6 +125,7 @@ class HistoryBuffer:
     Adds a received operation to the history. If the operation already
     exists in the history, simply updates its order attribute. If not,
     adds it. Throws an exception if the op does not include its place in
+
     the total order or if the op with the same key already has an assigned
     place in the total order.
 

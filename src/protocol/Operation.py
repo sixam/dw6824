@@ -301,8 +301,9 @@ class Operation:
     @throws {Error} If this op to be upgraded is immutable
     """
     def upgradeContextTo(self, op):
-        #if (self.immutable):
-            #raise OperationEngineException("attempt to upgrade context of immutable op")
+        if (self.immutable):
+            self.log.red('ERROR: attempt to upgrade immutable context')
+            raise OperationEngineException("attempt to upgrade context of immutable op")
         self.contextVector.setSeqForSite(op.siteId, op.seqId)
 
     """

@@ -45,10 +45,8 @@ class Queue(HistoryBuffer):
        for op in ops:
            comp = op.contextVector.morrisCompare(cv)
            if comp < 0:
-               self.log.red('CV is in the past')
                return self.remove(op)
            if comp == 0 and op.contextVector.equals(cv):
-               self.log.red('CV are equals')
                return self.remove(op)
 
        return None

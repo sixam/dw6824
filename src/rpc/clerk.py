@@ -50,11 +50,10 @@ class Clerk:
         packet = op.marshall()
         while True :
             try:
-                self.log.purple('send op:', op, 'to srv:', srv)
                 done = srv.enq(packet)
                 if done:
+                    self.log.rpc('sent:',op)
                     break
             except:
-                self.log.Print( 'looping')
                 pass
             time.sleep(1)

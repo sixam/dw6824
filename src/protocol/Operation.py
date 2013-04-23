@@ -224,6 +224,18 @@ class Operation:
             else:
                 return 0
         return rv
+
+
+    def compareByMorris(self, op):
+        rv = self.contextVector.morrisCompare(op.contextVector)
+        if (rv == 0):
+            if (self.siteId < op.siteId):
+                return -1
+            elif (self.siteId > op.siteId):
+                return 1
+            else:
+                return 0
+        return rv
     
     """
     Computes an ordered comparison of this op and another based on their

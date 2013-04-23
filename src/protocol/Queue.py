@@ -14,12 +14,14 @@ class Queue(HistoryBuffer)
        ops = self.getMorrisSortedOperations()
        for op in ops:
            if op.contextVector.morrisCompare(cv) < 0:
-               return op.copy()
-        return None
+               return self.remove(op)
+       return None
 
-
-       
-                    
+    def getMorrisSortedOperations(self):
+        ops = []
+        for v in self.ops:
+            ops.append(self.ops[v])
+         return sorted(ops, key=cmp_to_key(lambda x, y: x.compareByMorris(y)))
 
 
 

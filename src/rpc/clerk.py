@@ -19,8 +19,8 @@ class Clerk:
     def freeze(self, sid):
         self.state.freeze(sid)
         
-    def addStroke(self,s):
-        op = self.state.createOp('insert',stroke=s)
+    def addStroke(self,s,order=-1):
+        op = self.state.createOp('insert',stroke=s,order=order)
         self._send(op.copy())
 
     def deleteStroke(self,s_pos):

@@ -196,13 +196,14 @@ class ContextVector:
             Return 0 (equals) if two dudes are not comparable
         
         """
-        
         [npos,nneg,nnil] = self.getDiffStat(cv)
 
         if nneg > 0 and npos == 0:
             return -1
         if npos > 0 and nneg == 0:
             return 1
+        if npos > 0 and nneg > 0: #not comparable
+            return 2
         return 0
 
 

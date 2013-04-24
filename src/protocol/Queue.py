@@ -46,7 +46,7 @@ class Queue(HistoryBuffer):
            comp = op.contextVector.morrisCompare(cv)
            if comp < 0:
                return self.remove(op)
-           if comp == 0 and op.contextVector.equals(cv):
+           if comp == 0 :
                return self.remove(op)
 
        return None

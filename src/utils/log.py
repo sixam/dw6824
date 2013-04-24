@@ -17,13 +17,13 @@ class Log:
             self.log.addHandler(fhandle)
 
         # log options
-        self.show_lock = False
+        self.show_lock = True
         self.show_rpc = False
-        self.show_engine = False
-        self.show_release = False
+        self.show_engine = True
+        self.show_release = True
 
         # for recursion debug
-        self.accu = ""
+        #self.accu = ""
 
     def exception(self, *args):
         self.log.exception('Something terrible happened')
@@ -35,6 +35,9 @@ class Log:
             s += ' '
         s += '\n'
         self.accu += s
+
+    def flush(self):
+        self.accu = ''
 
     def release(self):
         if not self.show_release:
@@ -82,6 +85,9 @@ class Log:
 
     def lock(self,*args):
         if self.show_lock:
+            args = list(args)
+            args.insert(0,'\033[33mLK\033[0m:')
+            args = tuple(args)
             self.Print(*args)
 
     def rpc(self,*args):
@@ -94,7 +100,7 @@ class Log:
     def engine(self,*args):
         if self.show_engine:
             args = list(args)
-            args.insert(0,'\033[34mOE\033[0m]:')
+            args.insert(0,'\033[34mOE\033[0m:')
             args = tuple(args)
             self.Print(*args)
 

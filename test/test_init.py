@@ -238,7 +238,7 @@ class TestSimple(unittest.TestCase):
 
     def test_manypeers(self):
         """ Many peers """
-        self.addMultipleServers(4)
+        self.addMultipleServers(2)
         cks = []
         for i in range(len(self.peers)):
             cks.append(Clerk(self.peers[i].state));
@@ -247,15 +247,15 @@ class TestSimple(unittest.TestCase):
                 ck.thaw(sid)
 
         s = self.genRandomStrokes(20)
+        order = 0
         for stroke in s:
-            i = random.randint(0,1024) % len(self.peers)
-            cks[i].addStroke(stroke)
-            #time.sleep(0.1)
+            order += 1
+            i = random.randint(0,len(self.peers)-1)
+            cks[i].addStroke(stroke,order = order)
         time.sleep(10)
 
         for ck in cks:
-            ck.state.printFinalState()
-
+            ck.state.getStrokes()
 
         self.assertStrokesEqual()
 

@@ -96,18 +96,21 @@ class HistoryBuffer:
         for i in range(l):
             key = keys[i]
             if (key not in self.ops):
-                raise OperationEngineException("missing op for context diff: i=" + i +
-                        " key=" + key + " keys=" + str(keys))
+                raise OperationEngineException("missing op for context diff: i=" + str(i) +
+                        " key=" + str(key) + " keys=" + str(keys))
             ops.append(self.ops[key])
         """ sort by total order """
-        #return sorted(ops, key=cmp_to_key(lambda x,y: x.compareByOrder(y)))
-        return sorted(ops, key=cmp_to_key(lambda x, y: x.compareByMorris(y)))
+        srt = sorted(ops, key=cmp_to_key(lambda x,y: x.compareByOrder(y)))
+        #srt = sorted(ops, key=cmp_to_key(lambda x, y: x.compareByMorris(y)))
+
+        return srt 
 
     def getMorrisSortedOperations(self):
         ops = []
         for v in self.ops:
             ops.append(self.ops[v])
-        return sorted(ops, key=cmp_to_key(lambda x, y: -x.compareByMorris(y)))
+        return sorted(ops, key=cmp_to_key(lambda x, y: x.compareByOrder(y)))
+        #return sorted(ops, key=cmp_to_key(lambda x, y: x.compareByMorris(y)))
 
     """
     Adds a local operation to the history.

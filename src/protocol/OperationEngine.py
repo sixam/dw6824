@@ -154,27 +154,30 @@ class OperationEngine:
       to the shared state
     """
     def pushRemoteOp(self, op):
-        self.log.engine('+ pushing remote:',op)
+        #self.log.engine('+ pushing remote:',op)
         top = None
         if (self.hasProcessedOp(op)):
             """ let the history buffer track the total order for the op """
             self.hb.addRemote(op)
             """ engine has already processed this op so ignore it """
-            self.log.engine('\t-aldready processed')
+            #self.log.engine('\t- aldready processed')
             return None
         elif (self.cv.equals(op.contextVector)):
             """ no transform needed """
             """ make a copy so return value is independent of input """
             top = op.copy()
-            self.log.engine('\t-no transform needed')
+            #self.log.engine('\t- no transform needed')
         else:
-            self.log.engine('\t-transform needed, current context is:',self.cv)
+            self.log.engine('+ pushing remote:',op)
+            self.log.engine('\t- transform needed, current context is:',self.cv)
             """ transform needed to upgrade context """
             cd = self.cv.subtract(op.contextVector)
             """ make the original op immutable """
             op.immutable = True
             """ top is a transformed copy of the original """
+            self.log.flush()
             top = self._transform(op, cd)
+            self.log.engine('\t- done pushing\n')
 
 
         """ update local context vector with the original op """
@@ -184,8 +187,13 @@ class OperationEngine:
         """ update context vector table with original op """
         self.cvt.updateWithOperation(op)
 
+        # caching addition
+        op.xCache = top.xCache
+
+        #self.log.red(op.xCache)
+
         """ return the transformed op """
-        self.log.engine('\t-done pushing:\n\n',top)
+        #self.log.engine('\t-done pushing\n')
         return top
 
     """
@@ -338,13 +346,22 @@ class OperationEngine:
     def _transform(self, op, cd):
         """ get all ops for context different from history buffer sorted by context dependencies """
         ops = self.hb.getOpsForDifference(cd)
+        l = len(ops)
 
+        self.log.accumulate('--------------',op)
+
+        for i in range(l):
+            xop = ops[i]
+            if (not op.contextVector.equals(xop.contextVector)):
+                cxop = xop.getFromCache(op.contextVector)
+                """ cxop = null; """
+                if not (cxop):
+                    self.log.accumulate(xop)
 
         """ copy the incoming operation to avoid disturbing the history buffer """
         """   when the op comes from our history buffer during a recursive step """
         op = op.copy()
         """ iterate over all operations in the difference """
-        l = len(ops)
         for i in range(l):
             """ xop is the previously applied op """
             xop = ops[i]
@@ -354,7 +371,8 @@ class OperationEngine:
                 cxop = xop.getFromCache(op.contextVector)
                 """ cxop = null; """
                 if (cxop):
-                    self.log.engine('\t- cached transform, loading')
+                    #self.log.engine('\t- cached transform, loading')
+                    self.log.accumulate('load cached:',cxop)
                     xop = cxop
                 else:
                     """ transform needed to upgrade context of xop to op """
@@ -370,16 +388,16 @@ class OperationEngine:
                         upgrade context immediately and continue with
                         the next one """
                         op.upgradeContextTo(xop)
+                        self.log.accumulate('cxop is none, context upgrade to:',op.contextVector)
                         """ @todo: see null below """
                         continue
                     """ now only deal with the copy """
                     xop = cxop
             if (not op.contextVector.equals(xop.contextVector)):
                 self.log.red('ERROR: context vectors unequal after transform')
-                self.log.Print('\t context vectors: op -',op.contextVector, '; xop - ',xop.contextVector)
-                self.log.blue('get ops for difference: sort')
-                for o in ops:
-                    self.log.Print(o)
+                self.log.Print('\t op -',op)
+                self.log.Print('\t xop(xformed) -',xop)
+                self.log.green('\t local current context',self.cv)
                 self.log.release()
                 raise OperationEngineException("context vectors unequal after upgrade")
             """ make a copy of the op as is before transform """
@@ -398,10 +416,10 @@ class OperationEngine:
             op.addToCache(self.siteCount)
 
             """ do a symmetric transform on a copy of xop too while we're here """
-            xop = xop.copy()
-            xop = xop.transformWith(cop)
-            if (xop):
-                xop.addToCache(self.siteCount)
+            #xop = xop.copy()
+            #xop = xop.transformWith(cop)
+            #if (xop):
+                #xop.addToCache(self.siteCount)
         """ op is always a copy because we never entered this method if no transform was needed """
         return op
 

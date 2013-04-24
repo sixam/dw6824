@@ -80,7 +80,7 @@ class PeerState(QtCore.QObject):
             pass
             # Send signal to UI
 
-    def createOp(self,otype,stroke=None,pos=-1):
+    def createOp(self,otype,stroke=None,pos=-1,order=-1):
         self.log.lock( 'create op (lock)')
         self.lock.acquire()
         self.log.lock( 'create op (locked)')
@@ -97,6 +97,8 @@ class PeerState(QtCore.QObject):
             position = pos
 
         op = self.engine.createOp(True,key,val,otype,position)
+        if order >= 0:
+            op.order = order
 
         self.engine.pushLocalOp(op)
         self.processed_ops.append(op)
@@ -152,6 +154,8 @@ class PeerState(QtCore.QObject):
         cp = copy.deepcopy(self.strokes)
         self.lock.release()
         self.log.lock( 'get strokes (unlock)\n')
+
+        self.printFinalState()
         return cp
 
     def printFinalState(self):
@@ -170,15 +174,17 @@ class PeerState(QtCore.QObject):
     def printHistoryBuffer(self):
         self.log.blue( '\n-------------------- HISTORY BUFFER  -------------------------------------------')
         self.log.Print( len(self.engine.hb.ops), 'operations')
-        for op in self.engine.hb.ops:
-            self.log.Print(self.engine.hb.ops[op])
+        ops = self.engine.hb.getMorrisSortedOperations()
+        for op in ops:
+            self.log.Print(op)
         self.log.blue( '----------------------------------------------------------------------\n')
 
     def printQueue(self):
         self.log.blue( '\n-------------------- QUEUE  -------------------------------------------')
         self.log.Print( len(self.queue.ops), 'operations | ds:',self.engine.copyContextVector())
-        for op in self.queue.ops:
-            self.log.Print(self.queue.ops[op])
+        ops = self.queue.getMorrisSortedOperations()
+        for op in ops:
+            self.log.Print(op)
         self.log.blue( '----------------------------------------------------------------------\n')
 
     def printStrokes(self):

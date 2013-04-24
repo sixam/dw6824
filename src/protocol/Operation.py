@@ -86,8 +86,8 @@ class Operation:
             self.xCache = []
 
     def __str__(self):
-        return "{0} - id({1},{2}) - k:{3}, v:{4} p:{5} cv:{6}".format(
-                self.type,self.siteId,self.seqId,self.key,self.value['id'],self.position,self.contextVector.__str__())
+        return "{0} - id({1},{2}) - k:{3}, v:{4} p:{5} cv:{6} o:{7}".format(
+                self.type,self.siteId,self.seqId,self.key,self.value['id'],self.position,self.contextVector.__str__(),self.order)
 
     """
     Serializes the operation as an array of values for transmission.
@@ -235,6 +235,8 @@ class Operation:
                 return 1
             else:
                 return 0
+        if (rv == 2):
+            return 0
         return rv
     
     """
@@ -301,8 +303,9 @@ class Operation:
     @throws {Error} If this op to be upgraded is immutable
     """
     def upgradeContextTo(self, op):
-        #if (self.immutable):
-            #raise OperationEngineException("attempt to upgrade context of immutable op")
+        if (self.immutable):
+            self.log.red('ERROR: attempt to upgrade immutable context')
+            raise OperationEngineException("attempt to upgrade context of immutable op")
         self.contextVector.setSeqForSite(op.siteId, op.seqId)
 
     """

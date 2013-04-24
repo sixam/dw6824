@@ -19,8 +19,8 @@ class Clerk:
     def freeze(self, sid):
         self.state.freeze(sid)
         
-    def addStroke(self,s):
-        op = self.state.createOp('insert',stroke=s)
+    def addStroke(self,s,order=-1):
+        op = self.state.createOp('insert',stroke=s,order=order)
         self._send(op.copy())
 
     def deleteStroke(self,s_pos):
@@ -50,11 +50,10 @@ class Clerk:
         packet = op.marshall()
         while True :
             try:
-                self.log.purple('send op:', op, 'to srv:', srv)
                 done = srv.enq(packet)
                 if done:
+                    self.log.rpc('sent:',op)
                     break
             except:
-                self.log.Print( 'looping')
                 pass
             time.sleep(1)

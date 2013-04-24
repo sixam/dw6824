@@ -6,6 +6,7 @@ import copy
 
 from dp.src.protocol.OperationEngine import OperationEngine
 from dp.src.protocol.Queue import Queue
+from dp.src.protocol.OperationEngineException import OperationEngineException
 
 class PeerState(QtCore.QObject):
     """Stores all data concerning a peer's state
@@ -40,17 +41,24 @@ class PeerState(QtCore.QObject):
 
         self.engine = OperationEngine(self.id,log)
         self.queue  = Queue(log)
-        self.log.Print("yo",self.queue)
+
+        # logging options
     
     def thaw(self, sid):
+        self.log.lock( 'thaw (lock)')
         self.lock.acquire()
+        self.log.lock( 'thaw (locked)')
         self.engine.thawSite(sid)
         self.lock.release()
+        self.log.lock( 'thaw (unlock)')
 
 
     def freeze(self, sid):
+        self.log.lock( 'freeze (lock)')
         self.lock.acquire()
+        self.log.lock( 'freeze (locked)')
         self.engine.freezeSite(sid)
+        self.log.lock( 'freeze (unlock)')
         self.lock.release()
 
     def performOperation(self,op):
@@ -73,10 +81,10 @@ class PeerState(QtCore.QObject):
             pass
             # Send signal to UI
 
-    def createOp(self,otype,stroke=None,pos=-1):
-        self.log.Print( 'new op (lock)')
+    def createOp(self,otype,stroke=None,pos=-1,order=-1):
+        self.log.lock( 'create op (lock)')
         self.lock.acquire()
-        self.log.Print( 'new op (locked)')
+        self.log.lock( 'create op (locked)')
 
         key = 'strokes'
         if otype == 'insert':
@@ -90,36 +98,34 @@ class PeerState(QtCore.QObject):
             position = pos
 
         op = self.engine.createOp(True,key,val,otype,position)
-
-        self.log.blue('created op :',op)
+        if order >= 0:
+            op.order = order
 
         self.engine.pushLocalOp(op)
         self.processed_ops.append(op)
 
         self.performOperation(op)
         self.lock.release()
+        self.log.lock( 'create op (unlock)\n')
         if self.window: #Dont call UI (for the tester)
             self.newStrokesSignal.emit()
-        self.log.Print( 'new op (unlock)\n')
         return op
 
 
     def receiveOp(self, op):
-        self.log.Print( 'receive op (lock)')
+        self.log.lock( 'receive op (lock)')
         self.lock.acquire()
-        self.log.Print( 'receive op (locked)')
+        self.log.lock( 'receive op (locked)')
 
         # check duplicates
         seen = self.engine.hasProcessedOp(op)
         if seen:
-            self.log.orange('already seen')
+            self.log.engine('refused,already seen:',op)
             self.lock.release()
-            self.log.Print('receive op (unlock)\n')
+            self.log.lock('receive op (unlock)\n')
             return True
         self.queue.enqueue(op)
 
-        self.log.blue('after enqueue')
-        self.printQueue()
         added = 0
         cv = self.engine.copyContextVector()
         while True:
@@ -128,31 +134,28 @@ class PeerState(QtCore.QObject):
             if not processable:
                 break
             new_op = self.engine.pushRemoteOp(processable)
-            self.processed_ops.append(new_op)
             self.performOperation(new_op)
+            self.processed_ops.append(new_op)
             added += 1
 
-        self.log.blue('after dequeue')
-        self.printQueue()
 
-        self.log.green('receive: added',added,'operations')
         self.lock.release()
-        self.log.Print( 'receive op (unlock)\n')
+        self.log.lock( 'receive op (unlock)\n')
 
         #Dont call UI (for the tester)
         if self.window: 
             self.newStrokesSignal.emit()
 
-        self.log.Print( 'receive op (unlock)\n')
+        self.log.lock( 'receive op (unlock)\n')
         return True
 
     def getStrokes(self):
-        self.log.Print( 'get strokes (lock)')
+        self.log.lock( 'get strokes (lock)')
         self.lock.acquire()
-        self.log.Print( 'get strokes (locked)')
+        self.log.lock( 'get strokes (locked)')
         cp = copy.deepcopy(self.strokes)
         self.lock.release()
-        self.log.Print( 'get strokes (unlock)\n')
+        self.log.lock( 'get strokes (unlock)\n')
 
         self.printFinalState()
         return cp
@@ -173,15 +176,17 @@ class PeerState(QtCore.QObject):
     def printHistoryBuffer(self):
         self.log.blue( '\n-------------------- HISTORY BUFFER  -------------------------------------------')
         self.log.Print( len(self.engine.hb.ops), 'operations')
-        for op in self.engine.hb.ops:
-            self.log.Print(self.engine.hb.ops[op])
+        ops = self.engine.hb.getMorrisSortedOperations()
+        for op in ops:
+            self.log.Print(op)
         self.log.blue( '----------------------------------------------------------------------\n')
 
     def printQueue(self):
         self.log.blue( '\n-------------------- QUEUE  -------------------------------------------')
         self.log.Print( len(self.queue.ops), 'operations | ds:',self.engine.copyContextVector())
-        for op in self.queue.ops:
-            self.log.Print(self.queue.ops[op])
+        ops = self.queue.getMorrisSortedOperations()
+        for op in ops:
+            self.log.Print(op)
         self.log.blue( '----------------------------------------------------------------------\n')
 
     def printStrokes(self):

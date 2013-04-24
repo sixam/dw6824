@@ -15,8 +15,37 @@ class Log:
         fhandle.setFormatter(formatter)
         if not self.log.handlers:
             self.log.addHandler(fhandle)
+
+        # log options
+        self.show_lock = True
+        self.show_rpc = True
+        self.show_engine = True
+        self.show_release = True
+
+        # for recursion debug
+        #self.accu = ""
+
     def exception(self, *args):
         self.log.exception('Something terrible happened')
+
+    def accumulate(self,*args):
+        s = ''
+        for arg in args:
+            s += str(arg)
+            s += ' '
+        s += '\n'
+        self.accu += s
+
+    def flush(self):
+        self.accu = ''
+
+    def release(self):
+        if not self.show_release:
+            return
+        s = self.accu
+        self.accu = ''
+        self.red('Accumulated logs')
+        self.orange(s)
 
 
     def red(self,*args):
@@ -53,6 +82,28 @@ class Log:
         args.append('\033[0m')
         args = tuple(args)
         self.Print(*args)
+
+    def lock(self,*args):
+        if self.show_lock:
+            args = list(args)
+            args.insert(0,'\033[33mLK\033[0m:')
+            args = tuple(args)
+            self.Print(*args)
+
+    def rpc(self,*args):
+        if self.show_rpc:
+            args = list(args)
+            args.insert(0,'\033[35mRPC\033[0m:')
+            args = tuple(args)
+            self.Print(*args)
+
+    def engine(self,*args):
+        if self.show_engine:
+            args = list(args)
+            args.insert(0,'\033[34mOE\033[0m:')
+            args = tuple(args)
+            self.Print(*args)
+
 
     def Print(self, *args):
         s = str()

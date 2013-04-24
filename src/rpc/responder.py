@@ -22,7 +22,7 @@ class RPCresponder:
         try:
             return getattr(self, method)(*args)
         except:
-            self.log.exception('FFFFFFFFUUUUUUUCCCKKKK')
+            self.log.exception('DISPATCH EXCEPTION (rpc responder)')
 
 
     def _listMethods(self):
@@ -50,7 +50,6 @@ class RPCresponder:
         if self.dead:
             return 
 
-        self.log.red('received packet type:', packet['type'])
         otype = packet['type'] if 'type' in packet else None
 
         if otype == 'insert':
@@ -59,6 +58,8 @@ class RPCresponder:
             op = DeleteOperation.unmarshall(packet)
         elif otype == 'update':
             op = UpdateOperation.unmarshall(packet)
+
+        self.log.rpc('received:',op)
 
         accepted = self.state.receiveOp(op)
 

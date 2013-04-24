@@ -1,6 +1,7 @@
 from threading import Lock, Thread
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 import xmlrpclib
+import random
 import time
 from dp.src.session.central import CentralServer
 
@@ -38,18 +39,23 @@ class ClientResponder:
         self.incoming.ip = ip
         self.incoming.port = port
         self.lock.release()
+        if random.randint(0,4) == 0:
+            self.log.red('Vote Reject')
+            return False
         self.log.green('Vote OK')
         return True
 
     def commit(self, t, id, vote, ip, port):
-        self.log.green('commit received')
         self.lock.acquire()
         if vote == True:
+            self.log.green('commit received')
             srv = xmlrpclib.Server('http://%s:%s' % (self.incoming.ip, self.incoming.port))
             m = len(self.peers)
             for i in range(m, id + 1):
                 self.peers.insert(i, None)
             self.peers[id] = srv
+        else : 
+            self.log.red('abort received')
         self.lock.release()
         return True
         

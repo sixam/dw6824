@@ -95,6 +95,8 @@ class ServerResponder:
             self.hosts[session].append(ip)
             self.ports[session].append(port)
             self.participants[session].append(srv)
+        else:
+            self.log.purple('Reject')
         self.log.green('woot')
         self.log.blue(self.participants)
         self.log.blue(self.hosts)

@@ -13,7 +13,7 @@ if __name__ == '__main__':
     cs              = CentralServer('localhost', sp, lc)
     csrv            = xmlrpclib.Server('http://%s:%s' % ('localhost', sp))
 
-    n = 10
+    n = 20
     dc = []
     cssrv = []
     l = []
@@ -30,9 +30,9 @@ if __name__ == '__main__':
 #
 #
     sessions = []
-    for i in range(int(floor(n/2))):
+    for i in range(int(floor(n/4))):
         sessions.append(dc[i].cstart('localhost', pbase + i))
     m = len(sessions)
     for i in range(m,n):
-        s = random.randint(m,n - 1)
-        dc[i].cjoin(sessions[i - m], 'localhost',pbase + i)
+        s = random.randint(0, m - 1)
+        dc[i].cjoin(sessions[s], 'localhost',pbase + i)

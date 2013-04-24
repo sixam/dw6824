@@ -16,6 +16,8 @@ from .InsertOperation import InsertOperation
 from .UpdateOperation import UpdateOperation
 from .DeleteOperation import DeleteOperation
 
+import functools
+
 class OperationEngine:
 
     """
@@ -176,7 +178,10 @@ class OperationEngine:
             op.immutable = True
             """ top is a transformed copy of the original """
             self.log.flush()
+            #try:
             top = self._transform(op, cd)
+            #except OperationEngineException:
+                #self.log.red('ERROR: caught in OE')
             self.log.engine('\t- done pushing\n')
 
 

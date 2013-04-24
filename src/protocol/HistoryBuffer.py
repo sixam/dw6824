@@ -8,28 +8,7 @@ Copyright (c) IBM Corporation 2008, 2011. All Rights Reserved.
 from .OperationEngineException import OperationEngineException
 from .factory import factory
 from .Operation import Operation
-
-# cmp_to_key borrowed from
-# http://code.activestate.com/recipes/576653-convert-a-
-# cmp-function-to-a-key-function/
-def cmp_to_key(mycmp):
-    'Convert a cmp= function into a key= function'
-    class K(object):
-        def __init__(self, obj, *args):
-            self.obj = obj
-        def __lt__(self, other):
-            return mycmp(self.obj, other.obj) < 0
-        def __gt__(self, other):
-            return mycmp(self.obj, other.obj) > 0
-        def __eq__(self, other):
-            return mycmp(self.obj, other.obj) == 0
-        def __le__(self, other):
-            return mycmp(self.obj, other.obj) <= 0
-        def __ge__(self, other):
-            return mycmp(self.obj, other.obj) >= 0
-        def __ne__(self, other):
-            return mycmp(self.obj, other.obj) != 0
-    return K
+import functools
 
 """
 Stores information about local and remote operations for future
@@ -100,8 +79,8 @@ class HistoryBuffer:
                         " key=" + str(key) + " keys=" + str(keys))
             ops.append(self.ops[key])
         """ sort by total order """
-        srt = sorted(ops, key=cmp_to_key(lambda x,y: x.compareByOrder(y)))
-        #srt = sorted(ops, key=cmp_to_key(lambda x, y: x.compareByMorris(y)))
+        #srt = sorted(ops, key=functools.cmp_to_key(lambda x,y: x.compareByOrder(y)))
+        srt = sorted(ops, key=functools.cmp_to_key(lambda x, y: x.compareByMorris(y)))
 
         return srt 
 
@@ -109,8 +88,7 @@ class HistoryBuffer:
         ops = []
         for v in self.ops:
             ops.append(self.ops[v])
-        return sorted(ops, key=cmp_to_key(lambda x, y: x.compareByOrder(y)))
-        #return sorted(ops, key=cmp_to_key(lambda x, y: x.compareByMorris(y)))
+        return sorted(ops, key=functools.cmp_to_key(lambda x, y: x.compareByMorris(y)))
 
     """
     Adds a local operation to the history.
@@ -189,5 +167,5 @@ class HistoryBuffer:
         for v in self.ops:
             ops.append(self.ops[v])
         """ sort them by context, sequence, and site """
-        return sorted(ops, key=cmp_to_key(lambda x,y: x.compareByContext(y)))
+        return sorted(ops, key=functools.cmp_to_key(lambda x,y: x.compareByContext(y)))
 

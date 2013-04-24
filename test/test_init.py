@@ -97,6 +97,7 @@ class TestSimple(unittest.TestCase):
             s = p.getStrokes()
             if len(s) != len(strokes):
                 Pass = False
+                self.assertTrue(Pass,msg="different length")
             else:   
                 for i, stroke in enumerate(s):
                     if strokes[i] != stroke:

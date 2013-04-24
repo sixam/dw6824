@@ -6,6 +6,7 @@ import copy
 
 from dp.src.protocol.OperationEngine import OperationEngine
 from dp.src.protocol.Queue import Queue
+from dp.src.protocol.OperationEngineException import OperationEngineException
 
 class PeerState(QtCore.QObject):
     """Stores all data concerning a peer's state
@@ -136,6 +137,7 @@ class PeerState(QtCore.QObject):
             self.performOperation(new_op)
             self.processed_ops.append(new_op)
             added += 1
+
 
         self.lock.release()
         self.log.lock( 'receive op (unlock)\n')

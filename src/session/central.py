@@ -46,7 +46,8 @@ class ServerResponder:
         srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
         self.hosts.append([ip])
         self.ports.append([port])
-        self.participants([srv])
+        self.participants.append([srv])
+        self.lock.release()
         return count
 
 

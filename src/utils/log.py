@@ -18,7 +18,7 @@ class Log:
 
         # log options
         self.show_lock = True
-        self.show_rpc = False
+        self.show_rpc = True
         self.show_engine = True
         self.show_release = True
 
@@ -93,9 +93,9 @@ class Log:
     def rpc(self,*args):
         if self.show_rpc:
             args = list(args)
-            args.insert(0,'rpc:')
+            args.insert(0,'\033[35mRPC\033[0m:')
             args = tuple(args)
-            self.purple(*args)
+            self.Print(*args)
 
     def engine(self,*args):
         if self.show_engine:

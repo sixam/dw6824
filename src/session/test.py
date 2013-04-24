@@ -32,7 +32,11 @@ if __name__ == '__main__':
     sessions = []
     for i in range(int(floor(n/4))):
         sessions.append(dc[i].cstart('localhost', pbase + i))
+        if random.randint(0,1) == 0:
+            sessions.append(dc[i].cstart('localhost', pbase + i))
     m = len(sessions)
     for i in range(m,n):
         s = random.randint(0, m - 1)
         dc[i].cjoin(sessions[s], 'localhost',pbase + i)
+        if random.randint(0,1) == 0:
+            dc[i].cjoin(sessions[s], 'localhost',pbase + i)

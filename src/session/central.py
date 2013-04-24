@@ -16,6 +16,10 @@ class ServerResponder:
 
         self.participants  = []
 
+
+        self.startops = []
+        self.joinops = []
+
     def _dispatch(self, method, args):
         try:
             return getattr(self, method)(*args)
@@ -28,11 +32,35 @@ class ServerResponder:
         # knows to advertise the strings methods
         return list_public_methods(self) + \
                 ['string.' + method for method in list_public_methods(self.string)]
+    def checkrepstart(self, ip, port):
+        for op in self.startops:
+            if op[0] == ip and op[1] == port:
+                return True
+        return False
+    def checkrepjoin(self, ip, port, session):
+        for op in self.joinops:
+            if op[0] == ip and op[1] == port and op[2] == session:
+                return True
+        return False
+
+    def getsession(self, ip, port):
+         for op in self.startops:
+            if op[0] == ip and op[1] == port:
+                return op[2]
+         return -1
+
+    def getpeers(self, ip, port, session):
+        return True
+
     def start(self, ip, port):
         self.log.red('start called')
         self.lock.acquire()
         count = len(self.hosts)
         self.log.red('COUNT:', count)
+        if self.checkrepstart(ip, port):
+            self.log.purple('duplicate request')
+            self.lock.release()
+            return self.getsession(ip, port)
         if count  == 0:
             self.hosts = [[]]
             self.ports = [[]]
@@ -41,12 +69,14 @@ class ServerResponder:
             self.hosts[0].append(ip)
             self.ports[0].append(port)
             self.participants[0].append(srv)
+            self.startops.append([ip, port, count])
             self.lock.release()
             return 0
         srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
         self.hosts.append([ip])
         self.ports.append([port])
         self.participants.append([srv])
+        self.startops.append([ip, port, count])
         self.lock.release()
         return count
 
@@ -60,6 +90,10 @@ class ServerResponder:
             self.lock.release()
             return False
 
+        if self.checkrepjoin(ip, port, session):
+            self.log.purple('duplicate request')
+            self.lock.release()
+            return self.getpeers(ip, port, session)
 
         # Send vote requests
         v = True
@@ -95,8 +129,10 @@ class ServerResponder:
             self.hosts[session].append(ip)
             self.ports[session].append(port)
             self.participants[session].append(srv)
+            self.joinops.append([ip, port, session, True])
         else:
             self.log.purple('Reject')
+            self.joinops.append([ip, port, session, False])
         self.log.green('woot')
         self.log.blue(self.participants)
         self.log.blue(self.hosts)

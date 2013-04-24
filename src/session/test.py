@@ -26,6 +26,6 @@ if __name__ == '__main__':
 
 
 
-    
-    dc.cjoin(0,'localhost',cp)
+    dc.cstart('localhost', cp)
+#    dc.cjoin(0,'localhost',cp)
     ndc.cjoin(0,'localhost', ncp)

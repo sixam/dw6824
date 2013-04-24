@@ -76,6 +76,9 @@ class DummyClient:
 
     def cjoin(self, session, ip, port):
         self.cs.join(session, ip, port)
+
+    def cstart(self, ip, port):
+        return self.cs.start(ip, port)
         
 
 

@@ -28,28 +28,36 @@ class ServerResponder:
         # knows to advertise the strings methods
         return list_public_methods(self) + \
                 ['string.' + method for method in list_public_methods(self.string)]
+    def start(self, ip, port):
+        self.log.red('start called')
+        self.lock.acquire()
+        count = len(self.hosts)
+        self.log.red('COUNT:', count)
+        if count  == 0:
+            self.hosts = [[]]
+            self.ports = [[]]
+            self.participants = [[]]
+            srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
+            self.hosts[0].append(ip)
+            self.ports[0].append(port)
+            self.participants[0].append(srv)
+            self.lock.release()
+            return 0
+        srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
+        self.hosts.append([ip])
+        self.ports.append([port])
+        self.participants([srv])
+        return count
+
 
     def join(self, session, ip, port):
         """ Starts a 2PC with all participants to commit a new peer"""
         self.log.red('Join Called')
         self.lock.acquire()
         count = len(self.hosts)
-        self.log.red('COUNT:', count)
-        if count  == 0:
-            for i in range(session + 1):
-                self.hosts = [[]]
-                self.ports = [[]]
-                self.participants = [[]]
-                self.hosts[session]         = []
-                self.ports[session]         = []
-                self.participants[session]  = []
-
-            srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
-            self.hosts[session].append(ip)
-            self.ports[session].append(port)
-            self.participants[session].append(srv)
+        if session >= count:
             self.lock.release()
-            return True
+            return False
 
 
         # Send vote requests
@@ -81,11 +89,7 @@ class ServerResponder:
                    pass
                 time.sleep(1)
         if v == True:
-            m = len(self.hosts)
-            for i in range(m, session + 1):
-               self.hosts[session]         = []
-               self.ports[session]         = []
-               self.participants[session]  = []
+            self.log.red('COUNT:', count)
             srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
             self.hosts[session].append(ip)
             self.ports[session].append(port)

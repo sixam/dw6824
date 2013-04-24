@@ -354,14 +354,6 @@ class OperationEngine:
 
         self.log.accumulate('--------------',op)
 
-        #for i in range(l):
-            #xop = ops[i]
-            #if (not op.contextVector.equals(xop.contextVector)):
-                #cxop = xop.getFromCache(op.contextVector)
-                #""" cxop = null; """
-                #if not (cxop):
-                    #self.log.accumulate(xop)
-
         """ copy the incoming operation to avoid disturbing the history buffer """
         """   when the op comes from our history buffer during a recursive step """
         op = op.copy()
@@ -385,7 +377,6 @@ class OperationEngine:
                 cxop = xop.getFromCache(op.contextVector)
                 """ cxop = null; """
                 if (cxop):
-                    #self.log.engine('\t- cached transform, loading')
                     self.log.accumulate('load cached:',cxop)
                     xop = cxop
                 else:
@@ -408,11 +399,11 @@ class OperationEngine:
                     """ now only deal with the copy """
                     xop = cxop
             if (not op.contextVector.equals(xop.contextVector)):
-                self.log.red('ERROR: context vectors unequal after transform')
-                self.log.Print('\t op -',op)
-                self.log.Print('\t xop(xformed) -',xop)
-                self.log.green('\t local current context',self.cv)
-                self.log.release()
+                #self.log.red('ERROR: context vectors unequal after transform')
+                #self.log.Print('\t op -',op)
+                #self.log.Print('\t xop(xformed) -',xop)
+                #self.log.green('\t local current context',self.cv)
+                #self.log.release()
                 raise OperationEngineException("context vectors unequal after upgrade")
             """ make a copy of the op as is before transform """
             cop = op.copy()

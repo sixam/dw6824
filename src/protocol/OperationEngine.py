@@ -351,25 +351,34 @@ class OperationEngine:
     def _transform(self, op, cd):
         """ get all ops for context different from history buffer sorted by context dependencies """
         ops = self.hb.getOpsForDifference(cd)
-        l = len(ops)
 
         self.log.accumulate('--------------',op)
 
-        for i in range(l):
-            xop = ops[i]
-            if (not op.contextVector.equals(xop.contextVector)):
-                cxop = xop.getFromCache(op.contextVector)
-                """ cxop = null; """
-                if not (cxop):
-                    self.log.accumulate(xop)
+        #for i in range(l):
+            #xop = ops[i]
+            #if (not op.contextVector.equals(xop.contextVector)):
+                #cxop = xop.getFromCache(op.contextVector)
+                #""" cxop = null; """
+                #if not (cxop):
+                    #self.log.accumulate(xop)
 
         """ copy the incoming operation to avoid disturbing the history buffer """
         """   when the op comes from our history buffer during a recursive step """
         op = op.copy()
         """ iterate over all operations in the difference """
-        for i in range(l):
+        while ops:
             """ xop is the previously applied op """
-            xop = ops[i]
+            xop = ops.pop(0)
+            skip = False
+            for other in ops:
+                comp = other.compareByMorris(xop)
+                if comp == -1:
+                    ops.append(xop)
+                    skip = True
+                    break
+            if skip:
+                continue
+
             if (not op.contextVector.equals(xop.contextVector)):
                 """ see if we've cached a transform of this op in the desired """
                 """ context to avoid recursion """

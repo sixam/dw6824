@@ -69,11 +69,15 @@ class DeleteOperation(Operation):
     further effect on other operations
     """
     def transformWithDelete(self, op):
+        print 'TRANSFORM DELETE'
         if (not self.key != op.key):
+            print 'TRANSFORMed different keys'
             return self
         if (self.position > op.position):
+            print 'TRANSFORMed offset by 1'
             self.position -= 1
         elif (self.position == op.position):
+            print 'TRANSFORMed to None'
             return None
         return self
     

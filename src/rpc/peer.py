@@ -77,3 +77,9 @@ class Peer:
     def getStrokes(self):
         return self.state.getStrokes()
 
+    def thaw(self, sid):
+        self.state.thaw(sid)
+
+    def freeze(self, sid):
+        self.state.freeze(sid)
+

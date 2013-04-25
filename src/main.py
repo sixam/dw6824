@@ -16,9 +16,6 @@ if __name__ == '__main__':
     config = Utils.getConfig()
     local_id = sys.argv[1]
 
-    #sys.stdout = open(Utils.getLogPath('mainlog',local_id),'a')
-    #sys.stderr = open(Utils.getLogPath('errorlog',local_id),'a')
-
     print "New Run: %s\n" % n
     app = QtGui.QApplication(sys.argv)
 
@@ -33,7 +30,6 @@ if __name__ == '__main__':
     
     peer = Peer(ip, port, id, build_ui, log)
     peer.thaw(id)
-
 
     if len(sys.argv) >= 3:
         for i in range(2,len(sys.argv)):

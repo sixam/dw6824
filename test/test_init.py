@@ -6,6 +6,7 @@ import random
 from threading import Thread
 
 from PyQt4 import QtCore, QtGui
+from PyQt4.QtTest import QTest 
 
 from dp.src.utils.log import Log
 from dp.src.utils.utils import Utils
@@ -256,38 +257,38 @@ class TestSimple(unittest.TestCase):
 #
 #        self.assertStrokesEqual()
 
-#    def test_manypeers02(self):
-#        """ Many - peers, strokes, operations """
-#        self.addMultipleServers(2)
-#        cks = []
-#        for i in range(len(self.peers)):
-#            cks.append(Clerk(self.peers[i].state));
-#        for ck in cks:
-#            for sid in self.ids:
-#                ck.thaw(sid)
-#
-#        n_strokes = 12
-#        s = self.genRandomStrokes(n_strokes)
-#        for stroke in s:
-#            i = random.randint(0,len(self.peers)-1)
-#            cks[i].addStroke(stroke)
-#
-#        for s in range(n_strokes/2):
-#            i = random.randint(0,len(self.peers)-1)
-#            strokes = cks[i].getStrokes()
-#            if not strokes:
-#                continue
-#            m = random.randint(0, len(strokes) - 1)
-#            if not strokes[m]:
-#                continue
-#            if random.randint(0,1) :
-#                offset = [random.randint(1,200),random.randint(1,200)]
-#                cks[i].moveStroke(strokes[m],m,offset)
-#            else:
-#                cks[i].deleteStroke(strokes[m],m)
-#        time.sleep(25)
-#
-#        self.assertStrokesEqual()
+    def test_manypeers02(self):
+        """ Many - peers, strokes, operations """
+        self.addMultipleServers(2)
+        cks = []
+        for i in range(len(self.peers)):
+            cks.append(Clerk(self.peers[i].state));
+        for ck in cks:
+            for sid in self.ids:
+                ck.thaw(sid)
+
+        n_strokes = 12
+        s = self.genRandomStrokes(n_strokes)
+        for stroke in s:
+            i = random.randint(0,len(self.peers)-1)
+            cks[i].addStroke(stroke)
+
+        for s in range(n_strokes/2):
+            i = random.randint(0,len(self.peers)-1)
+            strokes = cks[i].getStrokes()
+            if not strokes:
+                continue
+            m = random.randint(0, len(strokes) - 1)
+            if not strokes[m]:
+                continue
+            if random.randint(0,1) :
+                offset = [random.randint(1,200),random.randint(1,200)]
+                cks[i].moveStroke(strokes[m],m,offset)
+            else:
+                cks[i].deleteStroke(strokes[m],m)
+        time.sleep(25)
+
+        self.assertStrokesEqual()
 
     def test_manydead(self):
         """ Many - peers dying"""

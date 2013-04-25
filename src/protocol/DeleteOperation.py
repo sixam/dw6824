@@ -72,6 +72,8 @@ class DeleteOperation(Operation):
         print 'TRANSFORM DELETE'
         if (not self.key != op.key):
             print 'TRANSFORMed different keys'
+            print 'key 1',self.key
+            print 'key 2',op.key
             return self
         if (self.position > op.position):
             print 'TRANSFORMed offset by 1'

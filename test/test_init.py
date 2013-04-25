@@ -284,8 +284,8 @@ class TestSimple(unittest.TestCase):
                 offset = [random.randint(1,200),random.randint(1,200)]
                 cks[i].moveStroke(strokes[m],m,offset)
             else:
-                cks[i].deleteStroke(m)
-        time.sleep(35)
+                cks[i].deleteStroke(strokes[m],m)
+        time.sleep(25)
 
         self.assertStrokesEqual()
 

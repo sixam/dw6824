@@ -62,7 +62,7 @@ class UpdateOperation(Operation):
     @returns {UpdateOperation} This instance
     """
     def transformWithInsert(self, op):
-        if (not self.key == op.key):
+        if (self.key != op.key):
             return self
         if (self.position >= op.position):
             self.position += 1
@@ -75,7 +75,7 @@ class UpdateOperation(Operation):
     @returns {UpdateOperation} This instance
     """
     def transformWithDelete(self, op):
-        if (not self.key == op.key):
+        if (self.key != op.key):
             return self
         if (self.position > op.position):
             self.position -= 1;

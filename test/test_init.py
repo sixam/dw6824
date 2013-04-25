@@ -282,7 +282,7 @@ class TestSimple(unittest.TestCase):
             if random.randint(0,1) :
                 offset = [random.randint(1,200),random.randint(1,200)]
                 cks[i].moveStroke(strokes[m],m,offset)
-            elif m not:
+            else:
                 cks[i].deleteStroke(m)
         time.sleep(15)
 

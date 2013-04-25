@@ -136,7 +136,6 @@ class PeerState(QtCore.QObject):
         cv = self.engine.copyContextVector()
         while True:
             cv = self.engine.copyContextVector()
-            self.printQueue()
             processable = self.queue.getProcessable(cv)
             if not processable:
                 break

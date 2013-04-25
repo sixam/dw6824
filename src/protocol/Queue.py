@@ -20,28 +20,22 @@ class Queue(HistoryBuffer):
         """ Pop and returns the operations whose context vectors now allows
         processing """
         ops = self.getMorrisSortedOperations()
-        self.log.red('get processable count:',self.getCount())
 
         for op in ops:
             skip = False
             for other in ops:
                 comp = other.compareByMorris(op)
                 if comp == -1:
-                    self.log.orange('Queue:not ready, past to process')
                     skip = True
                     break
             if skip:
-                self.log.orange('Queue:skipping')
                 continue
             else:
                comp = op.contextVector.morrisCompare(cv)
                if comp < 0:
-                   self.log.orange('Queue:process',op,'remaining:',self.getCount())
                    return self.remove(op)
                if comp == 0 :
-                   self.log.orange('Queue:process',op,'remaining:',self.getCount())
                    return self.remove(op)
 
-        self.log.orange('Queue:none ready, remaining:',self.size)
         return None
 

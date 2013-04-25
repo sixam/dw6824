@@ -3,6 +3,8 @@ from rpc.clerk import Clerk
 from stroke import Stroke
 from tool import Tool
 
+from threading import Lock
+
 
 class ScribbleArea(QtGui.QWidget):
     """ Main Area for drawing
@@ -45,13 +47,18 @@ class ScribbleArea(QtGui.QWidget):
 
         self.strokes = self.state.getStrokes()
 
+        self.lock = Lock()
+
     def clearImage(self):
         self.image.fill(QtGui.QColor(255, 255, 255))
         self.update()
 
     def strokesSignalHandler(self):
+        self.lock.acquire()
+        self.selected = -1
         self.strokes = self.state.getStrokes()
         self.draw()
+        self.lock.release()
 
 ################################ MOVE TOOL
     def _moveStart(self, pos):
@@ -59,6 +66,7 @@ class ScribbleArea(QtGui.QWidget):
         x = pos.x()
         y = pos.y()
         sel_rect = QtCore.QRectF(QtCore.QPointF(x-10,y-10),QtCore.QPointF(x+10,y+10))
+        self.lock.acquire()
         self.selected = -1 #if the click is outside, we deselect
         for i,stroke in enumerate(self.strokes): # check selection
             if stroke.toPainterPath().intersects(sel_rect):
@@ -66,8 +74,10 @@ class ScribbleArea(QtGui.QWidget):
                 self.log.Print( '\033[34mselected:',self.strokes[self.selected],'\033[0m')
                 break
         self.original_move_pos = self.move_pos
+        self.lock.release()
 
     def _moveUpdate(self,pos):
+        self.lock.acquire()
         if self.selected >=0 :
             self.moving = True
         if self.moving and self.selected >= 0:
@@ -75,13 +85,17 @@ class ScribbleArea(QtGui.QWidget):
             self.move_pos = pos
             self.strokes[self.selected].offsetPosBy(offset)
             self.draw()
+        self.lock.release()
 
     def _moveEnd(self,pos):
+        self.lock.acquire()
         if self.moving and self.selected >= 0: 
             offset = pos - self.move_pos 
-            self.clerk.moveStroke(self.strokes[self.selected],self.selected,[offset.x(),offset.y()])
             self.moving = False
+            self.lock.release()
+            self.clerk.moveStroke(self.strokes[self.selected],self.selected,[offset.x(),offset.y()])
         else:
+            self.lock.release()
             pass
 ################################ END 
 
@@ -177,10 +191,12 @@ class ScribbleArea(QtGui.QWidget):
         painter.drawPath(self.path);
 
     def delete(self):
+        self.lock.acquire()
         """ Deletes the currently selected stroke """
         if self.selected >= 0:
             self.clerk.deleteStroke(self.selected)
             self.selected = -1
+        self.lock.release()
 
     def penColor(self):
         return self.myPenColor

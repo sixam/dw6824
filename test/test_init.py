@@ -133,7 +133,7 @@ class TestSimple(unittest.TestCase):
         time.sleep(1)
         ck1.addStroke(s[1])
         time.sleep(1)
-        ck0.deleteStroke(0)
+        ck0.deleteStroke(s[0],0)
         time.sleep(1)
 
         self.assertStrokesEqual()

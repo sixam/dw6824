@@ -258,7 +258,7 @@ class TestSimple(unittest.TestCase):
 
     def test_manypeers02(self):
         """ Many - peers, strokes, operations """
-        self.addMultipleServers(1)
+        #self.addMultipleServers(1)
         cks = []
         for i in range(len(self.peers)):
             cks.append(Clerk(self.peers[i].state));
@@ -271,20 +271,21 @@ class TestSimple(unittest.TestCase):
         for stroke in s:
             i = random.randint(0,len(self.peers)-1)
             cks[i].addStroke(stroke)
-#        time.sleep()
 
         for s in range(n_strokes/2):
             i = random.randint(0,len(self.peers)-1)
             strokes = cks[i].getStrokes()
             if not strokes:
                 continue
-            m = random.randint(0, len(strokes) -1)
+            m = random.randint(0, len(strokes) - 1)
+            if not strokes[m]:
+                continue
             if random.randint(0,1) :
                 offset = [random.randint(1,200),random.randint(1,200)]
                 cks[i].moveStroke(strokes[m],m,offset)
             else:
                 cks[i].deleteStroke(m)
-        time.sleep(15)
+        time.sleep(35)
 
         self.assertStrokesEqual()
 

@@ -62,6 +62,8 @@ class PeerState(QtCore.QObject):
         self.lock.release()
 
     def performOperation(self,op):
+        if not op:
+            return
         if op.type == 'insert':
             m = len(self.strokes)
             for i in range(m, op.position+1):
@@ -70,6 +72,10 @@ class PeerState(QtCore.QObject):
                 self.strokes.insert(op.position,Stroke(**op.value))
             else: # none: replace
                 self.strokes[op.position]=Stroke(**op.value)
+
+        if op.position not in range(0,len(self.strokes)):
+            self.log.orange("can't move/delete stroke that doesn't exist, asked:",op.position,'max',len(self.strokes)-1)
+            return
 
         if op.type == 'delete':
             del self.strokes[op.position]
@@ -130,6 +136,7 @@ class PeerState(QtCore.QObject):
         cv = self.engine.copyContextVector()
         while True:
             cv = self.engine.copyContextVector()
+            self.printQueue()
             processable = self.queue.getProcessable(cv)
             if not processable:
                 break
@@ -146,7 +153,6 @@ class PeerState(QtCore.QObject):
         if self.window: 
             self.newStrokesSignal.emit()
 
-        self.log.lock( 'receive op (unlock)\n')
         return True
 
     def getStrokes(self):

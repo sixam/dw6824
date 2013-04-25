@@ -19,7 +19,7 @@ class Log:
         # log options
         self.show_lock    = True
         self.show_rpc     = True
-        self.show_engine  = False
+        self.show_engine  = True
         self.show_release = True
         self.show_ui      = True
 

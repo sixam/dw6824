@@ -63,6 +63,7 @@ class PeerState(QtCore.QObject):
 
     def performOperation(self,op):
         if not op:
+            self.log.red('ERROR: trying to perform a none op')
             return
         if op.type == 'insert':
             m = len(self.strokes)

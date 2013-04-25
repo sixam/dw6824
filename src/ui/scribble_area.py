@@ -220,10 +220,11 @@ class ScribbleArea(QtGui.QWidget):
         self.log.ui('delete',self.selected)
         if self.selected >= 0:
             index = self.selected
+            s = self.strokes[index]
             self.selected = -1
             self.lock.release()
             self.log.lock( 'delete (unlock)')
-            self.clerk.deleteStroke(index)
+            self.clerk.deleteStroke(s,index)
         else:
             self.lock.release()
             self.log.lock( 'delete (unlock)')

@@ -93,14 +93,12 @@ class PeerState(QtCore.QObject):
         self.log.lock( 'create op (locked)')
 
         key = 'strokes'
+        val = stroke.marshall()
         if otype == 'insert':
-            val = stroke.marshall()
             position = len(self.strokes)
         elif otype == 'delete':
-            val = Stroke().marshall()
             position = pos
         elif otype == 'update':
-            val = stroke.marshall()
             position = pos
 
         op = self.engine.createOp(True,key,val,otype,position)

@@ -209,6 +209,7 @@ class ScribbleArea(QtGui.QWidget):
         self.lock.acquire()
         self.log.lock( 'delete (locked)')
         """ Deletes the currently selected stroke """
+        self.log.ui('delete',self.selected)
         if self.selected >= 0:
             index = self.selected
             self.selected = -1

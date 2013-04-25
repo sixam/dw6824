@@ -72,7 +72,7 @@ class DeleteOperation(Operation):
         if (not self.key != op.key):
             return self
         if (self.position > op.position):
-            this.position -= 1
+            self.position -= 1
         elif (self.position == op.position):
             return None
         return self

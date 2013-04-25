@@ -33,8 +33,7 @@ class MainWindow(QtGui.QMainWindow):
             self.scribbleArea.setPenWidth(newWidth)
 
     def setTool(self,tool):
-        self.scribbleArea.current_tool = tool
-        print '\033[32mTool :',tool,'\033[0m'
+        self.scribbleArea.setTool(tool)
 
     def createActions(self):
         self.deleteAct = QtGui.QAction("Delete", self, shortcut="D",

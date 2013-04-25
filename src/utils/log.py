@@ -17,10 +17,11 @@ class Log:
             self.log.addHandler(fhandle)
 
         # log options
-        self.show_lock    = False
-        self.show_rpc     = False
+        self.show_lock    = True
+        self.show_rpc     = True
         self.show_engine  = False
         self.show_release = True
+        self.show_ui      = True
 
         # for recursion debug
         #self.accu = ""
@@ -94,6 +95,13 @@ class Log:
         if self.show_rpc:
             args = list(args)
             args.insert(0,'\033[35mRPC\033[0m:')
+            args = tuple(args)
+            self.Print(*args)
+
+    def ui(self,*args):
+        if self.show_ui:
+            args = list(args)
+            args.insert(0,'\033[32mUI\033[0m:')
             args = tuple(args)
             self.Print(*args)
 

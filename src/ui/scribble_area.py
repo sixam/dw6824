@@ -55,6 +55,7 @@ class ScribbleArea(QtGui.QWidget):
 
     def strokesSignalHandler(self):
         self.lock.acquire()
+        self.log.purple('update state, reset selection')
         self.selected = -1
         self.strokes = self.state.getStrokes()
         self.draw()
@@ -194,9 +195,14 @@ class ScribbleArea(QtGui.QWidget):
         self.lock.acquire()
         """ Deletes the currently selected stroke """
         if self.selected >= 0:
-            self.clerk.deleteStroke(self.selected)
+            index = self.selected
             self.selected = -1
-        self.lock.release()
+            self.lock.release()
+            self.clerk.deleteStroke(index)
+        else:
+            self.lock.release()
+
+
 
     def penColor(self):
         return self.myPenColor

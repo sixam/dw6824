@@ -58,8 +58,16 @@ class ScribbleArea(QtGui.QWidget):
         self.lock.acquire()
         self.log.lock( 'signal (locked)')
         self.log.ui('update state, reset selection')
-        self.selected = -1
+        if self.selected >= 0:
+            id = self.strokes[self.selected].id
+
         self.strokes = self.state.getStrokes()
+        if self.selected >= 0:
+            self.selected = -1
+            for s in self.strokes:
+                if s.id == id:
+                    self.selected = self.strokes.index(s)
+                    break
         self.draw()
         self.lock.release()
         self.log.lock( 'signal (unlock)')

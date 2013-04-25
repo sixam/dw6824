@@ -70,7 +70,7 @@ class DeleteOperation(Operation):
     """
     def transformWithDelete(self, op):
         print 'TRANSFORM DELETE'
-        if (not self.key != op.key):
+        if (self.key != op.key):
             print 'TRANSFORMed different keys'
             print 'key 1',self.key
             print 'key 2',op.key

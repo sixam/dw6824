@@ -1,6 +1,10 @@
 import copy
 from PyQt4 import QtCore, QtGui
 from utils.utils import Utils
+
+sizeX = 1024
+sizeY = 768
+
 class Stroke:
     """Basic Stroke"""
     def __init__(self, path=[], width=0, color=[0,0,0,255], id='none'):
@@ -14,9 +18,7 @@ class Stroke:
 
     def __str__(self):
         c = self.getBarycenter()
-        return "Stroke : %s - [%01.02f,%01.02f] - c: {0}".format(self.color) % (self.id[0:5],c[0]/1024,c[1]/768)
-        #return "Stroke: {3} - {0}pts - width: {1}, color: {2}".format(len(self.path), 
-                #self.width, self.color, self.id[0:5])
+        return "Stroke : %s - [%01.02f,%01.02f] - c: {0} - pts:{1}".format(self.color,len(self.path)) % (self.id[0:5],c[0]/sizeX,c[1]/sizeY)
 
     def __copy__(self):
         new = Stroke()

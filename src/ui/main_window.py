@@ -3,6 +3,9 @@ from PyQt4 import QtCore, QtGui
 from tool import Tool
 from scribble_area import ScribbleArea
 
+sizeX = 1024
+sizeY = 768
+
 class MainWindow(QtGui.QMainWindow):
     def __init__(self,state):
         super(MainWindow, self).__init__()
@@ -16,7 +19,7 @@ class MainWindow(QtGui.QMainWindow):
         self.createMenus()
 
         self.setWindowTitle("Scribble")
-        self.resize(1024, 768)
+        self.resize(sizeX, sizeY)
 
     def closeEvent(self, event):
         event.accept()

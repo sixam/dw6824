@@ -4,14 +4,8 @@ from PyQt4.Qt import *
 from tool import Tool
 from scribble_area import ScribbleArea
 
-class SSPopUp(QWidget):
-    def __init__(self):
-        QWidget.__init__(self)
-
-    def paintEvent(self, e):
-        dc = QPainter(self)
-        dc.drawLine(0, 0, 100, 100)
-        dc.drawLine(100, 0, 0, 100)
+sizeX = 1024
+sizeY = 768
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self,state):
@@ -26,9 +20,8 @@ class MainWindow(QtGui.QMainWindow):
         self.createMenus()
 
         self.setWindowTitle("Scribble")
-        self.resize(1024, 768)
+        self.resize(sizeX, sizeY)
 
-        self.w = None
 
     def closeEvent(self, event):
         event.accept()

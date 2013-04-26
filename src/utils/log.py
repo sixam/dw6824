@@ -17,10 +17,10 @@ class Log:
             self.log.addHandler(fhandle)
 
         # log options
-        self.show_lock    = True
-        self.show_rpc     = True
-        self.show_engine  = True
-        self.show_release = True
+        self.show_lock    = False
+        self.show_rpc     = False
+        self.show_engine  = False
+        self.show_release = False
         self.show_ui      = True
 
         # for recursion debug

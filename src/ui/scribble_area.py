@@ -144,6 +144,7 @@ class ScribbleArea(QtGui.QWidget):
 ################################ END 
 
     def mousePressEvent(self, event):
+        self.log.ui("mouse pressed")
         if event.button() == QtCore.Qt.LeftButton:
             pos = event.posF()
             if self.current_tool == Tool.MOVE:
@@ -154,6 +155,7 @@ class ScribbleArea(QtGui.QWidget):
                 pass
 
     def mouseMoveEvent(self, event):
+        self.log.ui("mouse moved")
         if (event.buttons() & QtCore.Qt.LeftButton):
             pos = event.posF()
             if self.current_tool == Tool.MOVE:
@@ -162,6 +164,7 @@ class ScribbleArea(QtGui.QWidget):
                 self._penUpdate(pos)
 
     def mouseReleaseEvent(self, event):
+        self.log.ui("mouse released")
         if event.button() == QtCore.Qt.LeftButton:
             if self.current_tool == Tool.MOVE:
                 pos = event.posF()

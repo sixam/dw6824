@@ -68,61 +68,61 @@ class CentralServerTest(GenericTestCase):
         for i in range(n):
             self.addSite()
 
-    def test_basic_central(self):
-        """ Central - Basic server"""
-        self.addMultipleSites(5)
-        ck = self.clerks
+    #def test_basic_central(self):
+        #""" Central - Basic server"""
+        #self.addMultipleSites(5)
+        #ck = self.clerks
 
-        sess_num = ck[0].start(self.ips[0],self.ports[0])
-        time.sleep(1)
+        #sess_num = ck[0].start(self.ips[0],self.ports[0])
+        #time.sleep(1)
 
-        for i in range(1,4):
-            ck[i].join(sess_num,self.ips[i],self.ports[i])
-        time.sleep(1)
-        ck[3].lock(sess_num)
-        for i in range(4,5):
-            ck[i].join(sess_num,self.ips[i],self.ports[i])
+        #for i in range(1,4):
+            #ck[i].join(sess_num,self.ips[i],self.ports[i])
+        #time.sleep(1)
+        #ck[3].lock(sess_num)
+        #for i in range(4,5):
+            #ck[i].join(sess_num,self.ips[i],self.ports[i])
 
-        for i,c in enumerate(self.clerks):
-            self.logs[i].blue(c.state.peers)
-            self.logs[i].blue(c.state.id)
+        #for i,c in enumerate(self.clerks):
+            #self.logs[i].blue(c.state.peers)
+            #self.logs[i].blue(c.state.id)
 
-        s = self.genRandomStrokes(3)
+        #s = self.genRandomStrokes(3)
 
-        ck[0].addStroke(s[0])
-        ck[1].addStroke(s[1])
-        time.sleep(1)
+        #ck[0].addStroke(s[0])
+        #ck[1].addStroke(s[1])
+        #time.sleep(1)
 
-        self.assertStrokesEqual(self.peers[0:3])
-        # NOTE : adapt assert to query members from central server
+        #self.assertStrokesEqual(self.peers[0:3])
+        ## NOTE : adapt assert to query members from central server
 
-    def test_hard_central(self):
-        """ Central - hard requests"""
-        self.addMultipleSites(12)
-        ck = self.clerks
+    #def test_hard_central(self):
+        #""" Central - hard requests"""
+        #self.addMultipleSites(12)
+        #ck = self.clerks
         
-        sess_num = ck[0].start(self.ips[0],self.ports[0])
-        time.sleep(1)
+        #sess_num = ck[0].start(self.ips[0],self.ports[0])
+        #time.sleep(1)
 
-        n_joined =1
-        for i in range(1,len(ck)/2):
-            success = ck[i].join(sess_num,self.ips[i],self.ports[i])
-            if success:
-                n_joined += 1 
-            if random.randint(0,1) == 1:
-                # check duplicate requests
-                success = ck[i].join(sess_num,self.ips[i],self.ports[i])
+        #n_joined =1
+        #for i in range(1,len(ck)/2):
+            #success = ck[i].join(sess_num,self.ips[i],self.ports[i])
+            #if success:
+                #n_joined += 1 
+            #if random.randint(0,1) == 1:
+                ## check duplicate requests
+                #success = ck[i].join(sess_num,self.ips[i],self.ports[i])
 
-        for i in range(len(ck)/2,len(ck)):
-            success = ck[i].join(sess_num,self.ips[i],self.ports[i])
-            if success:
-                n_joined += 1 
-            if random.randint(0,1) == 1:
-                # check duplicate requests
-                ck[i].lock(sess_num)
+        #for i in range(len(ck)/2,len(ck)):
+            #success = ck[i].join(sess_num,self.ips[i],self.ports[i])
+            #if success:
+                #n_joined += 1 
+            #if random.randint(0,1) == 1:
+                ## check duplicate requests
+                #ck[i].lock(sess_num)
 
-        time.sleep(1)
-        self.assertEqual(n_joined,len(self.cs.responder.hosts[sess_num]))
+        #time.sleep(1)
+        #self.assertEqual(n_joined,len(self.cs.responder.hosts[sess_num]))
 
 
 

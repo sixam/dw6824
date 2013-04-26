@@ -74,11 +74,13 @@ class GenericTestCase(unittest.TestCase):
                 if server2 != s and (s==server or server2 == server):
                     self.peers[i].addPeer(self.ips[j],self.ports[j])
 
-    def assertStrokesEqual(self):
+    def assertStrokesEqual(self,peers=None):
+        if not peers:
+            peers = self.peers
         """ Checks the final stroke lists are coherent between peers """
         Pass = True
-        strokes = self.peers[0].getStrokes()
-        for p in self.peers:
+        strokes = peers[0].getStrokes()
+        for p in peers:
             s = p.getStrokes()
             if len(s) != len(strokes):
                 Pass = False

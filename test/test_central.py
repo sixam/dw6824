@@ -61,6 +61,7 @@ class CentralServerTest(GenericTestCase):
                 break
             except:
                 continue
+        self.clerks[-1].state.cs = self.cs_proxies[-1] 
 
     def addMultipleSites(self,n=1):
         """ Adds n test servers """
@@ -69,21 +70,18 @@ class CentralServerTest(GenericTestCase):
 
     def test_basic_central(self):
         """ Central - Basic server"""
-        self.addSite()
-        self.addSite()
-        self.addSite()
+        self.addMultipleSites(5)
         ck = self.clerks
-
-        for c in self.clerks:
-            print self.clerks.index(c)
-            c.state.cs = self.cs_proxies[self.clerks.index(c)]
 
         sess_num = ck[0].start(self.ips[0],self.ports[0])
         time.sleep(1)
 
-        for i in range(1,len(ck)):
+        for i in range(1,4):
             ck[i].join(sess_num,self.ips[i],self.ports[i])
         time.sleep(1)
+        ck[3].lock(sess_num)
+        for i in range(4,5):
+            ck[i].join(sess_num,self.ips[i],self.ports[i])
 
         for i,c in enumerate(self.clerks):
             self.logs[i].blue(c.state.peers)
@@ -93,11 +91,38 @@ class CentralServerTest(GenericTestCase):
 
         ck[0].addStroke(s[0])
         ck[1].addStroke(s[1])
-        #ck[2].addStroke(s[2])
         time.sleep(1)
 
+        self.assertStrokesEqual(self.peers[0:3])
+        # NOTE : adapt assert to query members from central server
 
-        self.assertStrokesEqual()
+    def test_hard_central(self):
+        """ Central - hard requests"""
+        self.addMultipleSites(12)
+        ck = self.clerks
+        
+        sess_num = ck[0].start(self.ips[0],self.ports[0])
+        time.sleep(1)
+
+        n_joined =1
+        for i in range(1,len(ck)/2):
+            success = ck[i].join(sess_num,self.ips[i],self.ports[i])
+            if success:
+                n_joined += 1 
+            if random.randint(0,1) == 1:
+                # check duplicate requests
+                success = ck[i].join(sess_num,self.ips[i],self.ports[i])
+
+        for i in range(len(ck)/2,len(ck)):
+            success = ck[i].join(sess_num,self.ips[i],self.ports[i])
+            if success:
+                n_joined += 1 
+            if random.randint(0,1) == 1:
+                # check duplicate requests
+                ck[i].lock(sess_num)
+
+        time.sleep(1)
+        self.assertEqual(n_joined,len(self.cs.responder.hosts[sess_num]))
 
 
 

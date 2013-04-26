@@ -70,6 +70,8 @@ class Clerk:
 
         self.log.green('im calling',self.state.cs)
         peers = self.state.cs.join(session, ip, port)
+        if not peers:
+            return False
         self.state.id = len(peers)-1
         self.state.createEngine()
         self.thaw(self.state.id)
@@ -82,6 +84,8 @@ class Clerk:
             if p[0] == ip and p[1] == port:
                 continue
             self.state.addPeer(p[0],p[1])
+
+        return True
 
 
     def start(self, ip, port):

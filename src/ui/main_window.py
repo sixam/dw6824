@@ -1,7 +1,17 @@
 import functools
 from PyQt4 import QtCore, QtGui
+from PyQt4.Qt import *
 from tool import Tool
 from scribble_area import ScribbleArea
+
+class SSPopUp(QWidget):
+    def __init__(self):
+        QWidget.__init__(self)
+
+    def paintEvent(self, e):
+        dc = QPainter(self)
+        dc.drawLine(0, 0, 100, 100)
+        dc.drawLine(100, 0, 0, 100)
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self,state):
@@ -17,6 +27,8 @@ class MainWindow(QtGui.QMainWindow):
 
         self.setWindowTitle("Scribble")
         self.resize(1024, 768)
+
+        self.w = None
 
     def closeEvent(self, event):
         event.accept()
@@ -34,6 +46,33 @@ class MainWindow(QtGui.QMainWindow):
 
     def setTool(self,tool):
         self.scribbleArea.setTool(tool)
+
+    def startSession(self):
+         CS, ok = QtGui.QInputDialog.getText(self, 
+                "Scribble",
+                "Server Address",
+                QLineEdit.Normal,
+                "http://bratwurst.mit.edu:8000")
+         if ok:
+            print 'CS:', CS
+         sNumber = 42
+
+         QMessageBox.about(self, "Scribble Area", "Your session number is: %s" % str(sNumber))
+
+
+    def joinSession(self):
+         CS, ok = QtGui.QInputDialog.getText(self, 
+                "Scribble",
+                "Server Address",
+                QLineEdit.Normal,
+                "http://bratwurst.mit.edu:8000")
+         if ok:
+            print 'CS:', CS
+
+         sNumber, ok = QtGui.QInputDialog.getInt(self, "Scribble",
+                "Session Number:", 1, 1, 50, 1)
+         if ok:
+            print 'sNumber:', sNumber
 
     def createActions(self):
         self.deleteAct = QtGui.QAction("Delete", self, shortcut="D",
@@ -67,6 +106,13 @@ class MainWindow(QtGui.QMainWindow):
         self.aboutQtAct = QtGui.QAction("About &Qt", self,
                 triggered=QtGui.qApp.aboutQt)
 
+
+        self.startSessionAct = QtGui.QAction("&Start Session...", self,
+            triggered=self.startSession)
+
+        self.joinSessionAct = QtGui.QAction("&Join Session...", self,
+            triggered=self.joinSession)
+
     def createMenus(self):
         self.toolMenu = QtGui.QMenu("&Tool", self)
         for action in self.toolActs:
@@ -84,12 +130,17 @@ class MainWindow(QtGui.QMainWindow):
         optionMenu.addAction(self.clearScreenAct)
         optionMenu.addAction(self.deleteAct)
 
+        sessionMenu = QtGui.QMenu("&Session", self)
+        sessionMenu.addAction(self.startSessionAct)
+        sessionMenu.addAction(self.joinSessionAct)
+
         helpMenu = QtGui.QMenu("&Help", self)
         helpMenu.addAction(self.aboutAct)
         helpMenu.addAction(self.aboutQtAct)
 
         self.menuBar().addMenu(fileMenu)
         self.menuBar().addMenu(optionMenu)
+        self.menuBar().addMenu(sessionMenu)
         self.menuBar().addMenu(helpMenu)
     
     def about(self):

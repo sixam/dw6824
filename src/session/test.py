@@ -37,6 +37,8 @@ if __name__ == '__main__':
     m = len(sessions)
     for i in range(m,n):
         s = random.randint(0, m - 1)
+        if random.randint(0,3) == 0:
+            dc[i].clock(s)
         dc[i].cjoin(sessions[s], 'localhost',pbase + i)
         if random.randint(0,1) == 0:
             dc[i].cjoin(sessions[s], 'localhost',pbase + i)

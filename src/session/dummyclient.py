@@ -85,6 +85,9 @@ class DummyClient:
 
     def cstart(self, ip, port):
         return self.cs.start(ip, port)
+
+    def clock(self, session):
+        return self.cs.lockSession(session)
         
 
 

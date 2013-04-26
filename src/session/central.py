@@ -13,12 +13,14 @@ class ServerResponder:
 
         self.hosts         = []
         self.ports         = []
+        self.locked        = []
 
         self.participants  = []
 
 
         self.startops = []
         self.joinops = []
+        self.lockops = []
 
     def _dispatch(self, method, args):
         try:
@@ -32,11 +34,18 @@ class ServerResponder:
         # knows to advertise the strings methods
         return list_public_methods(self) + \
                 ['string.' + method for method in list_public_methods(self.string)]
+
+    def checkreplock(self, session):
+        return session in self.lockops
+
+    def getLocked(self, session):
+        return True
     def checkrepstart(self, ip, port):
         for op in self.startops:
             if op[0] == ip and op[1] == port:
                 return True
         return False
+
     def checkrepjoin(self, ip, port, session):
         for op in self.joinops:
             if op[0] == ip and op[1] == port and op[2] == session:
@@ -59,8 +68,9 @@ class ServerResponder:
         self.log.red('COUNT:', count)
         if self.checkrepstart(ip, port):
             self.log.purple('duplicate request')
+            value = self.getsession(ip, port)
             self.lock.release()
-            return self.getsession(ip, port)
+            return value
         if count  == 0:
             self.hosts = [[]]
             self.ports = [[]]
@@ -70,16 +80,35 @@ class ServerResponder:
             self.ports[0].append(port)
             self.participants[0].append(srv)
             self.startops.append([ip, port, count])
+            self.locked.append(False)
             self.lock.release()
             return 0
         srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
         self.hosts.append([ip])
         self.ports.append([port])
         self.participants.append([srv])
+        self.locked.append(False)
         self.startops.append([ip, port, count])
         self.lock.release()
         return count
 
+
+    def lockSession(self, session):
+        self.log.red('lock session called')
+        self.lock.acquire()
+        count  = len(self.hosts)
+        if session >= count:
+            self.lock.release()
+            return False
+        if self.checkreplock(session):
+            self.log.purple('duplicate request')
+            value = self.getLocked(session)
+            self.lock.release()
+            return value
+        self.lockops.append(session)
+        self.locked[session] = True
+        self.lock.release()
+        return True
 
     def join(self, session, ip, port):
         """ Starts a 2PC with all participants to commit a new peer"""
@@ -89,12 +118,16 @@ class ServerResponder:
         if session >= count:
             self.lock.release()
             return False
-
         if self.checkrepjoin(ip, port, session):
             self.log.purple('duplicate request')
+            value = self.getpeers(ip, port, session)
             self.lock.release()
-            return self.getpeers(ip, port, session)
+            return value
 
+        if self.locked[session]:
+            self.lock.release()
+            return False
+                
         # Send vote requests
         v = True
         self.log.blue(self.participants)

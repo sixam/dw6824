@@ -17,7 +17,7 @@ class Peer:
         self.log = log
         self.state = PeerState(peer_id, self.log)
         self.name = '{0}:{1}'.format(ip,port)
-        
+
         log.blue('\n\nINIT', peer_id)
         log.blue('----------------')
         self.log.blue( ip,port)
@@ -69,10 +69,7 @@ class Peer:
 
     def addPeer(self,ip,port):
         """ Add a new peer """
-        srv_name = 'http://%s:%s' % (ip, port)
-        srv = xmlrpclib.Server(srv_name)
-        self.state.peers.append(srv)
-        self.log.Print(' added peer:',srv_name,'\n')
+        self.state.addPeer(ip,port)
 
     def getStrokes(self):
         return self.state.getStrokes()
@@ -82,4 +79,3 @@ class Peer:
 
     def freeze(self, sid):
         self.state.freeze(sid)
-

@@ -7,6 +7,8 @@ from ui.stroke import Stroke
 import copy
 from dp.src.utils.log import Log
 
+import socket
+
 class Clerk:
     """ Clerk for the UI thread, handles the emission of RPC calls"""
     def __init__(self,state):
@@ -58,3 +60,26 @@ class Clerk:
             except:
                 pass
             time.sleep(1)
+
+    def join(self, session, ip, port=9011):
+        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s.connect(('google.com',80))
+        ip = s.getsockname()[0]
+        s.close()
+
+        peers = self.state.cs.join(session, ip, port)
+        self.state.id = len(peers)
+
+        for p in peers:
+            self.state.addPeer(p[0],p[1])
+            self.thaw(peers.index(p))
+
+
+    def start(self, ip, port):
+        session_num = self.state.cs.start(ip, port)
+        self.state.id = 0 
+        self.thaw(0)
+        return session_num
+
+    def lock(self, session):
+        return self.state.cs.lockSession(session)

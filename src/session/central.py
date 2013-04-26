@@ -17,7 +17,6 @@ class ServerResponder:
 
         self.participants  = []
 
-
         self.startops = []
         self.joinops = []
         self.lockops = []
@@ -59,7 +58,12 @@ class ServerResponder:
          return -1
 
     def getpeers(self, ip, port, session):
-        return True
+        for op in self.joinops:
+            if op[0] == ip and op[1] == port and op[2] == session:
+                return op[3]
+        self.log.red('ERROR in cs.getpeers, not found')
+        return []
+
 
     def start(self, ip, port):
         self.log.red('start called')
@@ -162,17 +166,21 @@ class ServerResponder:
             self.hosts[session].append(ip)
             self.ports[session].append(port)
             self.participants[session].append(srv)
-            self.joinops.append([ip, port, session, True])
+            # return list of ip,ports,ids
+            value = zip(self.hosts[session],self.ports[session])
         else:
             self.log.purple('Reject')
-            self.joinops.append([ip, port, session, False])
+            value = []
+
+        self.joinops.append([ip, port, session, value])
+
         self.log.green('woot')
         self.log.blue(self.participants)
         self.log.blue(self.hosts)
         self.log.blue(self.ports)
 
         self.lock.release()
-        return True
+        return value
         
 
 

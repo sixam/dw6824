@@ -42,7 +42,8 @@ class PeerState(QtCore.QObject):
         self.engine = OperationEngine(self.id,log)
         self.queue  = Queue(log)
 
-        # logging options
+        # Join/leave handling
+        self.cs = None
     
     def thaw(self, sid):
         self.log.lock( 'thaw (lock)')
@@ -199,6 +200,15 @@ class PeerState(QtCore.QObject):
         for i,s in enumerate(self.strokes):
             self.log.Print( i,'-',s)
         self.log.blue( '--------------------------------------------------------------------------')
+
+    def addPeer(self,ip,port):
+        """ Add a new peer """
+        self.lock.acquire()
+        srv_name = 'http://%s:%s' % (ip, port)
+        srv = xmlrpclib.Server(srv_name)
+        self.peers.append(srv)
+        self.log.Print(' added peer:',srv_name,'\n')
+        self.lock.release()
 
 
 

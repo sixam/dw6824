@@ -11,11 +11,10 @@ if __name__ == '__main__':
 
     lc              = Log(100)
     cs              = CentralServer('localhost', sp, lc)
-    csrv            = xmlrpclib.Server('http://%s:%s' % ('localhost', sp))
 
     n = 20
     dc = []
-    cssrv = []
+    cssrv = [] #proxies
     l = []
     for i in range(n):
         l.append(Log(i))

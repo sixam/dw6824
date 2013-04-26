@@ -6,6 +6,15 @@ from dp.src.protocol.InsertOperation import InsertOperation
 from dp.src.protocol.DeleteOperation import DeleteOperation
 from dp.src.protocol.UpdateOperation import UpdateOperation
 
+import xmlrpclib
+
+class Incoming:
+    """ Represents the incoming peer trying to join """
+    def __init__(self):
+        self.id = -1
+        self.ip = ''
+        self.port = 0
+
 class RPCresponder:
     """ Handles the processing of RPC requests"""
     def __init__(self, state):
@@ -17,6 +26,9 @@ class RPCresponder:
         self.unreliable = False
         self.dead = False
         self.log = state.log
+
+        # join related
+        self.incoming = Incoming()
 
     def _dispatch(self, method, args):
         try:
@@ -46,7 +58,6 @@ class RPCresponder:
     # RPC methods
     def enq(self,packet):
         """ Unmarshalls the request and add it to the queue"""
-
         if self.dead:
             return 
 
@@ -68,5 +79,24 @@ class RPCresponder:
         else:
             return False
 
-        #if self.unreliable:
-            #pass
+    def vote(self, t, id, ip, port):
+        self.log.green('vote asked')
+        #self.lock.acquire()
+        self.incoming.id = id
+        self.incoming.ip = ip
+        self.incoming.port = port
+        #self.lock.release()
+        self.log.green('Vote OK')
+        return True
+
+    def commit(self, t, id, vote, ip, port):
+        #self.lock.acquire()
+        if vote == True:
+            self.log.green('commit received')
+            srv = xmlrpclib.Server('http://%s:%s' % (self.incoming.ip, self.incoming.port))
+            self.state.peers.append(srv)
+            self.log.Print(' added peer:',srv_name,'\n')
+        else : 
+            self.log.red('abort received')
+        #self.lock.release()
+        return True

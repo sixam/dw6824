@@ -137,11 +137,12 @@ class ServerResponder:
         self.log.blue(self.participants)
         self.log.blue(self.hosts)
         self.log.blue(self.ports)
+        site_count = len(self.hosts[session])
         for srv in self.participants[session]:
             run = True
             while run :
                 try:
-                    v = srv.vote('join',count, ip, port)
+                    v = srv.vote('join',site_count, ip, port)
                     run = False
                 except:
                     pass
@@ -155,13 +156,13 @@ class ServerResponder:
             while run :
                 self.log.purple('commit round')
                 try:
-                   v = srv.commit('join',count, v, ip, port)
+                   v = srv.commit('join',site_count, v, ip, port)
                    run = False
                 except:
                    pass
                 time.sleep(1)
         if v == True:
-            self.log.red('COUNT:', count)
+            self.log.red('SITE COUNT:', site_count)
             srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
             self.hosts[session].append(ip)
             self.ports[session].append(port)
@@ -202,6 +203,11 @@ class CentralServer:
         t = Thread(target = self._run,name='{0}:{1}'.format(ip,port))
         t.daemon = True
         t.start()
+
+        log.blue('\n\nINIT - server')
+        log.blue('----------------')
+        self.log.blue( ip,port)
+        log.blue('----------------')
 
 
     def _run(self):

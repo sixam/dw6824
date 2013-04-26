@@ -42,14 +42,14 @@ class TestUI(GenericTestCase):
         return QtCore.QPoint(random.randint(1,sizeX-1),random.randint(1,sizeY-1))
         
 
-    def test_basic_ui_interactions(self):
-        """ UI - basic """
-        ck0 = self.clerks[0]
-        QTest.qWaitForWindowShown(self.area)
+    #def test_basic_ui_interactions(self):
+        #""" UI - basic """
+        #ck0 = self.clerks[0]
+        #QTest.qWaitForWindowShown(self.area)
 
-        self._drawRandomStroke()
+        #self._drawRandomStroke()
 
-        strokes = ck0.getStrokes()
+        #strokes = ck0.getStrokes()
 
 
 

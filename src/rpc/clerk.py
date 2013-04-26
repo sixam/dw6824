@@ -61,23 +61,33 @@ class Clerk:
                 pass
             time.sleep(1)
 
-    def join(self, session, ip, port=9011):
-        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        s.connect(('google.com',80))
-        ip = s.getsockname()[0]
-        s.close()
+    def join(self, session, ip='', port=9011):
+        if ip == '' :
+            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            s.connect(('google.com',80))
+            ip = s.getsockname()[0]
+            s.close()
 
+        self.log.green('im calling',self.state.cs)
         peers = self.state.cs.join(session, ip, port)
-        self.state.id = len(peers)
+        self.state.id = len(peers)-1
+        self.state.createEngine()
+        self.thaw(self.state.id)
 
-        for p in peers:
+        self.log.green('good so far')
+
+        for i,p in enumerate(peers):
+            self.log.orange('thawing', i)
+            self.thaw(i)
+            if p[0] == ip and p[1] == port:
+                continue
             self.state.addPeer(p[0],p[1])
-            self.thaw(peers.index(p))
 
 
     def start(self, ip, port):
         session_num = self.state.cs.start(ip, port)
         self.state.id = 0 
+        self.state.createEngine()
         self.thaw(0)
         return session_num
 

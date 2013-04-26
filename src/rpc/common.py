@@ -8,6 +8,8 @@ from dp.src.protocol.OperationEngine import OperationEngine
 from dp.src.protocol.Queue import Queue
 from dp.src.protocol.OperationEngineException import OperationEngineException
 
+import xmlrpclib
+
 class PeerState(QtCore.QObject):
     """Stores all data concerning a peer's state
 
@@ -39,7 +41,11 @@ class PeerState(QtCore.QObject):
         # site log file
         self.log = log
 
-        self.engine = OperationEngine(self.id,log)
+        if self.id >= 0:
+            self.engine = OperationEngine(self.id,log)
+        else:
+            self.engine = None
+
         self.queue  = Queue(log)
 
         # Join/leave handling
@@ -209,6 +215,9 @@ class PeerState(QtCore.QObject):
         self.peers.append(srv)
         self.log.Print(' added peer:',srv_name,'\n')
         self.lock.release()
+        
+    def createEngine(self):
+        self.engine = OperationEngine(self.id,self.log)
 
 
 

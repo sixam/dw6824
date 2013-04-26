@@ -59,7 +59,6 @@ class GenericTestCase(unittest.TestCase):
         while True:
             try:
                 port = random.randint(1,8000)
-                noUI = False
                 build_ui = False
                 peer = Peer(ip,port, local_id,build_ui,log)
                 self.peers.append(peer)

@@ -11,7 +11,7 @@ import xmlrpclib
 import socket
 
 class Peer:
-    def __init__(self,ip,port,peer_id,build_ui = True, log = None):
+    def __init__(self,ip,port,peer_id=-1,build_ui = True, log = None):
         # Node state
         self.id = peer_id
         self.log = log

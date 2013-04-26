@@ -95,8 +95,13 @@ class RPCresponder:
             self.log.green('commit received')
             srv = xmlrpclib.Server('http://%s:%s' % (self.incoming.ip, self.incoming.port))
             self.state.peers.append(srv)
-            self.log.Print(' added peer:',srv_name,'\n')
+            self.log.orange('thawing', id)
+            self.state.thaw(id)
+            self.log.Print(' added peer:',srv,'\n')
         else : 
             self.log.red('abort received')
         #self.lock.release()
         return True
+
+    def join(self, ip, port,bl):
+        self.log.red('fucked up dude')

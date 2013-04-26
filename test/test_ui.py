@@ -28,6 +28,9 @@ class TestUI(GenericTestCase):
 
     def drawRandomStroke()
 
+    def get
+        
+
     def test_basic_ui_interactions(self):
         """ UI - basic """
         ck0 = self.clerks[0]

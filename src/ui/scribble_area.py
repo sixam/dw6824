@@ -26,7 +26,7 @@ class ScribbleArea(QtGui.QLabel):
         # Drawing state
         self.controlPoints = [];
         self.scribbling = False
-        self.myPenWidth = 10.0
+        self.myPenWidth = 3.0
         self.myPenColor = QtGui.QColor(0,0,0)
 
         # Select and move state variables

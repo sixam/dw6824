@@ -23,3 +23,6 @@ class Utils:
         s="{0}".format(random.getrandbits(128))
         s = s[1:5]
         return s
+    @staticmethod
+    def getImagePath():
+        return "%s/icons/Canvas.jpg" % os.environ.get('DW_BASE')

@@ -2,11 +2,12 @@ from PyQt4 import QtCore, QtGui
 from rpc.clerk import Clerk
 from stroke import Stroke
 from tool import Tool
+from dp.src.utils.utils import Utils
 
 from threading import Lock
 
 
-class ScribbleArea(QtGui.QWidget):
+class ScribbleArea(QtGui.QLabel):
     """ Main Area for drawing
         =====================
 
@@ -26,7 +27,7 @@ class ScribbleArea(QtGui.QWidget):
         self.controlPoints = [];
         self.scribbling = False
         self.myPenWidth = 10.0
-        self.myPenColor = QtGui.QColor(0,0,255)
+        self.myPenColor = QtGui.QColor(0,0,0)
 
         # Select and move state variables
         self.select_rect = QtCore.QRectF
@@ -34,7 +35,7 @@ class ScribbleArea(QtGui.QWidget):
         self.moving = False
 
         # Drawing canvas
-        self.image = QtGui.QImage()
+        self.image = QtGui.QImage(Utils.getImagePath(), format=None)
 
         # RPC clerk
         self.clerk = Clerk(state)
@@ -197,7 +198,8 @@ class ScribbleArea(QtGui.QWidget):
         self.image = newImage
 
     def draw(self):
-        self.image.fill(QtGui.QColor(255, 255, 255))
+        #self.image.fill(QtGui.QColor(255, 255, 255))
+        self.image = QtGui.QImage(Utils.getImagePath(), format=None)
         painter = QtGui.QPainter(self.image)
         for stroke in self.strokes:
             if not stroke:

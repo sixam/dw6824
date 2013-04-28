@@ -205,7 +205,7 @@ class ScribbleArea(QtGui.QLabel):
             if not stroke:
                 continue
             painter.setPen(QtGui.QPen(QtGui.QColor(*stroke.color), stroke.width,
-                QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+                QtCore.Qt.SolidLine, QtCore.Qt.FlatCap, QtCore.Qt.MiterJoin))
             path = stroke.toPainterPath()
             painter.drawPath(path);
         self.update()
@@ -214,7 +214,7 @@ class ScribbleArea(QtGui.QLabel):
         """ Draw a temporary line  """
         painter = QtGui.QPainter(self.image)
         painter.setPen(QtGui.QPen(self.myPenColor, self.myPenWidth,
-                QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+                QtCore.Qt.SolidLine, QtCore.Qt.FlatCap, QtCore.Qt.MiterJoin))
         painter.drawPath(self.path);
 
     def delete(self):

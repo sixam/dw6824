@@ -27,7 +27,7 @@ class MainWindow(QtGui.QMainWindow):
         event.accept()
 
     def penColor(self):
-        newColor = QtGui.QColorDialog.getColor(self.scribbleArea.penColor())
+        newColor = QtGui.QColorDialog.getColor()
         if newColor.isValid():
             self.scribbleArea.setPenColor(newColor)
 

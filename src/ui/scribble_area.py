@@ -83,7 +83,7 @@ class ScribbleArea(QtGui.QLabel):
         self.lock.acquire()
         self.log.lock( 'move start (locked)')
         self.selected = -1 #if the click is outside, we deselect
-        for i,stroke in enumerate(self.strokes): # check selection
+        for i,stroke in reversed(list(enumerate(self.strokes))): # check selection
             if stroke.toPainterPath().intersects(sel_rect):
                 self.selected = i
                 self.log.ui( '\033[34mselected:',self.strokes[self.selected],'\033[0m')

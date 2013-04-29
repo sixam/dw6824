@@ -10,18 +10,13 @@ sizeY = 768
 class MainWindow(QtGui.QMainWindow):
     def __init__(self,state):
         super(MainWindow, self).__init__()
-
         self.toolActs   = []
-
         self.scribbleArea = ScribbleArea(state)
         self.setCentralWidget(self.scribbleArea)
-
         self.createActions()
         self.createMenus()
-
         self.setWindowTitle("Scribble")
         self.resize(sizeX, sizeY)
-
 
     def closeEvent(self, event):
         event.accept()
@@ -154,4 +149,4 @@ class MainWindow(QtGui.QMainWindow):
     
     def about(self):
         QtGui.QMessageBox.about(self, "About Scribble",
-                "WIP app")
+                "M.Gharbi & A.Tacchetti wrote this cool piece of soft ! Some of the backend comes from Coweb")

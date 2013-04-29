@@ -43,10 +43,9 @@ class MainWindow(QtGui.QMainWindow):
                 "http://bratwurst.mit.edu:8000")
          sNumber = 0
          if ok:
-            print 'CS:', CS
-         self.scribbleArea.state.cs = xmlrpclib.Server(str(CS))
-         sNumber = self.scribbleArea.clerk.start()
-         QMessageBox.about(self, "Scribble Area", "Your session number is: %s" % str(sNumber))
+             self.scribbleArea.state.cs = xmlrpclib.Server(str(CS))
+             sNumber = self.scribbleArea.clerk.start()
+             QMessageBox.about(self, "Scribble Area", "Your session number is: %s" % str(sNumber))
 
 
     def joinSession(self):
@@ -55,15 +54,15 @@ class MainWindow(QtGui.QMainWindow):
                 "Server Address",
                 QLineEdit.Normal,
                 "http://bratwurst.mit.edu:8000")
-         if ok:
-            print 'CS:', CS
+         if not ok:
+             return
 
          sNumber, ok = QtGui.QInputDialog.getInt(self, "Scribble",
                 "Session Number:", 0, 0, 50, 1)
          if ok:
-            print 'sNumber:', sNumber
-         self.scribbleArea.state.cs = xmlrpclib.Server(str(CS))
-         self.scribbleArea.clerk.join(sNumber)
+             self.scribbleArea.state.cs = xmlrpclib.Server(str(CS))
+             self.scribbleArea.clerk.join(sNumber)
+             QMessageBox.about(self, "Scribble Area", "Unable to join session: %s" % str(sNumber))
 
     def lockSession(self):
         CS, ok = QtGui.QInputDialog.getText(self, 
@@ -71,10 +70,11 @@ class MainWindow(QtGui.QMainWindow):
                 "Server Address",
                 QLineEdit.Normal,
                 "http://bratwurst.mit.edu:8000")
-        sNumber = 0
+        sNumber = self.scribbleArea.state.session
 
         if ok:
-            print CS, sNumber
+            self.scribbleArea.clerk.lock()
+        
 
     def createActions(self):
         self.deleteAct = QtGui.QAction("Delete", self, shortcut="D",

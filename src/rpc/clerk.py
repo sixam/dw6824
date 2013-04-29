@@ -62,22 +62,25 @@ class Clerk:
             time.sleep(1)
 
     def join(self, session):
+        if self.state.session >= 0:
+            self.log.red("Already in a session, restart to change.")
+            return False
         ip   = self.state.ip
         port = self.state.port
 
         # Contact server
-        self.log.green('im calling',self.state.cs)
+        self.log.green('Contacting',self.state.cs,'for a join')
         peers = self.state.cs.join(session, ip, port, self.state.uid)
-        self.log.green('returned',peers)
 
+        # Check we got the right to join
         if not peers:
+            self.log.red("Could not join session", session,": it might be locked")
             return False
 
         self.state.id = len(peers)-1
         self.state.createEngine()
         self.thaw(self.state.id)
-
-        self.log.green('good so far')
+        self.state.session = session
 
         for i,p in enumerate(peers):
             self.log.orange('thawing', i)
@@ -86,6 +89,7 @@ class Clerk:
                 continue
             self.state.addPeer(p[0],p[1])
 
+        self.log.Print("Joined session",self.state.session)
         return True
 
     def start(self):
@@ -93,10 +97,15 @@ class Clerk:
         port = self.state.port
 
         session_num = self.state.cs.start(ip, port, self.state.uid)
+        self.state.session = session_num
         self.state.id = 0 
         self.state.createEngine()
         self.thaw(0)
         return session_num
 
-    def lock(self, session):
-        return self.state.cs.lockSession(session)
+    def lock(self):
+        if self.state.session < 0:
+            self.log.Print("Cannot log a session I never joined")
+            return False
+        self.log.Print("Locked session",self.state.session)
+        return self.state.cs.lockSession(self.state.session)

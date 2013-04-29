@@ -34,6 +34,8 @@ class PeerState(QtCore.QObject):
         self.prqs    = [] # past requests
         self.processed_ops = []
 
+        self.session = -1
+
         # attached ui
         self.window = None
 

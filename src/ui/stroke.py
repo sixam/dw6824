@@ -21,11 +21,11 @@ class Stroke:
         return "Stroke : %s - [%01.02f,%01.02f] - c: {0} - pts:{1}".format(self.color,len(self.path)) % (self.id[0:5],c[0]/sizeX,c[1]/sizeY)
 
     def __copy__(self):
-        new = Stroke()
-        new.path = copy.copy(self.path);
+        new       = Stroke()
+        new.path  = copy.copy(self.path);
         new.width = copy.copy(self.width);
         new.color = copy.copy(self.color);
-        new.id = copy.copy(self.id)
+        new.id    = copy.copy(self.id)
         return new
 
     def __cmp__(self, other):
@@ -47,6 +47,7 @@ class Stroke:
         return -1
 
     def marshall(self):
+        """ Wraps the stroke data into a RPC-friendly format """
         packet          = {}
         packet['path']  = self.path
         packet['width'] = self.width
@@ -54,9 +55,8 @@ class Stroke:
         packet['id']    = self.id
         return packet
 
-    #def unmarshall():
-
     def toPainterPath(self):
+        """ Transform the strokes to a QT line """
         points = self.path
         path   = QtGui.QPainterPath(QtCore.QPointF(*points[0]));
         for pt in points:
@@ -76,11 +76,13 @@ class Stroke:
         return [x,y]
 
     def moveTo(self,newpos):
+        """ Change the stroke position to the supplied location """
         c = self.getBarycenter()
         offset = [newpos[0]-c[0],newpos[1]-c[1]]
         self.offsetPosBy(offset)
 
     def offsetPosBy(self,offset):
+        """ Change the stroke position by an offset """
         if isinstance(offset,QtCore.QPointF):
             x = offset.x()
             y = offset.y()

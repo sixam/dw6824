@@ -25,8 +25,7 @@ class ServerResponder:
         try:
             return getattr(self, method)(*args)
         except:
-            self.log.exception('FFFFFFFFUUUUUUUCCCKKKK')
-
+            self.log.exception('Dispatch crashed')
 
     def _listMethods(self):
         # implement this method so that system.listMethods
@@ -39,6 +38,7 @@ class ServerResponder:
 
     def getLocked(self, session):
         return True
+
     def checkrepstart(self, ip, port):
         for op in self.startops:
             if op[0] == ip and op[1] == port:

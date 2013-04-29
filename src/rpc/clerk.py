@@ -67,7 +67,7 @@ class Clerk:
 
         # Contact server
         self.log.green('im calling',self.state.cs)
-        peers = self.state.cs.join(session, ip, port)
+        peers = self.state.cs.join(session, ip, port, self.state.uid)
         self.log.green('returned',peers)
 
         if not peers:
@@ -92,7 +92,8 @@ class Clerk:
         ip   = self.state.ip
         port = self.state.port
 
-        session_num = self.state.cs.start(ip, port)
+        uid = Utils.generateID()
+        session_num = self.state.cs.start(ip, port, self.state.uid)
         self.state.id = 0 
         self.state.createEngine()
         self.thaw(0)

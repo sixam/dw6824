@@ -2,6 +2,7 @@ from ui.stroke import Stroke
 from threading import Lock
 from PyQt4 import QtCore, QtGui
 from dp.src.utils.log import Log
+from dp.src.utils.utils import Utils
 import copy
 
 from dp.src.protocol.OperationEngine import OperationEngine
@@ -51,6 +52,7 @@ class PeerState(QtCore.QObject):
 
         # Join/leave handling
         self.cs = None
+        self.uid = Utils.generateID()
     
     def thaw(self, sid):
         self.log.lock( 'thaw (lock)')

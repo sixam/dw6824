@@ -39,40 +39,40 @@ class ServerResponder:
     def getLocked(self, session):
         return True
 
-    def checkrepstart(self, ip, port):
+    def checkrepstart(self, ip, port, uid):
         for op in self.startops:
-            if op[0] == ip and op[1] == port:
+            if op[0] == ip and op[1] == port and op[2] == uid:
                 return True
         return False
 
-    def checkrepjoin(self, ip, port, session):
+    def checkrepjoin(self, ip, port, uid, session):
         for op in self.joinops:
-            if op[0] == ip and op[1] == port and op[2] == session:
+            if op[0] == ip and op[1] == port and op[2] == session and op[3] == uid:
                 return True
         return False
 
-    def getsession(self, ip, port):
+    def getsession(self, ip, port, uid):
          for op in self.startops:
-            if op[0] == ip and op[1] == port:
-                return op[2]
+            if op[0] == ip and op[1] == port and op[2] == uid:
+                return op[3]
          return -1
 
-    def getpeers(self, ip, port, session):
+    def getpeers(self, ip, port, uid, session):
         for op in self.joinops:
-            if op[0] == ip and op[1] == port and op[2] == session:
-                return op[3]
+            if op[0] == ip and op[1] == port and op[2] == session and op[3] == uid:
+                return op[4]
         self.log.red('ERROR in cs.getpeers, not found')
         return []
 
 
-    def start(self, ip, port):
+    def start(self, ip, port, uid):
         self.log.red('start called')
         self.lock.acquire()
         count = len(self.hosts)
         self.log.red('COUNT:', count)
-        if self.checkrepstart(ip, port):
+        if self.checkrepstart(ip, port, uid):
             self.log.purple('duplicate request')
-            value = self.getsession(ip, port)
+            value = self.getsession(ip, port, uid)
             self.lock.release()
             return value
         if count  == 0:
@@ -83,7 +83,7 @@ class ServerResponder:
             self.hosts[0].append(ip)
             self.ports[0].append(port)
             self.participants[0].append(srv)
-            self.startops.append([ip, port, count])
+            self.startops.append([ip, port, count, uid])
             self.locked.append(False)
             self.lock.release()
             return 0
@@ -92,7 +92,7 @@ class ServerResponder:
         self.ports.append([port])
         self.participants.append([srv])
         self.locked.append(False)
-        self.startops.append([ip, port, count])
+        self.startops.append([ip, port, count, uid])
         self.lock.release()
         return count
 
@@ -114,7 +114,7 @@ class ServerResponder:
         self.lock.release()
         return True
 
-    def join(self, session, ip, port):
+    def join(self, session, ip, port, uid):
         """ Starts a 2PC with all participants to commit a new peer"""
         self.log.red('Join Called')
         self.lock.acquire()
@@ -122,9 +122,9 @@ class ServerResponder:
         if session >= count:
             self.lock.release()
             return False
-        if self.checkrepjoin(ip, port, session):
+        if self.checkrepjoin(ip, port, uid, session):
             self.log.purple('duplicate request')
-            value = self.getpeers(ip, port, session)
+            value = self.getpeers(ip, port, uid, session)
             self.lock.release()
             return value
 
@@ -173,7 +173,7 @@ class ServerResponder:
             self.log.purple('Reject')
             value = []
 
-        self.joinops.append([ip, port, session, value])
+        self.joinops.append([ip, port, session, uid, value])
 
         self.log.green('woot')
         self.log.blue(self.participants)

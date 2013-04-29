@@ -92,7 +92,6 @@ class Clerk:
         ip   = self.state.ip
         port = self.state.port
 
-        uid = Utils.generateID()
         session_num = self.state.cs.start(ip, port, self.state.uid)
         self.state.id = 0 
         self.state.createEngine()

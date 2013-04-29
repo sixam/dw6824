@@ -58,9 +58,10 @@ class MainWindow(QtGui.QMainWindow):
             print 'CS:', CS
 
          sNumber, ok = QtGui.QInputDialog.getInt(self, "Scribble",
-                "Session Number:", 1, 1, 50, 1)
+                "Session Number:", 0, 0, 50, 1)
          if ok:
             print 'sNumber:', sNumber
+         self.scribbleArea.state.cs = xmlrpclib.Server(str(CS))
          self.scribbleArea.clerk.join(sNumber)
 
     def lockSession(self):

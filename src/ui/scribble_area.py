@@ -47,8 +47,7 @@ class ScribbleArea(QtGui.QLabel):
         self.log = state.log
 
         # init the stroke list
-        self.strokes = self.state.getStrokes()
-
+        self.strokes = []
         self.lock = Lock()
 
     def clearImage(self):

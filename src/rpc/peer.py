@@ -11,8 +11,16 @@ import xmlrpclib
 import socket
 
 class Peer:
-    def __init__(self,ip,port,peer_id=-1,build_ui = True, log = None):
+    def __init__(self,ip='',port=9011,peer_id=-1,build_ui = True, log = None):
         # Node state
+        if ip == '':
+            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            s.connect(('google.com',80))
+            ip = s.getsockname()[0]
+            s.close()
+        if not log:
+            log = Log('livesession')
+
         self.id = peer_id
         self.log = log
         self.state = PeerState(peer_id, self.log)
@@ -20,7 +28,7 @@ class Peer:
 
         log.blue('\n\nINIT', peer_id)
         log.blue('----------------')
-        self.log.blue( ip,port)
+        self.log.blue(ip,port)
         log.blue('----------------')
 
         # Init main UI

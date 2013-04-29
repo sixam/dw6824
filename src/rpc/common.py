@@ -44,7 +44,8 @@ class PeerState(QtCore.QObject):
         if self.id >= 0:
             self.engine = OperationEngine(self.id,log)
         else:
-            self.engine = None
+            # This is so that I can draw locally if I never join a session
+            self.engine = OperationEngine(0,log)
 
         self.queue  = Queue(log)
 
@@ -218,6 +219,10 @@ class PeerState(QtCore.QObject):
         
     def createEngine(self):
         self.engine = OperationEngine(self.id,self.log)
+        self.queue = Queue(self.log)
+        self.strokes = []
+        if self.window: #Dont call UI (for the tester)
+            self.newStrokesSignal.emit()
 
 
 

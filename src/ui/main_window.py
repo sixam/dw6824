@@ -66,6 +66,7 @@ class MainWindow(QtGui.QMainWindow):
                 "Session Number:", 1, 1, 50, 1)
          if ok:
             print 'sNumber:', sNumber
+         self.scribbleArea.clerk.join(sNumber)
 
     def lockSession(self):
         CS, ok = QtGui.QInputDialog.getText(self, 

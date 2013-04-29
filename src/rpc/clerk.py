@@ -63,15 +63,16 @@ class Clerk:
 
     def join(self, session, ip='', port=9011):
         if ip == '' :
-            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect(('google.com',80))
-            ip = s.getsockname()[0]
-            s.close()
+            ip = self._getIP()
 
+        # Contact server
         self.log.green('im calling',self.state.cs)
         peers = self.state.cs.join(session, ip, port)
+        self.log.green('returned',peers)
+
         if not peers:
             return False
+
         self.state.id = len(peers)-1
         self.state.createEngine()
         self.thaw(self.state.id)
@@ -90,16 +91,20 @@ class Clerk:
 
     def start(self, ip='', port=9011):
         if ip == '' :
-            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect(('google.com',80))
-            ip = s.getsockname()[0]
-            s.close()
+            ip = self._getIP()
 
         session_num = self.state.cs.start(ip, port)
         self.state.id = 0 
         self.state.createEngine()
         self.thaw(0)
         return session_num
+
+    def _getIP(self):
+        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s.connect(('google.com',80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
 
     def lock(self, session):
         return self.state.cs.lockSession(session)

@@ -67,6 +67,17 @@ class MainWindow(QtGui.QMainWindow):
          if ok:
             print 'sNumber:', sNumber
 
+    def lockSession(self):
+        CS, ok = QtGui.QInputDialog.getText(self, 
+                "Scribble",
+                "Server Address",
+                QLineEdit.Normal,
+                "http://bratwurst.mit.edu:8000")
+        sNumber = 42
+
+        if ok:
+            print CS, sNumber
+
     def createActions(self):
         self.deleteAct = QtGui.QAction("Delete", self, shortcut="D",
                 triggered=self.scribbleArea.delete)
@@ -106,6 +117,9 @@ class MainWindow(QtGui.QMainWindow):
         self.joinSessionAct = QtGui.QAction("&Join Session...", self,
             triggered=self.joinSession)
 
+        self.lockSessionAct = QtGui.QAction("&Lock Session...", self,
+            triggered=self.lockSession)
+
     def createMenus(self):
         self.toolMenu = QtGui.QMenu("&Tool", self)
         for action in self.toolActs:
@@ -126,6 +140,7 @@ class MainWindow(QtGui.QMainWindow):
         sessionMenu = QtGui.QMenu("&Session", self)
         sessionMenu.addAction(self.startSessionAct)
         sessionMenu.addAction(self.joinSessionAct)
+        sessionMenu.addAction(self.lockSessionAct)
 
         helpMenu = QtGui.QMenu("&Help", self)
         helpMenu.addAction(self.aboutAct)

@@ -88,7 +88,13 @@ class Clerk:
         return True
 
 
-    def start(self, ip, port):
+    def start(self, ip='', port=9011):
+        if ip == '' :
+            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            s.connect(('google.com',80))
+            ip = s.getsockname()[0]
+            s.close()
+
         session_num = self.state.cs.start(ip, port)
         self.state.id = 0 
         self.state.createEngine()

@@ -3,7 +3,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.Qt import *
 from tool import Tool
 from scribble_area import ScribbleArea
-
+import xmlrpclib
 sizeX = 1024
 sizeY = 768
 
@@ -48,8 +48,8 @@ class MainWindow(QtGui.QMainWindow):
                 "http://bratwurst.mit.edu:8000")
          if ok:
             print 'CS:', CS
-         sNumber = 42
-
+         self.scribbleArea.state.cs = xmlrpclib.Server(str(CS))
+         sNumber = self.scribbleArea.clerk.start()
          QMessageBox.about(self, "Scribble Area", "Your session number is: %s" % str(sNumber))
 
 

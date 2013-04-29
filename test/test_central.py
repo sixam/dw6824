@@ -73,15 +73,15 @@ class CentralServerTest(GenericTestCase):
         self.addMultipleSites(5)
         ck = self.clerks
 
-        sess_num = ck[0].start(self.ips[0],self.ports[0])
+        sess_num = ck[0].start()
         time.sleep(1)
 
         for i in range(1,4):
-            ck[i].join(sess_num,self.ips[i],self.ports[i])
+            ck[i].join(sess_num)
         time.sleep(1)
         ck[3].lock(sess_num)
         for i in range(4,5):
-            ck[i].join(sess_num,self.ips[i],self.ports[i])
+            ck[i].join(sess_num)
 
         for i,c in enumerate(self.clerks):
             self.logs[i].blue(c.state.peers)
@@ -101,20 +101,20 @@ class CentralServerTest(GenericTestCase):
         self.addMultipleSites(12)
         ck = self.clerks
         
-        sess_num = ck[0].start(self.ips[0],self.ports[0])
+        sess_num = ck[0].start()
         time.sleep(1)
 
         n_joined =1
         for i in range(1,len(ck)/2):
-            success = ck[i].join(sess_num,self.ips[i],self.ports[i])
+            success = ck[i].join(sess_num)
             if success:
                 n_joined += 1 
             if random.randint(0,1) == 1:
                 # check duplicate requests
-                success = ck[i].join(sess_num,self.ips[i],self.ports[i])
+                success = ck[i].join(sess_num)
 
         for i in range(len(ck)/2,len(ck)):
-            success = ck[i].join(sess_num,self.ips[i],self.ports[i])
+            success = ck[i].join(sess_num)
             if success:
                 n_joined += 1 
             if random.randint(0,1) == 1:

@@ -14,22 +14,25 @@ class Peer:
     def __init__(self,ip='',port=9011,peer_id=-1,build_ui = True, log = None):
         # Node state
         if ip == '':
-            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            s.connect(('google.com',80))
-            ip = s.getsockname()[0]
-            s.close()
+            self.ip = self._getIP()
+        else:
+            self.ip = ip
         if not log:
             log = Log('livesession')
 
-        self.id = peer_id
-        self.log = log
-        self.state = PeerState(peer_id, self.log)
-        self.name = '{0}:{1}'.format(ip,port)
+        self.id         = peer_id
+        self.port       = port
+        self.log        = log
+        self.name       = '{0}:{1}'.format(self.ip,port)
+        self.state      = PeerState(peer_id, self.log)
+        self.state.ip   = self.ip
+        self.state.port = self.port
 
-        log.blue('\n\nINIT', peer_id)
-        log.blue('----------------')
-        self.log.blue(ip,port)
-        log.blue('----------------')
+        # Print start
+        log.blue('\n\nINIT', self.id)
+        log.blue('-'*(len(self.ip.__str__())+len(self.port.__str__())+3))
+        self.log.blue(self.ip, ":", self.port)
+        log.blue('-'*(len(self.ip.__str__())+len(self.port.__str__())+3))
 
         # Init main UI
         if build_ui:
@@ -58,6 +61,13 @@ class Peer:
     def _run(self):
         """ Accept incoming connection till exit  """
         self.server.serve_forever()
+
+    def _getIP(self):
+        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s.connect(('google.com',80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
 
     def kill(self):
         self.log.red( self,'=> killed')

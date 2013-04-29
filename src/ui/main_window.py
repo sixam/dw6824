@@ -41,7 +41,7 @@ class MainWindow(QtGui.QMainWindow):
                 "Server Address",
                 QLineEdit.Normal,
                 "http://bratwurst.mit.edu:8000")
-         sNumber = 42
+         sNumber = 0
          if ok:
             print 'CS:', CS
          self.scribbleArea.state.cs = xmlrpclib.Server(str(CS))
@@ -71,7 +71,7 @@ class MainWindow(QtGui.QMainWindow):
                 "Server Address",
                 QLineEdit.Normal,
                 "http://bratwurst.mit.edu:8000")
-        sNumber = 42
+        sNumber = 0
 
         if ok:
             print CS, sNumber

@@ -61,9 +61,9 @@ class Clerk:
                 pass
             time.sleep(1)
 
-    def join(self, session, ip='', port=9011):
-        if ip == '' :
-            ip = self._getIP()
+    def join(self, session):
+        ip   = self.state.ip
+        port = self.state.port
 
         # Contact server
         self.log.green('im calling',self.state.cs)
@@ -88,23 +88,15 @@ class Clerk:
 
         return True
 
-
-    def start(self, ip='', port=9011):
-        if ip == '' :
-            ip = self._getIP()
+    def start(self):
+        ip   = self.state.ip
+        port = self.state.port
 
         session_num = self.state.cs.start(ip, port)
         self.state.id = 0 
         self.state.createEngine()
         self.thaw(0)
         return session_num
-
-    def _getIP(self):
-        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        s.connect(('google.com',80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
 
     def lock(self, session):
         return self.state.cs.lockSession(session)

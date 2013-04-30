@@ -61,8 +61,9 @@ class MainWindow(QtGui.QMainWindow):
                 "Session Number:", 0, 0, 50, 1)
          if ok:
              self.scribbleArea.state.cs = xmlrpclib.Server(str(CS))
-             self.scribbleArea.clerk.join(sNumber)
-             QMessageBox.about(self, "Scribble Area", "Unable to join session: %s" % str(sNumber))
+             success = self.scribbleArea.clerk.join(sNumber)
+             if not success:
+                 QMessageBox.about(self, "Scribble Area", "Unable to join session: %s" % str(sNumber))
 
     def lockSession(self):
         CS, ok = QtGui.QInputDialog.getText(self, 

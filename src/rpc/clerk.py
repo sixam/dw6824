@@ -46,14 +46,28 @@ class Clerk:
         return self.state.getStrokes()
 
     def _send(self,op,cvt):
+        if self.state.id < 0:
+            self.log.rpc("Not in a session, abort sending")
+            return
         local_cv = op.contextVector
-        for i,srv in enumerate(self.state.peers):
+        self.log.Print("peers:",self.state.peers)
+        for j in range(local_cv.getSize()):
+            if j == self.state.id:
+                continue
+            if j > self.state.id:
+                i = j - 1
+            else :
+                i = j
+            self.log.Print("i",i,"j",j,"id",self.state.id)
+            srv = self.state.peers[i]
             cv  = cvt.getContextVector(i)
             cd  = local_cv.subtract(cv)
-            self.log.red("Local:",local_cv,"Remote:",cv,"Diff:",cd)
+            self.log.red(i,"- Local:",local_cv,"Remote:",cv,"Diff:",cd)
             ops = self.state.engine.hb.getOpsForDifference(cd)
             self.log.blue("SEND:",len(ops), "to catchup")
+            self.log.Print("logs len:",len(ops))
             ops.append(op)
+            self.log.Print("added op, logs len:",len(ops))
             for o in ops:
                 t = Thread(target=self._send_worker,args=(o.copy(),srv))
                 t.daemon = True

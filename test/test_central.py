@@ -79,7 +79,7 @@ class CentralServerTest(GenericTestCase):
         for i in range(1,4):
             ck[i].join(sess_num)
         time.sleep(1)
-        ck[3].lock(sess_num)
+        ck[3].lock()
         for i in range(4,5):
             ck[i].join(sess_num)
 
@@ -119,7 +119,7 @@ class CentralServerTest(GenericTestCase):
                 n_joined += 1 
             if random.randint(0,1) == 1:
                 # check duplicate requests
-                ck[i].lock(sess_num)
+                ck[i].lock()
 
         time.sleep(1)
         self.assertEqual(n_joined,len(self.cs.responder.hosts[sess_num]))

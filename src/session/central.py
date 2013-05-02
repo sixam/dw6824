@@ -74,8 +74,6 @@ class ServerResponder:
             except:
                 count += 1
             time.sleep(1)
-        self.log.purple(v)
-        # Commit or abort
 
     def sendJoin(self, participants, site_count, ip, port):
         for srv in participants:

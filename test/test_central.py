@@ -91,7 +91,7 @@ class CentralServerTest(GenericTestCase):
 
         ck[0].addStroke(s[0])
         ck[1].addStroke(s[1])
-        time.sleep(1)
+        time.sleep(5)
 
         self.assertStrokesEqual(self.peers[0:3])
         # NOTE : adapt assert to query members from central server

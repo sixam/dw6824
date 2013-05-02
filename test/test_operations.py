@@ -24,12 +24,15 @@ class TestOperations(GenericTestCase):
         ck0.addStroke(s[0])
         time.sleep(1)
         ck1.addStroke(s[1])
-        time.sleep(1)
+        time.sleep(5)
 
         self.assertStrokesEqual()
 
     def test_basic_delete(self):
         """ Basic - delete strokes """
+        for ck in self.clerks:
+            for sid in self.ids:
+                ck.thaw(sid)
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = self.clerks[0]
@@ -48,6 +51,9 @@ class TestOperations(GenericTestCase):
 
     def test_basic_move(self):
         """ Basic - move strokes """
+        for ck in self.clerks:
+            for sid in self.ids:
+                ck.thaw(sid)
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = self.clerks[0]
@@ -72,6 +78,9 @@ class TestOperations(GenericTestCase):
 
     def test_delay_01(self):
         """ Delay - simple """
+        for ck in self.clerks:
+            for sid in self.ids:
+                ck.thaw(sid)
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = self.clerks[0]
@@ -96,12 +105,15 @@ class TestOperations(GenericTestCase):
 
         ck0.addStroke(s[6]);
         ck1.addStroke(s[7])
-        time.sleep(1)
+        time.sleep(5)
 
         self.assertStrokesEqual()
 
     def test_delay_02(self):
         """ Delay - dOPT puzzle """
+        for ck in self.clerks:
+            for sid in self.ids:
+                ck.thaw(sid)
         p0 = self.peers[0]
         p1 = self.peers[1]
         ck0 = self.clerks[0]
@@ -128,16 +140,19 @@ class TestOperations(GenericTestCase):
         ck0.addStroke(s[5])
         ck1.addStroke(s[6])
 
-        time.sleep(2)
+        time.sleep(5)
         self.assertStrokesEqual()
 
     def test_manystrokes(self):
         """ Many - strokes """
+        for ck in self.clerks:
+            for sid in self.ids:
+                ck.thaw(sid)
         s = self.genRandomStrokes(100)
         for stroke in s:
             i = random.randint(0,1024) % len(self.peers)
             self.clerks[i].addStroke(stroke)
-        time.sleep(30)
+        time.sleep(45)
         self.assertStrokesEqual()
 
     def test_manypeers(self):

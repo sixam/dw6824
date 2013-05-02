@@ -2,6 +2,7 @@ from threading import Lock, Thread
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 import xmlrpclib
 import time
+import copy
 from dp.src.protocol.Operation import Operation
 from dp.src.protocol.InsertOperation import InsertOperation
 
@@ -62,7 +63,25 @@ class ServerResponder:
                 return op[4]
         self.log.red('ERROR in cs.getpeers, not found')
         return []
+    
+    def _sendJoinWork(self, participants, site_count, ip, port):
+        for srv in participants:
+            run = True
+            count = 0
+            while run and count < 10:
+                try:
+                    v = srv.vote('join',site_count, ip, port)
+                    run = False
+                except:
+                    count += 1
+                time.sleep(1)
+            self.log.purple(v)
+        # Commit or abort
 
+    def sendJoin(self, participants, site_count, ip, port):
+        t = Thread(target=self._sendJoinWork, args=(participants, site_count, ip, port))
+        t.daemon = True
+        t.start()
 
     def start(self, ip, port, uid):
         self.log.red('start called')
@@ -135,18 +154,7 @@ class ServerResponder:
         self.log.blue(self.hosts)
         self.log.blue(self.ports)
         site_count = len(self.hosts[session])
-        for srv in self.participants[session]:
-            run = True
-            count = 0
-            while run and count < 10:
-                try:
-                    v = srv.vote('join',site_count, ip, port)
-                    run = False
-                except:
-                    count += 1
-                time.sleep(1)
-            self.log.purple(v)
-        # Commit or abort
+        self.sendJoin(self.participants[session], site_count, ip, port)
         self.log.red('SITE COUNT:', site_count)
         srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
         self.hosts[session].append(ip)

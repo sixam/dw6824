@@ -148,7 +148,7 @@ class TestOperations(GenericTestCase):
         for ck in self.clerks:
             for sid in self.ids:
                 ck.thaw(sid)
-        s = self.genRandomStrokes(100)
+        s = self.genRandomStrokes(50)
         for stroke in s:
             i = random.randint(0,1024) % len(self.peers)
             self.clerks[i].addStroke(stroke)

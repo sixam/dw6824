@@ -64,24 +64,24 @@ class ServerResponder:
         self.log.red('ERROR in cs.getpeers, not found')
         return []
     
-    def _sendJoinWork(self, participants, site_count, ip, port):
-        for srv in participants:
-            run = True
-            count = 0
-            while run and count < 10:
-                try:
-                    v = srv.vote('join',site_count, ip, port)
-                    run = False
-                except:
-                    count += 1
-                time.sleep(1)
-            self.log.purple(v)
+    def _sendJoinWork(self, srv, site_count, ip, port):
+        run = True
+        count = 0
+        while run and count < 10:
+            try:
+                v = srv.vote('join',site_count, ip, port)
+                run = False
+            except:
+                count += 1
+            time.sleep(1)
+        self.log.purple(v)
         # Commit or abort
 
     def sendJoin(self, participants, site_count, ip, port):
-        t = Thread(target=self._sendJoinWork, args=(participants, site_count, ip, port))
-        t.daemon = True
-        t.start()
+        for srv in participants:
+            t = Thread(target=self._sendJoinWork, args=(srv, site_count, ip, port))
+            t.daemon = True
+            t.start()
 
     def start(self, ip, port, uid):
         self.log.red('start called')

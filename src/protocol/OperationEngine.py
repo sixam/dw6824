@@ -319,9 +319,11 @@ class OperationEngine:
         """ don't ever thaw the slot for our own site """
         if (site == self.siteId): return
         """ get the minimum context vector """
-        #cv = self.cvt.getMinimumContextVector()
         """ grow it to include the site if needed """
+        # Init empty cv for newcomers
         cv = ContextVector({"count":1})
+        # Use this in case of hb truncation
+        #cv = self.cvt.getMinimumContextVector()
         cv.growTo(site)
         """ use it as the initial context of the site """
         self.cvt.updateWithContextVector(site, cv)

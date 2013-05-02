@@ -26,6 +26,7 @@ class RPCresponder:
         self.unreliable = False
         self.dead = False
         self.log = state.log
+        self.knownids = []
 
         # join related
         self.incoming = Incoming()
@@ -82,6 +83,8 @@ class RPCresponder:
     def vote(self, t, id, ip, port):
         self.log.green('vote asked')
         #self.lock.acquire()
+        if id in self.knownids:
+            return True
         self.incoming.id = id
         self.incoming.ip = ip
         self.incoming.port = port
@@ -91,6 +94,7 @@ class RPCresponder:
         self.log.orange('thawing', id)
         self.state.thaw(id)
         self.log.Print(' added peer:',srv,'\n')
+        self.knownids.append(id)
 
         return True
 

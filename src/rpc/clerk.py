@@ -50,7 +50,7 @@ class Clerk:
         for i,srv in enumerate(self.state.peers):
             cv  = cvt.getContextVector(i)
             cd  = local_cv.subtract(cv)
-            self.log.red("Local:",local_cv,"Remote:",cv,"Diff":,cd)
+            self.log.red("Local:",local_cv,"Remote:",cv,"Diff:",cd)
             ops = self.state.engine.hb.getOpsForDifference(cd)
             self.log.blue("SEND:",len(ops), "to catchup")
             ops.append(op)

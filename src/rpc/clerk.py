@@ -60,7 +60,16 @@ class Clerk:
                 i = j
             self.log.Print("i",i,"j",j,"id",self.state.id)
             srv = self.state.peers[i]
+            self.log.Print("cvt:",len(cvt.cvt))
+            for cc in cvt.cvt:
+                self.log.Print(cc)
+
             cv  = cvt.getContextVector(j)
+
+            self.log.Print("cvt:",len(cvt.cvt))
+            for cc in cvt.cvt:
+                self.log.Print(cc)
+
             cd  = local_cv.subtract(cv)
             self.log.red(i,"- Local:",local_cv,"Remote:",cv,"Diff:",cd)
             ops = self.state.engine.hb.getOpsForDifference(cd)

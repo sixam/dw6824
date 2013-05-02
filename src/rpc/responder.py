@@ -1,10 +1,10 @@
 from PyQt4 import QtCore, QtGui
 from utils.utils import Utils
 
-from dp.src.protocol.Operation import Operation
-from dp.src.protocol.InsertOperation import InsertOperation
-from dp.src.protocol.DeleteOperation import DeleteOperation
-from dp.src.protocol.UpdateOperation import UpdateOperation
+from protocol.Operation import Operation
+from protocol.InsertOperation import InsertOperation
+from protocol.DeleteOperation import DeleteOperation
+from protocol.UpdateOperation import UpdateOperation
 
 import xmlrpclib
 

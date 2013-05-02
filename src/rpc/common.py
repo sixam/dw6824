@@ -1,13 +1,13 @@
 from ui.stroke import Stroke
 from threading import Lock
 from PyQt4 import QtCore, QtGui
-from dp.src.utils.log import Log
-from dp.src.utils.utils import Utils
+from utils.log import Log
+from utils.utils import Utils
 import copy
 
-from dp.src.protocol.OperationEngine import OperationEngine
-from dp.src.protocol.Queue import Queue
-from dp.src.protocol.OperationEngineException import OperationEngineException
+from protocol.OperationEngine import OperationEngine
+from protocol.Queue import Queue
+from protocol.OperationEngineException import OperationEngineException
 
 import xmlrpclib
 

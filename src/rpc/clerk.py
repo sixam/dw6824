@@ -5,7 +5,7 @@ import time
 from utils.utils import Utils
 from ui.stroke import Stroke
 import copy
-from dp.src.utils.log import Log
+from utils.log import Log
 
 import socket
 

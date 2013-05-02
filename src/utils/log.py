@@ -1,4 +1,4 @@
-from dp.src.utils.utils import Utils
+from .utils import Utils
 import logging
 
 class Log:

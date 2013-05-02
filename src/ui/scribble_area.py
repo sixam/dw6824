@@ -2,7 +2,7 @@ from PyQt4 import QtCore, QtGui
 from rpc.clerk import Clerk
 from stroke import Stroke
 from tool import Tool
-from dp.src.utils.utils import Utils
+from utils.utils import Utils
 
 from threading import Lock
 

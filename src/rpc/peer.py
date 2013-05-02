@@ -1,12 +1,12 @@
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from PyQt4 import QtCore, QtGui
 import sys
-from dp.src.utils.log import Log
+from utils.log import Log
 from rpc.common import PeerState
-from dp.src.ui.main_window import MainWindow
+from ui.main_window import MainWindow
 from threading import Thread
-from dp.src.rpc.clerk import Clerk
-from dp.src.rpc.responder import RPCresponder
+from rpc.clerk import Clerk
+from rpc.responder import RPCresponder
 import xmlrpclib
 import socket
 

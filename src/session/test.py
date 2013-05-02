@@ -1,9 +1,9 @@
 import xmlrpclib
 import random
 from math import floor
-from dp.src.session.central import CentralServer
-from dp.src.session.dummyclient import DummyClient
-from dp.src.utils.log import Log
+from session.central import CentralServer
+from session.dummyclient import DummyClient
+from utils.log import Log
 
 if __name__ == '__main__':
     sp              = 9005

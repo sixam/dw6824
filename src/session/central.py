@@ -2,9 +2,8 @@ from threading import Lock, Thread
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 import xmlrpclib
 import time
-import protocol.Operation
-from protocol.Operation import Operation
-from protocol.InsertOperation import InsertOperation
+from dp.src.protocol.Operation import Operation
+from dp.src.protocol.InsertOperation import InsertOperation
 
 class ServerResponder:
     def __init__(self, log):

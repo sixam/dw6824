@@ -21,7 +21,7 @@ class Log:
         self.show_rpc     = True
         self.show_engine  = False
         self.show_release = True
-        self.show_ui      = True
+        self.show_ui      = False
 
         # for recursion debug
         #self.accu = ""

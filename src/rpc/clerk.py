@@ -23,16 +23,19 @@ class Clerk:
         
     def addStroke(self,s,order=-1):
         op = self.state.createOp('insert',stroke=s,order=order)
-        self._send(op.copy())
+        cvt  = copy.deepcopy(self.state.engine.cvt)
+        self._send(op.copy(),cvt)
 
     def deleteStroke(self,s,s_pos):
         new_s = copy.copy(s)
         op = self.state.createOp('delete',stroke=s,pos=s_pos)
-        self._send(op.copy())
+        cvt  = copy.deepcopy(self.state.engine.cvt)
+        self._send(op.copy(),cvt)
 
     def updateStroke(self,s,s_pos):
         op = self.state.createOp('update',stroke=s, pos=s_pos)
-        self._send(op.copy())
+        cvt  = copy.deepcopy(self.state.engine.cvt)
+        self._send(op.copy(),cvt)
 
     def moveStroke(self,s,s_pos,offset):
         new_s = copy.copy(s)
@@ -42,11 +45,42 @@ class Clerk:
     def getStrokes(self):
         return self.state.getStrokes()
 
-    def _send(self,op):
-        for srv in self.state.peers:
-            t = Thread(target=self._send_worker,args=(op,srv))
-            t.daemon = True
-            t.start()
+    def _send(self,op,cvt):
+        if self.state.id < 0:
+            self.log.rpc("Not in a session, abort sending")
+            return
+        local_cv = op.contextVector
+        self.log.Print("peers:",self.state.peers)
+        for j in range(local_cv.getSize()):
+            if j == self.state.id:
+                continue
+            if j > self.state.id:
+                i = j - 1
+            else :
+                i = j
+            self.log.Print("i",i,"j",j,"id",self.state.id)
+            srv = self.state.peers[i]
+            self.log.Print("cvt:",len(cvt.cvt))
+            for cc in cvt.cvt:
+                self.log.Print(cc)
+
+            cv  = cvt.getContextVector(j)
+
+            self.log.Print("cvt:",len(cvt.cvt))
+            for cc in cvt.cvt:
+                self.log.Print(cc)
+
+            cd  = local_cv.subtract(cv)
+            self.log.red(i,"- Local:",local_cv,"Remote:",cv,"Diff:",cd)
+            ops = self.state.engine.hb.getOpsForDifference(cd)
+            self.log.blue("SEND:",len(ops), "to catchup")
+            self.log.Print("logs len:",len(ops))
+            ops.append(op)
+            self.log.Print("added op, logs len:",len(ops))
+            for o in ops:
+                t = Thread(target=self._send_worker,args=(o.copy(),srv))
+                t.daemon = True
+                t.start()
 
     def _send_worker(self,op,srv):
         keep_running = True

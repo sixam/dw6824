@@ -23,18 +23,18 @@ class Clerk:
         
     def addStroke(self,s,order=-1):
         op = self.state.createOp('insert',stroke=s,order=order)
-        cvt  = copy.deepcopy(self.state.hb.cvt)
+        cvt  = copy.deepcopy(self.state.engine.cvt)
         self._send(op.copy(),cvt)
 
     def deleteStroke(self,s,s_pos):
         new_s = copy.copy(s)
         op = self.state.createOp('delete',stroke=s,pos=s_pos)
-        cvt  = copy.deepcopy(self.state.hb.cvt)
+        cvt  = copy.deepcopy(self.state.engine.cvt)
         self._send(op.copy(),cvt)
 
     def updateStroke(self,s,s_pos):
         op = self.state.createOp('update',stroke=s, pos=s_pos)
-        cvt  = copy.deepcopy(self.state.hb.cvt)
+        cvt  = copy.deepcopy(self.state.engine.cvt)
         self._send(op.copy(),cvt)
 
     def moveStroke(self,s,s_pos,offset):
@@ -50,7 +50,7 @@ class Clerk:
         for i,srv in enumerate(self.state.peers):
             cv  = cvt.getContextVector(i)
             cd  = local_cv.subtract(cv)
-            ops = self.state.hb.getOpsForDifference(cd)
+            ops = self.state.engine.hb.getOpsForDifference(cd)
             self.log.blue("SEND:",len(ops), "to catchup")
             for o in ops:
                 t = Thread(target=self._send_worker,args=(o.copy(),srv))

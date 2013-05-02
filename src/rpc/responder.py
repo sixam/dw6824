@@ -86,22 +86,27 @@ class RPCresponder:
         self.incoming.ip = ip
         self.incoming.port = port
         #self.lock.release()
-        self.log.green('Vote OK')
+        srv = xmlrpclib.Server('http://%s:%s' % (self.incoming.ip, self.incoming.port))
+        self.state.peers.append(srv)
+        self.log.orange('thawing', id)
+        self.state.thaw(id)
+        self.log.Print(' added peer:',srv,'\n')
+
         return True
 
-    def commit(self, t, id, vote, ip, port):
-        #self.lock.acquire()
-        if vote == True:
-            self.log.green('commit received')
-            srv = xmlrpclib.Server('http://%s:%s' % (self.incoming.ip, self.incoming.port))
-            self.state.peers.append(srv)
-            self.log.orange('thawing', id)
-            self.state.thaw(id)
-            self.log.Print(' added peer:',srv,'\n')
-        else : 
-            self.log.red('abort received')
-        #self.lock.release()
-        return True
+#    def commit(self, t, id, vote, ip, port):
+#        #self.lock.acquire()
+#        if vote == True:
+#            self.log.green('commit received')
+#            srv = xmlrpclib.Server('http://%s:%s' % (self.incoming.ip, self.incoming.port))
+#            self.state.peers.append(srv)
+#            self.log.orange('thawing', id)
+#            self.state.thaw(id)
+#            self.log.Print(' added peer:',srv,'\n')
+#        else : 
+#            self.log.red('abort received')
+#        #self.lock.release()
+#        return True
 
     def join(self, ip, port,bl):
         self.log.red('fucked up dude')

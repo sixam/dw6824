@@ -85,14 +85,15 @@ class Clerk:
     def _send_worker(self,op,srv):
         keep_running = True
         packet = op.marshall()
-        while True :
+        count = 0
+        while True and count < 10:
             try:
                 done = srv.enq(packet)
                 if done:
                     self.log.rpc('sent:',op)
                     break
             except:
-                pass
+                count += 1
             time.sleep(1)
 
     def join(self, session):

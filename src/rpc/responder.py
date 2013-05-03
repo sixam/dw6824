@@ -72,6 +72,8 @@ class RPCresponder:
             op = UpdateOperation.unmarshall(packet)
 
         self.log.rpc('received:',op)
+        if op.key != self.state.session:
+            return False
 
         accepted = self.state.receiveOp(op)
 

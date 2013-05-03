@@ -105,7 +105,7 @@ class PeerState(QtCore.QObject):
         self.lock.acquire()
         self.log.lock( 'create op (locked)')
 
-        key = 'strokes'
+        key = self.session
         val = stroke.marshall()
         if otype == 'insert':
             position = len(self.strokes)

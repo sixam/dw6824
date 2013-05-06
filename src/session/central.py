@@ -2,6 +2,7 @@ from threading import Lock, Thread
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 import xmlrpclib
 import time
+import copy
 from dp.src.protocol.Operation import Operation
 from dp.src.protocol.InsertOperation import InsertOperation
 
@@ -62,7 +63,23 @@ class ServerResponder:
                 return op[4]
         self.log.red('ERROR in cs.getpeers, not found')
         return []
+    
+    def _sendJoinWork(self, srv, site_count, ip, port):
+        run = True
+        count = 0
+        while run and count < 10:
+            try:
+                v = srv.vote('join',site_count, ip, port)
+                run = False
+            except:
+                count += 1
+            time.sleep(1)
 
+    def sendJoin(self, participants, site_count, ip, port):
+        for srv in participants:
+            t = Thread(target=self._sendJoinWork, args=(srv, site_count, ip, port))
+            t.daemon = True
+            t.start()
 
     def start(self, ip, port, uid):
         self.log.red('start called')
@@ -114,7 +131,6 @@ class ServerResponder:
         return True
 
     def join(self, session, ip, port, uid):
-        """ Starts a 2PC with all participants to commit a new peer"""
         self.log.red('Join Called')
         self.lock.acquire()
         count = len(self.hosts)
@@ -132,46 +148,18 @@ class ServerResponder:
             return False
                 
         # Send vote requests
-        v = True
         self.log.blue(self.participants)
         self.log.blue(self.hosts)
         self.log.blue(self.ports)
         site_count = len(self.hosts[session])
-        for srv in self.participants[session]:
-            run = True
-            while run :
-                try:
-                    v = srv.vote('join',site_count, ip, port)
-                    run = False
-                except:
-                    pass
-                time.sleep(1)
-            self.log.purple(v)
-            if v == False:
-                break
-        # Commit or abort
-        for srv in self.participants[session]:
-            run = True
-            while run :
-                self.log.purple('commit round')
-                try:
-                   v = srv.commit('join',site_count, v, ip, port)
-                   run = False
-                except:
-                   pass
-                time.sleep(1)
-        if v == True:
-            self.log.red('SITE COUNT:', site_count)
-            srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
-            self.hosts[session].append(ip)
-            self.ports[session].append(port)
-            self.participants[session].append(srv)
-            # return list of ip,ports,ids
-            value = zip(self.hosts[session],self.ports[session])
-        else:
-            self.log.purple('Reject')
-            value = []
-
+        self.sendJoin(self.participants[session], site_count, ip, port)
+        self.log.red('SITE COUNT:', site_count)
+        srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
+        self.hosts[session].append(ip)
+        self.ports[session].append(port)
+        self.participants[session].append(srv)
+        # return list of ip,ports,ids
+        value = zip(self.hosts[session],self.ports[session])
         self.joinops.append([ip, port, session, uid, value])
 
         self.log.green('woot')

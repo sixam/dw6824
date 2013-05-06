@@ -79,7 +79,7 @@ class CentralServerTest(GenericTestCase):
         for i in range(1,4):
             ck[i].join(sess_num)
         time.sleep(1)
-        ck[3].lock(sess_num)
+        ck[3].lock()
         for i in range(4,5):
             ck[i].join(sess_num)
 
@@ -91,7 +91,7 @@ class CentralServerTest(GenericTestCase):
 
         ck[0].addStroke(s[0])
         ck[1].addStroke(s[1])
-        time.sleep(1)
+        time.sleep(5)
 
         self.assertStrokesEqual(self.peers[0:3])
         # NOTE : adapt assert to query members from central server
@@ -119,7 +119,7 @@ class CentralServerTest(GenericTestCase):
                 n_joined += 1 
             if random.randint(0,1) == 1:
                 # check duplicate requests
-                ck[i].lock(sess_num)
+                ck[i].lock()
 
         time.sleep(1)
         self.assertEqual(n_joined,len(self.cs.responder.hosts[sess_num]))

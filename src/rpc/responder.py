@@ -26,6 +26,7 @@ class RPCresponder:
         self.unreliable = False
         self.dead = False
         self.log = state.log
+        self.knownids = []
 
         # join related
         self.incoming = Incoming()
@@ -71,6 +72,8 @@ class RPCresponder:
             op = UpdateOperation.unmarshall(packet)
 
         self.log.rpc('received:',op)
+        if op.key != self.state.session:
+            return False
 
         accepted = self.state.receiveOp(op)
 
@@ -82,25 +85,19 @@ class RPCresponder:
     def vote(self, t, id, ip, port):
         self.log.green('vote asked')
         #self.lock.acquire()
+        if id in self.knownids:
+            return True
         self.incoming.id = id
         self.incoming.ip = ip
         self.incoming.port = port
         #self.lock.release()
-        self.log.green('Vote OK')
-        return True
+        srv = xmlrpclib.Server('http://%s:%s' % (self.incoming.ip, self.incoming.port))
+        self.state.peers.append(srv)
+        self.log.orange('thawing', id)
+        self.state.thaw(id)
+        self.log.Print(' added peer:',srv,'\n')
+        self.knownids.append(id)
 
-    def commit(self, t, id, vote, ip, port):
-        #self.lock.acquire()
-        if vote == True:
-            self.log.green('commit received')
-            srv = xmlrpclib.Server('http://%s:%s' % (self.incoming.ip, self.incoming.port))
-            self.state.peers.append(srv)
-            self.log.orange('thawing', id)
-            self.state.thaw(id)
-            self.log.Print(' added peer:',srv,'\n')
-        else : 
-            self.log.red('abort received')
-        #self.lock.release()
         return True
 
     def join(self, ip, port,bl):

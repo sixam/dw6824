@@ -1,3 +1,4 @@
+import resources
 from PyQt4 import QtCore, QtGui
 from rpc.clerk import Clerk
 from stroke import Stroke
@@ -34,7 +35,7 @@ class ScribbleArea(QtGui.QLabel):
         self.moving      = False
 
         # Drawing canvas
-        self.image = QtGui.QImage(Utils.getImagePath(), format=None)
+        self.image = QtGui.QImage(':/images/Canvas.png', format=None)
 
         # RPC clerk
         self.clerk = Clerk(state)
@@ -133,7 +134,7 @@ class ScribbleArea(QtGui.QLabel):
 
     def draw(self):
         """ Updates the drawing context """
-        self.image = QtGui.QImage(Utils.getImagePath(), format=None)
+        self.image = QtGui.QImage(':/images/Canvas.png', format=None)
         painter = QtGui.QPainter(self.image)
         for stroke in self.strokes:
             if not stroke:

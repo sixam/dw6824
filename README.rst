@@ -30,7 +30,8 @@ See the LICENSE file for the terms of the "New BSD License".
 Credits
 =======
 
-We borrowed some ideas and a data structures from opencoweb <http://opencoweb.org/>
+We borrowed some ideas and a data structures from opencoweb <http://opencoweb.org/>.
+
 We are thankful to R. Morris, N. Narula and C. Gruenwald for their help during 6.824 - Spring 2013.
 
 References

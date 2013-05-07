@@ -1,5 +1,5 @@
 ==============================
-dw6824 - A peer-to-peer Whiteboard
+dw6824 - A peer-to-peer whiteboard
 ==============================
 
 
@@ -17,7 +17,7 @@ You need to install python >= 2.7.4 and PyQt4.
 Status
 ======
 
-This is Andrea and Mika's final project for 6.824 at MIT. There is a _LOT_ to be done
+This is Andrea and Mika's final project for 6.824 at MIT. There is a **lot** to be done
 to turn this into a fully functional application.
 
 License

@@ -6,15 +6,15 @@ class Log:
         self.id = id
         self.log = logging.getLogger('log-%s' % self.id)
         self.log.setLevel(logging.DEBUG)
-        fname = Utils.getLogPath('mainlog', self.id)
-        fhandle = logging.FileHandler(fname)
-        fhandle.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+        
 
         formatter = logging.Formatter('%(message)s')
         #%(levelname)s
-        fhandle.setFormatter(formatter)
+        ch.setFormatter(formatter)
         if not self.log.handlers:
-            self.log.addHandler(fhandle)
+            self.log.addHandler(ch)
 
         # log options
         self.show_lock    = True

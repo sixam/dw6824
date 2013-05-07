@@ -55,6 +55,8 @@ class PeerState(QtCore.QObject):
         # Join/leave handling
         self.cs = None
         self.uid = Utils.generateID()
+        self.ips = []
+        self.ports = []
     
     def thaw(self, sid):
         self.log.lock( 'thaw (lock)')
@@ -114,7 +116,7 @@ class PeerState(QtCore.QObject):
         elif otype == 'update':
             position = pos
 
-        op = self.engine.createOp(True,key,val,otype,position)
+        op = self.engine.createOp(True,key,val,otype,position, ips = self.ips, ports = self.ports)
         if order >= 0:
             op.order = order
 

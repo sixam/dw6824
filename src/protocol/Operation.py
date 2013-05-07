@@ -49,6 +49,8 @@ class Operation:
         self.order = \
         self.seqId = \
         self.xCache = \
+        self.ips = \
+        self.ports = \
         self.local = None
 
         if (None == args):
@@ -68,6 +70,8 @@ class Operation:
             self.value = args["value"]
             self.position = args["position"]
             self.order = args["order"] if "order" in args else -1
+            self.ips = args["ips"]
+            self.ports = args["ports"]
             if ("seqId" in args):
                 self.seqId = args["seqId"]
             elif (self.contextVector):
@@ -86,8 +90,9 @@ class Operation:
             self.xCache = []
 
     def __str__(self):
-        return "{0} - id({1},{2}) - k:{3}, v:{4} p:{5} cv:{6} o:{7}".format(
-                self.type,self.siteId,self.seqId,self.key,self.value['id'],self.position,self.contextVector.__str__(),self.order)
+        return "{0} - id({1},{2}) - k:{3}, v:{4} p:{5} cv:{6} o:{7} -- ips:{8}, ports:{9}".format(
+                self.type,self.siteId,self.seqId,self.key,self.value['id'],
+                self.position,self.contextVector.__str__(),self.order, self.ips, self.ports)
 
     """
     Serializes the operation as an array of values for transmission.
@@ -111,6 +116,8 @@ class Operation:
         packet['seqId']         = self.seqId
         packet['siteId']        = self.siteId
         packet['order']         = self.order
+        packet['ips']           = self.ips
+        packet['ports']         = self.ports
         return packet
 
     @ staticmethod
@@ -160,7 +167,9 @@ class Operation:
             "order" : self.order,
             "local" : self.local,
             """ reference existing xCache """
-            "xCache" : self.xCache
+            "xCache" : self.xCache,
+            "ips" : self.ips,
+            "ports" : self.ports
         }
         """ respect subclasses """
         return self.getConstructor()(args)

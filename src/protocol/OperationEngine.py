@@ -100,7 +100,7 @@ class OperationEngine:
       for local operations which are not yet assigned a place in the order.
     @returns {Operation} Subclass instance matching the given type
     """
-    def createOp(self, local, key, value, _type, position, site=None, cv=None, order=None):
+    def createOp(self, local, key, value, _type, position, site=None, cv=None, order=None, ips=None, ports=None):
         args = {}
         if (local):
             args["key"] = key
@@ -109,6 +109,8 @@ class OperationEngine:
             args["siteId"] = self.siteId
             args["contextVector"] = self.copyContextVector()
             args["local"] = True
+            args["ips"] = ips
+            args["ports"] = ports
         else:
             """ build cv from raw sites array """
             cv = ContextVector({"sites" : cv})

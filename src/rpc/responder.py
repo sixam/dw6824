@@ -75,6 +75,18 @@ class RPCresponder:
         if op.key != self.state.session:
             return False
 
+        for ip in op.ips:
+            if ip == self.state.ip and op.ports[op.ips.index(ip)] == self.state.port :
+                continue
+            if ip not in self.state.ips:
+                port = op.ports[op.ips.index(ip)]
+                id = op.siteId
+                srv = xmlrpclib.Server('http://%s:%s' % (ip, port))
+                self.log.Print(' added peer:',srv,'\n')
+                self.state.peers.append(srv)
+                self.state.thaw(id)
+                
+
         accepted = self.state.receiveOp(op)
 
         if accepted:
@@ -85,6 +97,7 @@ class RPCresponder:
     def vote(self, t, id, ip, port):
         self.log.green('vote asked')
         #self.lock.acquire()
+        return True
         if id in self.knownids:
             return True
         self.incoming.id = id
@@ -93,6 +106,8 @@ class RPCresponder:
         #self.lock.release()
         srv = xmlrpclib.Server('http://%s:%s' % (self.incoming.ip, self.incoming.port))
         self.state.peers.append(srv)
+        self.state.ips.append(ip)
+        self.state.ports.append(port)
         self.log.orange('thawing', id)
         self.state.thaw(id)
         self.log.Print(' added peer:',srv,'\n')

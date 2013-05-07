@@ -53,6 +53,8 @@ class PeerState(QtCore.QObject):
         self.queue  = Queue(log)
 
         # Join/leave handling
+        self.ip = ''
+        self.port = 0
         self.cs = None
         self.uid = Utils.generateID()
         self.ips = []

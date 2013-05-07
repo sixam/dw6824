@@ -27,6 +27,8 @@ class Peer:
         self.state      = PeerState(peer_id, self.log)
         self.state.ip   = self.ip
         self.state.port = self.port
+        self.state.ips.append(self.state.ip)
+        self.state.ports.append(self.state.port)
 
         # Print start
         log.blue('\n\nINIT', self.id)

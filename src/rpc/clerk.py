@@ -138,8 +138,6 @@ class Clerk:
         self.state.id = 0 
         self.state.createEngine()
         self.thaw(0)
-        self.state.ips.append(ip)
-        self.state.ports.append(port)
         return session_num
 
     def lock(self):

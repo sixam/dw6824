@@ -118,6 +118,8 @@ class Clerk:
         self.state.session = session
 
         for i,p in enumerate(peers):
+            self.state.ips.append(p[0])
+            self.state.ports.append(p[1])
             self.log.orange('thawing', i)
             self.thaw(i)
             if p[0] == ip and p[1] == port:
@@ -136,6 +138,8 @@ class Clerk:
         self.state.id = 0 
         self.state.createEngine()
         self.thaw(0)
+        self.state.ips.append(ip)
+        self.state.ports.append(port)
         return session_num
 
     def lock(self):

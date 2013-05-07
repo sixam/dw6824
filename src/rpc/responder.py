@@ -85,6 +85,8 @@ class RPCresponder:
                 self.log.Print(' added peer:',srv,'\n')
                 self.state.peers.append(srv)
                 self.state.thaw(id)
+                self.state.ips.append(ip)
+                self.state.ports.append(port)
                 
 
         accepted = self.state.receiveOp(op)
@@ -97,7 +99,6 @@ class RPCresponder:
     def vote(self, t, id, ip, port):
         self.log.green('vote asked')
         #self.lock.acquire()
-        return True
         if id in self.knownids:
             return True
         self.incoming.id = id

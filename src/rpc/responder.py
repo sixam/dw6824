@@ -74,7 +74,7 @@ class RPCresponder:
         self.log.rpc('received:',op)
         if op.key != self.state.session:
             return False
-
+        self.state.lock.acquire()
         for ip in op.ips:
             if ip == self.state.ip and op.ports[op.ips.index(ip)] == self.state.port :
                 continue
@@ -87,6 +87,7 @@ class RPCresponder:
                 self.state.thaw(id)
                 self.state.ips.append(ip)
                 self.state.ports.append(port)
+        self.state.lock.release()
                 
 
         accepted = self.state.receiveOp(op)
